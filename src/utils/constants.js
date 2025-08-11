@@ -98,51 +98,6 @@ const FCMPlatformType = (function () {
   return type;
 })();
 
-<<<<<<< HEAD
-const ValidationMsg  = (function () {
-    function ValidationMsg(){}
-    ValidationMsg.NameEmpty = 'Name required!';
-    ValidationMsg.EmailEmpty = 'Email required!';
-    ValidationMsg.EmailInvalid = 'Oops, email invalid please enter valid email..';
-    ValidationMsg.PasswordEmpty = 'Password required!';
-    ValidationMsg.PasswordInvalid = 'Password Invalid';
-    ValidationMsg.LicenseNumberEmpty = 'License number required!';
-    ValidationMsg.RegisteredDateEmpty = 'Registered-Date required!';
-    ValidationMsg.LicenseExpiryEmpty = 'LicenseExpiry required!';
-    ValidationMsg.ZipcodeEmpty = 'zipCode required!';
-    ValidationMsg.ServiceTypeEmpty = 'ServiceType required';
-    ValidationMsg.ReceiverIdEmpty = 'ReceiverId required';
-    ValidationMsg.MessageEmpty = 'message required!';
-    ValidationMsg.InvalidPassResetCode = "The Password Reset Token is Invalid.";
-    ValidationMsg.TargetCompletionDateEmpty = 'TargetCompletionDate required!';
-    ValidationMsg.AccountantNameEmpty = 'AccountantName required!';
-    ValidationMsg.AccountNotRegistered = "Account not registered.";
-    ValidationMsg.RequestStatusEmpty = 'Request Status required!';
-    ValidationMsg.DocumentEmpty = 'Document required!';
-    ValidationMsg.ServiceIdEmpty = 'ServiceId required!';
-    ValidationMsg.DocumentTypeEmpty = 'DocumentType required';
-    ValidationMsg.NotAllowed = 'Not Allowed!';
-    ValidationMsg.UnableToLogin = 'Unable To Login!';
-    ValidationMsg.DuplicateEmail = 'email already exists!';
-    ValidationMsg.LicenseIssueDateEmpty = 'licenseIssueDate required!';
-    ValidationMsg.CompanyNameEmpty = 'CompanyName required!';
-<<<<<<< HEAD
-    ValidationMsg.ClientExists = 'Client already Exists!';
-=======
-    ValidationMsg.ParametersError = "Invalid Parameter";
-    ValidationMsg.PasswordResetCodeEmpty = "Reset code is Required..";
-    ValidationMsg.NewPasswordEmpty = "New Password is require.";
-    ValidationMsg.RecordNotFound = "Record not Found!";
-    ValidationMsg.OldPasswordIncorrect = "Entered old password is incorrect.";
-
-
-
->>>>>>> 2026c754d377ff496963e15bf91e1f325133cc14
-
-    return ValidationMsg;
-})()
-   
-=======
 const ValidationMsg = (function () {
   function ValidationMsg() {}
   ValidationMsg.NameEmpty = "Name required!";
@@ -178,7 +133,6 @@ const ValidationMsg = (function () {
 
   return ValidationMsg;
 })();
->>>>>>> ded70efbfc80d4dcc55a6be930cd236835409e8e
 
 const ResponseMessages = (function () {
   function ResponseMessages() {}
@@ -213,87 +167,6 @@ const TableNames = (function () {
 })();
 
 const TableFields = (function () {
-<<<<<<< HEAD
-    function TableFields(){}
-    TableFields.ID = "_id";
-    TableFields.name_ = "name";
-    TableFields.email = "email";
-    TableFields.password = "password";
-    TableFields.tokens = "token";
-    TableFields.token = "token";
-    TableFields.userType = 'userType';
-    TableFields.passwordResetToken = 'passwordResetToken';
-    TableFields.contact = 'contact';
-    TableFields.phoneCountry = 'phoneCountry';
-    TableFields.phone = 'phone';
-    TableFields.companyId = 'companyId';
-    TableFields.registeredDate = 'registeredDate';
-    TableFields.isActive = 'isActive';
-    TableFields.clientDetails = 'clientDetails';
-    TableFields.clientId = 'clientId';
-    TableFields.documents = 'documents';
-    TableFields.documentDetails = 'documentDetails';
-    TableFields.docStatus = 'docStatus';
-    TableFields.documentType = 'documentType';
-    TableFields.document = 'document';
-    TableFields.comments = 'comments';
-    TableFields.uploadedAt = 'uploadedAt';
-    TableFields.address = 'address';
-    TableFields.addressLine1 = 'addressLine1';
-    TableFields.addressLine2 = 'addressLine2';
-    TableFields.street = 'street';
-    TableFields.landmark = 'landmark';
-    TableFields.zipCode = 'zipCode';
-    TableFields.city = 'city';
-    TableFields.state = 'state';
-    TableFields.country = 'country';
-    TableFields.licenseDetails = 'licenseDetails';
-    TableFields.licenseType = 'licenseType';
-    TableFields.licenseNumber = 'licenseNumber';
-    TableFields.licenseIssueDate = 'licenseIssueDate';
-    TableFields.licenseExpiry = 'licenseExpiry';
-    TableFields.taxRegistrationNumber = 'taxRegistrationNumber';
-    TableFields.financialYear = 'financialYear';
-    TableFields.startDate = 'startDate';
-    TableFields.endDate = 'endDate';
-    TableFields.businessType = 'businessType';
-    TableFields.contactPerson = 'contactPerson';
-    TableFields.title = 'title';
-    TableFields.description = 'description';
-    TableFields.associatedClients = 'associatedClients';
-    TableFields.clientDetail = 'clientDetail';
-    TableFields.clientName = 'clientName';
-    TableFields.serviceType = 'serviceType';
-    TableFields.deadlineDetails= 'deadlineDetails';
-    TableFields.deadlineCategory = 'deadlineCategory';
-    TableFields.deadline = 'deadline';
-    TableFields.startDate = 'startDate';
-    TableFields.endDate = 'endDate';
-    TableFields.isAllDay = 'isAllDay';
-    TableFields.colorCode = 'colorCode';
-    TableFields.isCompleted = 'isCompleted';
-    TableFields.receiverId = 'receiverId';
-    TableFields.message = 'message';
-    TableFields.notificationType = 'notificationType';
-    TableFields.serviceType = 'serviceType';
-    TableFields.targetCompletionDate = 'targetCompletionDate';
-    TableFields.description = 'description';
-    TableFields.assignedStaff = 'assignedStaff';
-    TableFields.accountantName = 'accountantName';
-    TableFields.note = 'note';
-    TableFields.requestedOn = 'requestedOn';
-    TableFields.status= 'status';
-    TableFields.serviceDetails = 'serviceDetails';
-    TableFields.serviceId = 'serviceId';
-    TableFields.serviceStartDate = 'serviceStartDate';
-    TableFields.serviceEndDate = 'serviceEndDate';
-    TableFields.clients = 'clients';
-    TableFields.startingAmount = 'startingAmount';
-    TableFields.totalAmount = 'totalAmount';
-    TableFields.requiredDocumentList = 'requiredDocumentList';
-    TableFields.value = 'value';
-    TableFields.companyName = 'companyName';
-=======
   function TableFields() {}
   TableFields.ID = "_id";
   TableFields.name_ = "name";
@@ -372,7 +245,6 @@ const TableFields = (function () {
   TableFields.totalAmount = "totalAmount";
   TableFields.requiredDocumentList = "requiredDocumentList";
   TableFields.value = "value";
->>>>>>> ded70efbfc80d4dcc55a6be930cd236835409e8e
 
   return TableFields;
 })();
