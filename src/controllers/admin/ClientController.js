@@ -1,18 +1,18 @@
 const ClientService = require('../../db/services/ClientService');
 const { TableFields, ValidationMsg } = require('../../utils/constants');
 const ValidationError = require('../../utils/ValidationError');
-const { sendStudentInvitationEmail} = require('../../emails/email');
+const { sendClientInvitationEmail} = require('../../emails/email');
 
 exports.addClient = async (req) => {
     const reqBody = req.body;
-
+    const reqUser = req.user;
+    const isAdmin = reqUser[TableFields.authType] === 1 ? true :  false;
     const email = reqBody[TableFields.email];
     if(!email) {
         throw new ValidationError(ValidationMsg.EmailEmpty);
     }
 
     const clientExists = await ClientService.existsWithEmail(email);
-    console.log(clientExists);
     if(clientExists) {
         throw new ValidationError(ValidationMsg.ClientExists)
     }
@@ -21,17 +21,14 @@ exports.addClient = async (req) => {
         reqBody,
         undefined,
         async (updatedFields) => {
-            let {clientRecords, password} = await ClientService.insertRecord(
-                {
-                    email : updatedFields[TableFields.email],
-                },
+            let records = await ClientService.insertRecord(
                 updatedFields
             );
-            if(clientRecords[TableFields.email]) {
-                sendStudentInvitationEmail(
-                    clientRecords[TableFields.name_],
-                    clientRecords[TableFields.email],
-                    password
+            if(records[TableFields.email]) {
+                sendClientInvitationEmail(
+                    records[TableFields.name_],
+                    records[TableFields.email],
+                    reqBody[TableFields.password]
                 )
             }
         }
@@ -43,18 +40,20 @@ exports.addClient = async (req) => {
 async function parseAndValidateClient(
     reqBody,
     existingClient = {},
-    onValidationCompleted = async () => {}
+    onValidationCompleted = async (updatedFields) => {}
 ) {
-    if(isFieldEmpty(reqBody[TableFields.name_], existingClient[TableFields.name_])){
+
+    if(isFieldEmpty(reqBody[TableFields.name_])){
         throw new ValidationError(ValidationMsg.NameEmpty);
     }
-    if(isFieldEmpty(reqBody[TableFields.email], existingClient[TableFields.email])){
+    if(isFieldEmpty(reqBody[TableFields.email])){
         throw new ValidationError(ValidationMsg.EmailEmpty);
     }
-    if(isFieldEmpty(reqBody[TableFields.password], existingClient[TableFields.password])){
+    if(isFieldEmpty(reqBody[TableFields.password])){
         throw new ValidationError(ValidationMsg.PasswordEmpty);
     }
-    if(isFieldEmpty(reqBody[TableFields.companyName], existingClient[TableFields.companyName])){
+    if(isFieldEmpty(reqBody[TableFields.companyName])){
+
         throw new ValidationError(ValidationMsg.CompanyNameEmpty);
     }
     const response = await onValidationCompleted({
@@ -63,16 +62,11 @@ async function parseAndValidateClient(
         [TableFields.password] : reqBody[TableFields.password],
         [TableFields.companyName] : reqBody[TableFields.companyName]
     })
-
     return response;
 }
 
-function isFieldEmpty(providedField, existingField) {
-    if (providedField != undefined) {
-        if (providedField) {
-            return false;
-        }
-    } else if (existingField) {
+function isFieldEmpty(existingField) {
+    if (existingField) {
         return false;
     }
     return true;

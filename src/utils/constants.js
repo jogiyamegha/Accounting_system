@@ -130,6 +130,7 @@ const ValidationMsg = (function () {
   ValidationMsg.NewPasswordEmpty = "New Password is require.";
   ValidationMsg.RecordNotFound = "Record not Found!";
   ValidationMsg.OldPasswordIncorrect = "Entered old password is incorrect.";
+  ValidationMsg.ClientExists = "Client already Exists";
 
   return ValidationMsg;
 })();
@@ -180,6 +181,7 @@ const TableFields = (function () {
   TableFields.phoneCountry = "phoneCountry";
   TableFields.phone = "phone";
   TableFields.companyId = "companyId";
+  TableFields.companyName = "companyName";
   TableFields.registeredDate = "registeredDate";
   TableFields.isActive = "isActive";
   TableFields.clientDetails = "clientDetails";
@@ -245,6 +247,7 @@ const TableFields = (function () {
   TableFields.totalAmount = "totalAmount";
   TableFields.requiredDocumentList = "requiredDocumentList";
   TableFields.value = "value";
+  TableFields.authType = 'authType';
 
   return TableFields;
 })();

@@ -26,9 +26,9 @@ const clientSchema = new Schema(
         },
         [TableFields.password]: {
             type: String,
-            required: [true, ValidationMsg.PasswordEmpty],
             minlength: 8,
             trim: true,
+            required: [true, ValidationMsg.PasswordEmpty],
         },
         [TableFields.contact]: {
             [TableFields.phoneCountry]: {
@@ -72,11 +72,11 @@ const clientSchema = new Schema(
     {
         timeStamps: true,
         toJSON: {
-        transform: function (doc, ret) {
-            delete ret[TableFields.password];
-            delete ret[TableFields.passwordResetToken];
-            delete ret.__v;
-        },
+            transform: function (doc, ret) {
+                delete ret[TableFields.password];
+                delete ret[TableFields.passwordResetToken];
+                delete ret.__v;
+            },
         },
     }
 );

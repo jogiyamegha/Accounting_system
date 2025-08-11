@@ -71,7 +71,7 @@ class ClientService {
             throw error;
         } else {
             try{
-                createdClientRecord = await client.save();                
+                createdClientRecord = await client.save();    
                 return createdClientRecord;
             } catch(e){
                 if(createdClientRecord){
