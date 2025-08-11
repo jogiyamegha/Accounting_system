@@ -1,7 +1,7 @@
 const ClientService = require('../../db/services/ClientService');
 const { TableFields, ValidationMsg } = require('../../utils/constants');
 const ValidationError = require('../../utils/ValidationError');
-
+const { sendStudentInvitationEmail} = require('../../emails/email');
 
 exports.addClient = async (req) => {
     const reqBody = req.body;
