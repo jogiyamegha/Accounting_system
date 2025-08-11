@@ -113,8 +113,10 @@ const ValidationMsg  = (function () {
     ValidationMsg.ServiceTypeEmpty = 'ServiceType required';
     ValidationMsg.ReceiverIdEmpty = 'ReceiverId required';
     ValidationMsg.MessageEmpty = 'message required!';
+    ValidationMsg.InvalidPassResetCode = "The Password Reset Token is Invalid.";
     ValidationMsg.TargetCompletionDateEmpty = 'TargetCompletionDate required!';
     ValidationMsg.AccountantNameEmpty = 'AccountantName required!';
+    ValidationMsg.AccountNotRegistered = "Account not registered.";
     ValidationMsg.RequestStatusEmpty = 'Request Status required!';
     ValidationMsg.DocumentEmpty = 'Document required!';
     ValidationMsg.ServiceIdEmpty = 'ServiceId required!';
@@ -124,6 +126,14 @@ const ValidationMsg  = (function () {
     ValidationMsg.DuplicateEmail = 'email already exists!';
     ValidationMsg.LicenseIssueDateEmpty = 'licenseIssueDate required!';
     ValidationMsg.CompanyNameEmpty = 'CompanyName required!';
+    ValidationMsg.ParametersError = "Invalid Parameter";
+    ValidationMsg.PasswordResetCodeEmpty = "Reset code is Required..";
+    ValidationMsg.NewPasswordEmpty = "New Password is require.";
+    ValidationMsg.RecordNotFound = "Record not Found!";
+    ValidationMsg.OldPasswordIncorrect = "Entered old password is incorrect.";
+
+
+
 
     return ValidationMsg;
 })()
