@@ -109,6 +109,8 @@ const ProjectionBuilder = class {
             projection[TableFields.name_] = 1;
             projection[TableFields.email] = 1;
             projection[TableFields.userType] = 1;
+            projection[TableFields.contact] = 1;
+            
             return this; 
         }
          this.withEmail = () => {
