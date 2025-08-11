@@ -7,6 +7,7 @@ const {
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
+const Email = require('../../emails/email')
 
 exports.addAdminUser = async (req) => {
   if (Util.parseBoolean(req.headers.dbuser)) {
@@ -64,7 +65,7 @@ exports.forgotPassword = async (req) => {
   if (!providedEmail) throw new ValidationError(ValidationMsg.EmailEmpty);
 
   let { code, email } = await AdminService.getResetPasswordToken(providedEmail);
-  // email ...code here...
+  Email.sendForgotPasswordMail(email, code);
 };
 
 exports.forgotPasswordCodeExists = async (req) => {

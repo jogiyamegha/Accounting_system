@@ -59,12 +59,35 @@ exports.sendClientSignupMail = async (name, emailId, password) => {
   let data = {
     name: name,
     username: emailId,
-    password: password
+    password: password,
   };
   const template = Handlebars.compile(signupTemplate);
 
   try {
     await sendEmail(emailId, GeneralMessages.signupEmailSucess, template(data));
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+exports.sendClientInvitationEmail = async (name, emailId, code) => {
+  const invitationTemplate = fs
+    .readFileSync(
+      path.join(customerViewDirPath, "client", "client-invitation.hbs")
+    )
+    .toString();
+  let data = {
+    name: name,
+    code: code,
+    email: emailId,
+  };
+  const template = Handlebars.compile(invitationTemplate);
+  try {
+    await sendEmail(
+      emailId,
+      GeneralMessages.invitationLink,
+      template(data)
+    );
   } catch (e) {
     console.log(e);
   }
