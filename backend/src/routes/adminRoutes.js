@@ -30,7 +30,7 @@ const router = API.configRoute("/admin")
 
 .addPath('/add-client')
 .asPOST(ClientController.addClient)
-.useAdminAuth()
+// .useAdminAuth()
 .build()
 
 .getRouter()

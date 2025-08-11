@@ -5,8 +5,8 @@ const { sendClientInvitationEmail} = require('../../emails/email');
 
 exports.addClient = async (req) => {
     const reqBody = req.body;
+    console.log("object");
     const reqUser = req.user;
-    const isAdmin = reqUser[TableFields.authType] === 1 ? true :  false;
     const email = reqBody[TableFields.email];
     if(!email) {
         throw new ValidationError(ValidationMsg.EmailEmpty);
