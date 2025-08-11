@@ -1,5 +1,6 @@
 const API = require("../utils/apiBuilder");
 const AuthController = require('../controllers/admin/AuthController');
+const ClientController = require('../controllers/admin/ClientController');
 const { TableFields } = require("../utils/constants");
 const router = API.configRoute("/admin")
 
@@ -21,6 +22,16 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+/**
+ * 
+ * Auth Routes
+ * 
+ */
+
+.addPath('/add-client')
+.asPOST(ClientController.addClient)
+.useAdminAuth()
+.build()
 
 .getRouter()
 module.exports = router;

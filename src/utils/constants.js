@@ -124,6 +124,7 @@ const ValidationMsg  = (function () {
     ValidationMsg.DuplicateEmail = 'email already exists!';
     ValidationMsg.LicenseIssueDateEmpty = 'licenseIssueDate required!';
     ValidationMsg.CompanyNameEmpty = 'CompanyName required!';
+    ValidationMsg.ClientExists = 'Client already Exists!';
 
     return ValidationMsg;
 })()
@@ -238,6 +239,7 @@ const TableFields = (function () {
     TableFields.totalAmount = 'totalAmount';
     TableFields.requiredDocumentList = 'requiredDocumentList';
     TableFields.value = 'value';
+    TableFields.companyName = 'companyName';
 
     return TableFields;
 })()

@@ -62,6 +62,25 @@ class ClientService {
         );
     };
 
+     static insertRecord = async (clientFields) => {
+        const client = new Client(clientFields);
+
+        let error = client.validateSync();
+        let createdClientRecord;
+        if(error){
+            throw error;
+        } else {
+            try{
+                createdClientRecord = await client.save();                
+                return createdClientRecord;
+            } catch(e){
+                if(createdClientRecord){
+                    await createdClientRecord.delete();
+                }
+            }
+        }
+    }
+
     static insertUserRecord = async (reqBody) => {
         let email = reqBody[TableFields.email];
         email = (email + '').trim().toLocaleLowerCase();

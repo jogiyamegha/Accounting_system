@@ -45,7 +45,6 @@ const clientSchema = new Schema(
         },
         [TableFields.registeredDate]: {
             type: Date,
-            required: [true, ValidationMsg.RegisteredDateEmpty],
             default : Date.now()
         },
         [TableFields.isActive]: {
@@ -83,13 +82,9 @@ const clientSchema = new Schema(
 );
 
 clientSchema.pre("save", async function (next) {
-    if (this.isModified(TableFields.password)) {
-        console.log("Hashing Password..");
-            this[TableFields.password] = bcrypt.hash(
-            this[TableFields.password],
-            8
-        );
-    }
+    if(this.isModified(TableFields.password)){
+            this[TableFields.password] = await bcrypt.hash(this[TableFields.password], 8);
+        }
     next();
 });
 

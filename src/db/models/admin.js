@@ -68,7 +68,6 @@ adminSchema.pre('save', async function(next) {
 })
 
 adminSchema.methods.isValidAuth = async function (password) {
-    console.log(password);
     return await bcrypt.compare(password, this[TableFields.password]);
 };
 
