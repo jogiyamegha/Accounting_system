@@ -20,7 +20,7 @@ const clientSchema = new Schema(
             lowercase: true,
             validate(value) {
                 if (!validator.isEmail(value)) {
-                throw new ValidationError(ValidationMsg.EmailInvalid);
+                    throw new ValidationError(ValidationMsg.EmailInvalid);
                 }
             },
         },
@@ -38,9 +38,10 @@ const clientSchema = new Schema(
                 type: Number,
             },
         },
-        [TableFields.companyId]: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: TableNames.Company,
+        [TableFields.companyName]: {
+            type: String,
+            trim: true,
+            required : [true, ValidationMsg.CompanyNameEmpty]
         },
         [TableFields.registeredDate]: {
             type: Date,
@@ -111,7 +112,7 @@ clientSchema.methods.createAuthToken = function (interFaceType) {
         },
         process.env.JWT_CLIENT_PK,
         {
-        expiresIn: "24h",
+            expiresIn: "24h",
         }
     );
 
