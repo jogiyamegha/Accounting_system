@@ -123,6 +123,7 @@ const ValidationMsg  = (function () {
     ValidationMsg.UnableToLogin = 'Unable To Login!';
     ValidationMsg.DuplicateEmail = 'email already exists!';
     ValidationMsg.LicenseIssueDateEmpty = 'licenseIssueDate required!';
+    ValidationMsg.CompanyNameEmpty = 'CompanyName required!';
 
     return ValidationMsg;
 })()
