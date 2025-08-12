@@ -65,7 +65,7 @@ exports.forgotPassword = async (req) => {
   if (!providedEmail) throw new ValidationError(ValidationMsg.EmailEmpty);
 
   let { code, email } = await AdminService.getResetPasswordToken(providedEmail);
-  Email.sendForgotPasswordMail(email, code);
+  Email.sendForgotPasswordMail(email, code, req.user[TableFields.name_]);
 };
 
 exports.forgotPasswordCodeExists = async (req) => {
@@ -86,27 +86,27 @@ exports.forgotPasswordCodeExists = async (req) => {
   }
 };
 
-exports.resetPassword = async (req) => {
-  let providedEmail = req.body[TableFields.email];
-  providedEmail = (providedEmail + "").trim().toLowerCase();
+// exports.resetPassword = async (req) => {
+//   let providedEmail = req.body[TableFields.email];
+//   providedEmail = (providedEmail + "").trim().toLowerCase();
 
-  const { code, newPassword } = req.body;
+//   const { code, newPassword } = req.body;
 
-  if (!providedEmail) throw new ValidationError(ValidationMsg.EmailEmpty);
-  if (!code) throw new ValidationError(ValidationMsg.PasswordResetCodeEmpty);
-  if (!newPassword) throw new ValidationError(ValidationMsg.NewPasswordEmpty);
+//   if (!providedEmail) throw new ValidationError(ValidationMsg.EmailEmpty);
+//   if (!code) throw new ValidationError(ValidationMsg.PasswordResetCodeEmpty);
+//   if (!newPassword) throw new ValidationError(ValidationMsg.NewPasswordEmpty);
 
-  let user = await AdminService.resetPassword(providedEmail, code, newPassword);
-  let token = await createAndStoreAuthToken(user);
-  return {
-    user: await AdminService.getUserById(user[TableFields.ID])
-      .withPassword()
-      .withUserType()
-      .withBasicInfo()
-      .execute(),
-    token: token || undefined,
-  };
-};
+//   let user = await AdminService.resetPassword(providedEmail, code, newPassword);
+//   let token = await createAndStoreAuthToken(user);
+//   return {
+//     user: await AdminService.getUserById(user[TableFields.ID])
+//       .withPassword()
+//       .withUserType()
+//       .withBasicInfo()
+//       .execute(),
+//     token: token || undefined,
+//   };
+// };
 
 exports.changePassword = async (req) => {
   // let { oldPassword, newPassword } = req.body;

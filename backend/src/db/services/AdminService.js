@@ -86,11 +86,23 @@ class AdminService {
     if (!user) throw new ValidationError(ValidationMsg.AccountNotRegistered);
 
     let code;
-    if (!user[TableFields.passwordResetToken]) {
+
+    const now = new Date();
+
+    if (
+      !user[TableFields.passwordResetToken] ||
+      !user[TableFields.passwordResetTokenExpiresAt] ||
+      user[TableFields.passwordResetTokenExpiresAt] < now
+    ) {
       code = Util.generateRandomOTP(4);
       user[TableFields.passwordResetToken] = code;
+      user[TableFields.passwordResetTokenExpiresAt] = new Date(
+        now.getTime() + 15 * 60000
+      ); // 15 min
       await user.save();
-    } else code = user[TableFields.passwordResetToken];
+    } else {
+      code = user[TableFields.passwordResetToken];
+    }
 
     return {
       code,
@@ -103,20 +115,24 @@ class AdminService {
     if (!otp) {
       return false;
     }
+    let query = { [TableFields.passwordResetToken]: otp };
     if (providedEmail) {
-      return (await Admin.exists({
-        [TableFields.email]: providedEmail,
-        [TableFields.passwordResetToken]: otp,
-      }))
-        ? true
-        : false;
-    } else {
-      return (await Admin.exists({
-        [TableFields.passwordResetToken]: otp,
-      }))
-        ? true
-        : false;
+      query[TableFields.email] = providedEmail;
     }
+
+    const user = await Admin.findOne(query);
+
+    if (!user) return false;
+
+    // Check expiry
+    if (
+      !user[TableFields.passwordResetTokenExpiresAt] ||
+      user[TableFields.passwordResetTokenExpiresAt] < new Date()
+    ) {
+      return false; // expired
+    }
+
+    return true;
   };
 
   static resetPassword = async (email, code, newPassword) => {
@@ -142,6 +158,7 @@ class AdminService {
   ) => {
     userObj[TableFields.tokens] = [{ [TableFields.token]: token }];
     userObj[TableFields.password] = newPassword;
+    userObj[TableFields.passwordResetToken] = "";
     await userObj.save();
   };
 

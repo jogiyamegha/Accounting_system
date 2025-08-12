@@ -5,7 +5,7 @@ const fs = require("fs");
 const customerViewDirPath = path.join(__dirname, "../templates");
 const nodemailer = require("nodemailer");
 
-exports.sendForgotPasswordMail = async (emailId, code) => {
+exports.sendForgotPasswordMail = async (emailId, code, name) => {
   const resetPasswordTemplate = fs
     .readFileSync(
       path.join(customerViewDirPath, "admin", "forgot-password.hbs")
@@ -14,6 +14,7 @@ exports.sendForgotPasswordMail = async (emailId, code) => {
 
   let data = {
     code: code,
+    name: name
   };
 
   const template = Handlebars.compile(resetPasswordTemplate);

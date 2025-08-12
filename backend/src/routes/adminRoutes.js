@@ -22,6 +22,21 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath('/forgotPassword')
+.asPOST(AuthController.forgotPassword)
+.useAdminAuth()
+.build()
+ 
+.addPath('/verify-otp')
+.asPOST(AuthController.forgotPasswordCodeExists)
+.useAdminAuth()
+.build()
+ 
+.addPath('/change-password')
+.asPOST(AuthController.changePassword)
+.useAdminAuth()
+.build()
+
 /**
  * 
  * Auth Routes

@@ -248,6 +248,7 @@ const TableFields = (function () {
   TableFields.requiredDocumentList = "requiredDocumentList";
   TableFields.value = "value";
   TableFields.authType = 'authType';
+  TableFields.passwordResetTokenExpiresAt = 'passwordResetTokenExpiresAt'
 
   return TableFields;
 })();

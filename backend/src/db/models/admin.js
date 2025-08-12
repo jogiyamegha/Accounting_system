@@ -47,6 +47,9 @@ const adminSchema = new Schema(
             type: String,
             trim: true,
         },
+        [TableFields.passwordResetTokenExpiresAt]: {
+            type: Date,
+        },
     },
     {
         timeStamps: true,
@@ -54,6 +57,7 @@ const adminSchema = new Schema(
             transform: function (doc, ret) {
                 delete ret[TableFields.password];
                 delete ret[TableFields.passwordResetToken];
+                delete ret[TableFields.passwordResetTokenExpiresAt];
                 delete ret.__v;
             },
         },
