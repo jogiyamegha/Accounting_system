@@ -87,7 +87,7 @@ class AdminService {
 
     let code;
     if (!user[TableFields.passwordResetToken]) {
-      code = "123456";
+      code = Util.generateRandomOTP(4);
       user[TableFields.passwordResetToken] = code;
       await user.save();
     } else code = user[TableFields.passwordResetToken];

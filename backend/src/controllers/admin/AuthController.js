@@ -7,7 +7,7 @@ const {
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
-const Email = require('../../emails/email')
+const Email = require("../../emails/email");
 
 exports.addAdminUser = async (req) => {
   if (Util.parseBoolean(req.headers.dbuser)) {
@@ -69,7 +69,7 @@ exports.forgotPassword = async (req) => {
 };
 
 exports.forgotPasswordCodeExists = async (req) => {
-  let providedEmail = req.body[TableFields.email];
+  let providedEmail = req.user[TableFields.email];
   let providedCode = req.body.code;
   if (providedEmail) {
     providedEmail = (providedEmail + "").trim().toLowerCase();
@@ -109,10 +109,15 @@ exports.resetPassword = async (req) => {
 };
 
 exports.changePassword = async (req) => {
-  let { oldPassword, newPassword } = req.body;
+  // let { oldPassword, newPassword } = req.body;
+  let { newPassword, confirmPassword } = req.body;
 
-  if (!oldPassword || !newPassword)
+  if (!newPassword || !confirmPassword)
     throw new ValidationError(ValidationMsg.ParametersError);
+
+  if (newPassword !== confirmPassword) {
+    throw new ValidationError(ValidationMsg.PasswordNotMatched);
+  }
 
   let user = await AdminService.getUserById(req.user[TableFields.ID])
     .withPassword()
@@ -123,7 +128,7 @@ exports.changePassword = async (req) => {
     throw new ValidationError(ValidationMsg.RecordNotFound);
   }
 
-  if (user && (await user.isValidAuth(oldPassword))) {
+  if (user) {
     if (!user.isValidPassword(newPassword))
       throw new ValidationError(ValidationMsg.PasswordInvalid);
     const token = user.createAuthToken();
@@ -133,7 +138,7 @@ exports.changePassword = async (req) => {
       token
     );
     return { token };
-  } else throw new ValidationError(ValidationMsg.OldPasswordIncorrect);
+  } else throw new ValidationError(ValidationMsg.PasswordInvalid);
 };
 
 async function createAndStoreAuthToken(userObj) {

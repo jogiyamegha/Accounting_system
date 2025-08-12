@@ -131,7 +131,7 @@ const ValidationMsg = (function () {
   ValidationMsg.RecordNotFound = "Record not Found!";
   ValidationMsg.OldPasswordIncorrect = "Entered old password is incorrect.";
   ValidationMsg.ClientExists = "Client already Exists";
-
+  ValidationMsg.PasswordNotMatched = "Password doesn't matched.."
   return ValidationMsg;
 })();
 
