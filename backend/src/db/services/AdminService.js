@@ -159,6 +159,7 @@ class AdminService {
     userObj[TableFields.tokens] = [{ [TableFields.token]: token }];
     userObj[TableFields.password] = newPassword;
     userObj[TableFields.passwordResetToken] = "";
+    userObj[TableFields.passwordResetTokenExpiresAt] = ""
     await userObj.save();
   };
 
