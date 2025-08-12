@@ -7,6 +7,7 @@ export default function AdminVerifyOtp() {
     
     const navigate = useNavigate();
     const location = useLocation()
+
     const email = location.state?.email || "";
     
     const [loading, setLoading] = useState(false);
@@ -41,6 +42,7 @@ export default function AdminVerifyOtp() {
                 alert("OTP is Verified Successfully..");
                 navigate("/admin/change-password", {state : {email }});
             } catch (error) {
+
             setError(error.message);
             //   alert("OTP is not Correct..");
         } finally {

@@ -5,8 +5,6 @@ import { ADMIN_END_POINT } from "../../../utils/constants";
 export default function AdminChangePassword() {
     const newPasswordInputRef = useRef();
     const confirmPasswordInputRef = useRef();
-    
-    const navigate = useNavigate();
     const location = useLocation();
     const email = location.state?.email || "";
     

@@ -34,8 +34,8 @@ export default function AdminForgotPassword() {
             } finally {
                 setLoading(false);
             }
-    };
-    
+
+    } 
     return (
         <form onSubmit={submitHandler}>
             <div>

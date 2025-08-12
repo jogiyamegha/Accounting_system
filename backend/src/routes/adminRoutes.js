@@ -45,6 +45,8 @@ const router = API.configRoute("/admin")
 .asPOST(AuthController.changePassword)
 .build()
 
+
+
 .addPath('/add-client')
 .asPOST(ClientController.addClient)
 .useAdminAuth()

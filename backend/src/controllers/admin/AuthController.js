@@ -111,6 +111,7 @@ exports.forgotPasswordCodeExists = async (req) => {
 exports.changePassword = async (req) => {
   // let { oldPassword, newPassword } = req.body;
   let providedEmail = req.body[TableFields.email]
+
   let { newPassword, confirmPassword } = req.body;
 
   if (!providedEmail || !newPassword || !confirmPassword)
@@ -122,6 +123,7 @@ exports.changePassword = async (req) => {
 
   let user = await AdminService.findByEmail(providedEmail)
     .withBasicInfo()
+
     .withId()
     .execute();
 
