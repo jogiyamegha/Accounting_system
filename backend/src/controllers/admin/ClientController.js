@@ -5,7 +5,6 @@ const { sendClientInvitationEmail} = require('../../emails/email');
 
 exports.addClient = async (req) => {
     const reqBody = req.body;
-    console.log("object");
     const reqUser = req.user;
     const email = reqBody[TableFields.email];
     if(!email) {

@@ -25,7 +25,7 @@ const auth = async (req, res, next) => {
         if(!(e instanceof ValidationError)){
             console.log(e);
         }
-        res.status(ResponseStatus.Unauthorized);
+        res.status(ResponseStatus.Unauthorized).json({message : 'unAuthorized'})
     }
 }
 

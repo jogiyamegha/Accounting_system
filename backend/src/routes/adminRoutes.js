@@ -9,6 +9,16 @@ const router = API.configRoute("/admin")
  * Auth Routes
  * 
  */
+.addPath('/admin')
+.asGET((req, res) => {
+    res.json({
+        success: true,
+        user: req.user // ✅ Matches what your middleware sets
+    });
+})
+.useAdminAuth()
+.build()
+
 .addPath("/signup")
 .asPOST(AuthController.addAdminUser)
 .build()
@@ -37,15 +47,9 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
-/**
- * 
- * Auth Routes
- * 
- */
-
 .addPath('/add-client')
 .asPOST(ClientController.addClient)
-// .useAdminAuth()
+.useAdminAuth()
 .build()
 
 .getRouter()

@@ -24,18 +24,17 @@ export default function AddClient() {
                 method: "POST",
                 body: JSON.stringify(formData),
                 headers: { 
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
         
-            
-        
             if (res.ok) {
-                alert("Signup Successful!");
+                alert("Client added Successful!");
 
                 // all clients page will render here
             } else {
-                alert("Signup failed. Please try again.");
+                alert("client addition failed. Please try again.");
             }
         } catch (error) {
             alert("Network error. Please try again later.", error);
