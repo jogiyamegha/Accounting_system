@@ -9,11 +9,12 @@ const router = API.configRoute("/admin")
  * Auth Routes
  * 
  */
+
 .addPath('/admin')
 .asGET((req, res) => {
     res.json({
         success: true,
-        user: req.user // ✅ Matches what your middleware sets
+        user: req.user 
     });
 })
 .useAdminAuth()
@@ -32,19 +33,16 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
-.addPath('/forgotPassword')
+.addPath('/forgot-password')
 .asPOST(AuthController.forgotPassword)
-.useAdminAuth()
 .build()
  
 .addPath('/verify-otp')
 .asPOST(AuthController.forgotPasswordCodeExists)
-.useAdminAuth()
 .build()
  
 .addPath('/change-password')
 .asPOST(AuthController.changePassword)
-.useAdminAuth()
 .build()
 
 .addPath('/add-client')

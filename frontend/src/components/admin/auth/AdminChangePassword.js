@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ADMIN_END_POINT } from "../../../utils/constants";
  
 export default function AdminChangePassword() {
@@ -7,6 +7,8 @@ export default function AdminChangePassword() {
     const confirmPasswordInputRef = useRef();
     
     const navigate = useNavigate();
+    const location = useLocation();
+    const email = location.state?.email || "";
     
     const [error, setError] = useState("");
     
@@ -23,6 +25,7 @@ export default function AdminChangePassword() {
         }
     
         const data = {
+            email: email,
             newPassword: enteredNewPassword,
             confirmPassword: enteredConfirmPassword,
         };

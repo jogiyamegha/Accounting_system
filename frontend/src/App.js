@@ -51,7 +51,7 @@ function App() {
                 />
 
                 <Route 
-                    path='/admin/forgotPassword'
+                    path='/admin/forgot-password'
                     element={
                         <AdminForgotPassword />
                     }

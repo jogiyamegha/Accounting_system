@@ -64,12 +64,12 @@ exports.forgotPassword = async (req) => {
 
   if (!providedEmail) throw new ValidationError(ValidationMsg.EmailEmpty);
 
-  let { code, email } = await AdminService.getResetPasswordToken(providedEmail);
-  Email.sendForgotPasswordMail(email, code, req.user[TableFields.name_]);
+  let { code, email, name } = await AdminService.getResetPasswordToken(providedEmail);
+  Email.sendForgotPasswordMail(email, code, name);
 };
 
 exports.forgotPasswordCodeExists = async (req) => {
-  let providedEmail = req.user[TableFields.email];
+  let providedEmail = req.body[TableFields.email];
   let providedCode = req.body.code;
   if (providedEmail) {
     providedEmail = (providedEmail + "").trim().toLowerCase();
@@ -110,17 +110,18 @@ exports.forgotPasswordCodeExists = async (req) => {
 
 exports.changePassword = async (req) => {
   // let { oldPassword, newPassword } = req.body;
+  let providedEmail = req.body[TableFields.email]
   let { newPassword, confirmPassword } = req.body;
 
-  if (!newPassword || !confirmPassword)
+  if (!providedEmail || !newPassword || !confirmPassword)
     throw new ValidationError(ValidationMsg.ParametersError);
 
   if (newPassword !== confirmPassword) {
     throw new ValidationError(ValidationMsg.PasswordNotMatched);
   }
 
-  let user = await AdminService.getUserById(req.user[TableFields.ID])
-    .withPassword()
+  let user = await AdminService.findByEmail(providedEmail)
+    .withBasicInfo()
     .withId()
     .execute();
 
@@ -132,13 +133,14 @@ exports.changePassword = async (req) => {
     if (!user.isValidPassword(newPassword))
       throw new ValidationError(ValidationMsg.PasswordInvalid);
     const token = user.createAuthToken();
+   
     await AdminService.updatePasswordAndInsertLatestToken(
       user,
       newPassword,
       token
     );
     Email.sendChangedPasswordMail(
-      user[TableFields.email],
+      providedEmail,
       newPassword,
       user[TableFields.name_]
     );

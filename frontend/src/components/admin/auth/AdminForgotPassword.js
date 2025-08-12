@@ -17,23 +17,23 @@ export default function AdminForgotPassword() {
         const enteredEmail = emailInputRef.current.value.trim().toLowerCase();
     
         try {
-        const response = await fetch(`${ADMIN_END_POINT}/forgot-password`, {
-            method: "POST",
-            body: JSON.stringify({ email: enteredEmail }),
-            headers: { "Content-Type": "application/json" },
-        });
+            const response = await fetch(`${ADMIN_END_POINT}/forgot-password`, {
+                method: "POST",
+                body: JSON.stringify({ email: enteredEmail }),
+                headers: { "Content-Type": "application/json" },
+            });
+        
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to send OTP");
+            }
     
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Failed to send OTP");
-        }
-    
-        navigate("/admin/verify-otp");
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+            navigate("/admin/verify-otp", {state : {email: enteredEmail}});
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
     };
     
     return (

@@ -60,6 +60,14 @@ function AdminLogin() {
             <div>
                 <button type="submit">Login</button>
             </div>
+            <div>
+                <a
+                    href="/admin/forgot-password"
+                    style={{ fontSize: "14px", color: "#007bff", textDecoration: "none" }}
+                >
+                Forgot Password?
+                </a>
+            </div>
         </form>
     );
 }
