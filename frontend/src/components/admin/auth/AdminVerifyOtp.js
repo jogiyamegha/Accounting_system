@@ -1,11 +1,14 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ADMIN_END_POINT } from "../../../utils/constants";
  
 export default function AdminVerifyOtp() {
     const otpInputRef = useRef();
     
     const navigate = useNavigate();
+
+    const location = useLocation();
+    const email = location.state?.email || "";
     
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -18,6 +21,7 @@ export default function AdminVerifyOtp() {
         const enteredOTP = otpInputRef.current.value.trim();
     
         const data = {
+            email: email,
             code: enteredOTP,
         };
     
@@ -37,7 +41,7 @@ export default function AdminVerifyOtp() {
         }
     
             alert("OTP is Verified Successfully..");
-            navigate("/admin/change-password");
+            navigate("/admin/change-password", { state: { email } });
         } catch (error) {
             setError(error.message);
             //   alert("OTP is not Correct..");

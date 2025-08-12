@@ -28,7 +28,7 @@ export default function AdminForgotPassword() {
             throw new Error(errorData.message || "Failed to send OTP");
         }
     
-        navigate("/admin/verify-otp");
+        navigate("/admin/verify-otp", { state: { email: enteredEmail } });
         } catch (err) {
             setError(err.message);
         } finally {
