@@ -1,12 +1,14 @@
 import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ADMIN_END_POINT } from "../../../utils/constants";
+import '../../../styles/changePassword.css';
  
 export default function AdminChangePassword() {
     const newPasswordInputRef = useRef();
     const confirmPasswordInputRef = useRef();
     const location = useLocation();
     const email = location.state?.email || "";
+    const navigate = useNavigate();
     
     const [error, setError] = useState("");
     
@@ -53,29 +55,28 @@ export default function AdminChangePassword() {
     };
  
     return (
-        <form onSubmit={submitHandler}>
-        <div>
-            <p>Please Set the New Password..</p>
-            <p>
-                It should be 8 character long & must contain atleat 1 uppercase
-                letter, a lowercase letter, a digit & a special-character - (@$!%*?&)
+        <div className="setpass-container">
+        <h2>Set New Password</h2>
+        <form onSubmit={submitHandler} className="setpass-form">
+            <p className="setpass-info">Please set the new password</p>
+            <p className="setpass-requirements">
+                    It should be 8 characters long & must contain at least 1 uppercase
+                    letter, 1 lowercase letter, 1 digit & a special character (@$!%*?&).
             </p>
+            {error && <p className="error-message">{error}</p>}
+
+                <div className="form-group">
+                <input
+                    type="password"
+                    name="newPassword"
+                    id="newPassword"
+                    placeholder="New Password"
+                    ref={newPasswordInputRef}
+                    required
+                />
         </div>
-    
-        {error && <p style={{ color: "red" }}>{error}</p>}
-    
-        <div>
-            <input
-                type="password"
-                name="newPassword"
-                id="newPassword"
-                placeholder="New Password"
-                ref={newPasswordInputRef}
-                required
-            />
-        </div>
-    
-        <div>
+        
+        <div className="form-group">
             <input
                 type="password"
                 name="confirmPassword"
@@ -85,11 +86,12 @@ export default function AdminChangePassword() {
                 required
             />
         </div>
-    
-        <div>
-            <button type="submit">Set Password</button>
-        </div>
+            <button type="submit" className="setpass-button">
+                Set Password
+            </button>
         </form>
+        </div>
+ 
     );
 }
     

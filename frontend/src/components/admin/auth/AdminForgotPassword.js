@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ADMIN_END_POINT } from "../../../utils/constants";
+import "../../../styles/forgotPassword.css";
  
 export default function AdminForgotPassword() {
     const emailInputRef = useRef();
@@ -37,24 +38,24 @@ export default function AdminForgotPassword() {
 
     } 
     return (
-        <form onSubmit={submitHandler}>
-            <div>
-                <p>Enter your registered email to get OTP</p>
-            </div>
-        
-            {error && <p style={{ color: "red" }}>{error}</p>}
-        
-            <div>
+        <div className="forgot-container">
+        <h2>Forgot Password</h2>
+        <form onSubmit={submitHandler} className="forgot-form">
+            <p className="forgot-info">Enter your registered email to get OTP</p>
+            
+            {error && <p className="error-message">{error}</p>}
+            
+            <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <input type="email" id="email" ref={emailInputRef} required />
             </div>
-        
-            <div>
-                <button type="submit" disabled={loading}>
+            
+            <button type="submit" className="forgot-button" disabled={loading}>
                 {loading ? "Sending..." : "Get OTP"}
-                </button>
-            </div>
+            </button>
         </form>
+        </div>
+ 
     );
 }
 

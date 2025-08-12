@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ADMIN_END_POINT } from "../../../utils/constants";
- 
+import '../../../styles/verifyOtp.css';
 export default function AdminVerifyOtp() {
     const otpInputRef = useRef();
     
@@ -51,24 +51,23 @@ export default function AdminVerifyOtp() {
     };
     
     return (
-        <form onSubmit={submitHandler}>
-            <div>
-                <p>Entered the OTP Recieved on Mail</p>
-            </div>
-        
-            {error && <p style={{ color: "red" }}>{error}</p>}
-        
-            <div>
-                <label htmlFor="otp">OTP: </label>
-                <input type="text" id="otp" ref={otpInputRef} required />
-            </div>
-        
-            <div>
-                <button type="submit" disabled={loading}>
+        <div className="otp-container">
+            <h2>Verify OTP</h2>
+            <form onSubmit={submitHandler} className="otp-form">
+                <p className="otp-info">Enter the OTP received on your email</p>
+                
+                {error && <p className="error-message">{error}</p>}
+                
+                <div className="form-group">
+                    <label htmlFor="otp">OTP</label>
+                    <input type="text" id="otp" ref={otpInputRef} required />
+                </div>
+                <button type="submit" className="otp-button" disabled={loading}>
                     {loading ? "Verifying..." : "Verify"}
                 </button>
-            </div>
-        </form>
+            </form>
+        </div>
+        
     );
 }
  

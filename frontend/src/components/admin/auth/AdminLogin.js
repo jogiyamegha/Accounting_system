@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "../../../redux/features/userSlice";
+import "../../../styles/login.css";
  
 function AdminLogin() {
     const emailInputRef = useRef();
@@ -48,27 +49,28 @@ function AdminLogin() {
     }
         
     return (
-        <form onSubmit={submitHandler}>
-            <div>
-                <label htmlFor="email">Email</label>
-                <input type="email" id="email" ref={emailInputRef} required />
+        <div className="login-container">
+        <h2>Admin Login</h2>
+            <form onSubmit={submitHandler} className="login-form">
+            <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" ref={emailInputRef} required />
             </div>
-            <div>
+            
+            <div className="form-group">
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" ref={passwordInputRef} required />
             </div>
-            <div>
-                <button type="submit">Login</button>
-            </div>
-            <div>
-                <a
-                    href="/admin/forgot-password"
-                    style={{ fontSize: "14px", color: "#007bff", textDecoration: "none" }}
-                >
+            
+            <button type="submit" className="login-button">
+                    Login
+            </button>
+            
+            <a href="/admin/forgot-password" className="forgot-link">
                 Forgot Password?
-                </a>
-            </div>
-        </form>
+            </a>
+            </form>
+        </div>
     );
 }
  
