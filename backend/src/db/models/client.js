@@ -59,6 +59,9 @@ const clientSchema = new Schema(
             type: String,
             trim: true,
         },
+        [TableFields.passwordResetTokenExpiresAt]: {
+            type: Date,
+        },
         [TableFields.tokens]: [
             {
                 [TableFields.ID]: false,

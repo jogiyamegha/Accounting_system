@@ -9,6 +9,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminForgotPassword from './components/admin/auth/AdminForgotPassword';
 import AdminChangePassword from './components/admin/auth/AdminChangePassword';
 import AdminVerifyOtp from './components/admin/auth/AdminVerifyOtp';
+import ClientSignup from './components/client/Auth/ClientSignup';
+import ClientChangePassword from './components/client/Auth/ClientChangePassword';
+import ClientForgotPassword from './components/client/Auth/ClientForgotPassword';
+import ClientVerifyOtp from './components/client/Auth/ClientVerifyOtp';
 
 function App() {
     return (
@@ -70,6 +74,44 @@ function App() {
                         <AdminVerifyOtp />
                     }
                 />
+
+                 {/* -------- Client Routes ------------ */}
+                
+                <Route 
+                    path='/client/signup'
+                    element={
+                        <ClientSignup />
+                    }
+                />
+
+                <Route 
+                    path='/:role/login'
+                    element={
+                        <CheckUser />
+                    }
+                />
+
+                  <Route 
+                    path='/client/forgot-password'
+                    element={
+                        <ClientForgotPassword />
+                    }
+                />
+
+                <Route 
+                    path='/client/change-password'
+                    element={
+                        <ClientChangePassword />
+                    }
+                />
+
+                <Route 
+                    path='/client/verify-otp'
+                    element={
+                        <ClientVerifyOtp />
+                    }
+                />
+
             </Routes>
         </>
     )

@@ -77,40 +77,7 @@ class AdminService {
     return Util.generateRandomPassword(digit);
   };
 
-  static getResetPasswordToken = async (email) => {
-    let user = await AdminService.findByEmail(email)
-      .withId()
-      .withBasicInfo()
-      .withPasswordResetToken()
-      .execute();
-    if (!user) throw new ValidationError(ValidationMsg.AccountNotRegistered);
-
-    let code;
-
-    const now = new Date();
-
-    if (
-      !user[TableFields.passwordResetToken] ||
-      !user[TableFields.passwordResetTokenExpiresAt] ||
-      user[TableFields.passwordResetTokenExpiresAt] < now
-    ) {
-      code = Util.generateRandomOTP(4);
-      user[TableFields.passwordResetToken] = code;
-      user[TableFields.passwordResetTokenExpiresAt] = new Date(
-        now.getTime() + 15 * 60000
-      ); // 15 min
-      await user.save();
-    } else {
-      code = user[TableFields.passwordResetToken];
-    }
-
-    return {
-      code,
-      email: user[TableFields.email],
-      name: user[TableFields.name_],
-    };
-  };
-
+  
   static resetPasswordCodeExists = async (providedEmail, otp) => {
     if (!otp) {
       return false;

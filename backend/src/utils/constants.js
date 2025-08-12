@@ -132,6 +132,7 @@ const ValidationMsg = (function () {
   ValidationMsg.OldPasswordIncorrect = "Entered old password is incorrect.";
   ValidationMsg.ClientExists = "Client already Exists";
   ValidationMsg.PasswordNotMatched = "Password doesn't matched.."
+  ValidationMsg.EmailExists = 'user exists';
   return ValidationMsg;
 })();
 

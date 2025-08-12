@@ -1,6 +1,7 @@
 const Client = require('../models/client');
 const { TableFields, TableNames, UserTypes, ValidationMsg, InterfaceType} = require('../../utils/constants');
 const ValidationError = require('../../utils/ValidationError');
+const Util = require('../../utils/util');
 
 class ClientService {
     static findByEmail = (email) => {
@@ -48,7 +49,6 @@ class ClientService {
         });
     };
 
-
     static removeAuth = async (clientId, authToken) => {
         await Client.updateOne(
             {
@@ -62,7 +62,7 @@ class ClientService {
         );
     };
 
-     static insertRecord = async (clientFields) => {
+    static insertRecord = async (clientFields) => {
         const client = new Client(clientFields);
 
         let error = client.validateSync();
@@ -119,6 +119,94 @@ class ClientService {
         }
 
     }
+
+    static getResetPasswordToken = async (email) => {
+        let user = await ClientService.findByEmail(email)
+            .withId()
+            .withBasicInfo()
+            .withPasswordResetToken()
+            .execute();
+        if (!user) throw new ValidationError(ValidationMsg.AccountNotRegistered);
+        let code;
+
+        const now = new Date();
+
+        if (
+            !user[TableFields.passwordResetToken] ||
+            !user[TableFields.passwordResetTokenExpiresAt] ||
+            user[TableFields.passwordResetTokenExpiresAt] < now
+        ) {
+            code = Util.generateRandomOTP(4);
+            user[TableFields.passwordResetToken] = code;
+            user[TableFields.passwordResetTokenExpiresAt] = new Date(
+                now.getTime() + 15 * 60000
+            ); // 15 min
+            await user.save();
+        } else {
+            code = user[TableFields.passwordResetToken];
+        }
+
+        return {
+            code,
+            email: user[TableFields.email],
+            name: user[TableFields.name_],
+        };
+    };
+
+    static resetPasswordCodeExists = async (providedEmail, otp) => {
+        if (!otp) {
+          return false;
+        }
+        let query = { [TableFields.passwordResetToken]: otp };
+        if (providedEmail) {
+          query[TableFields.email] = providedEmail;
+        }
+    
+        const user = await Client.findOne(query);
+    
+        if (!user) return false;
+    
+        // Check expiry
+        if (
+            !user[TableFields.passwordResetTokenExpiresAt] ||
+            user[TableFields.passwordResetTokenExpiresAt] < new Date()
+        ) {
+            return false; // expired
+        }
+    
+        return true;
+    };
+
+    static resetPassword = async (email, code, newPassword) => {
+        let user = await ClientService.findByEmail(email)
+        .withId()
+        .withBasicInfo()
+        .withPasswordResetToken()
+        .execute();
+        
+        if (!user) throw new ValidationError(ValidationMsg.AccountNotRegistered);
+
+        if (user[TableFields.passwordResetToken] == code) {
+            user[TableFields.password] = newPassword;
+            user[TableFields.passwordResetToken] = "";
+            user[TableFields.tokens] = [];
+            return await user.save();
+        } else throw new ValidationError(ValidationMsg.InvalidPassResetCode);
+    };
+
+    static updatePasswordAndInsertLatestToken = async (
+        userObj,
+        newPassword,
+        token
+    ) => {
+        userObj[TableFields.tokens] = [{ [TableFields.token]: token }];
+        userObj[TableFields.password] = newPassword;
+        userObj[TableFields.passwordResetToken] = "";
+        userObj[TableFields.passwordResetTokenExpiresAt] = ""
+        await userObj.save();
+    };
+
+
 }
 
 const ProjectionBuilder = class {
@@ -131,6 +219,10 @@ const ProjectionBuilder = class {
             projection[TableFields.contact] = 1;
             
             return this; 
+        }
+        this.withPasswordResetToken = () => {
+            projection[TableFields.passwordResetTokenExpiresAt] = 1;
+            return this;
         }
          this.withEmail = () => {
             projection[TableFields.email] = 1;

@@ -6,6 +6,7 @@ const cron = require('node-cron');
 const env = require('dotenv');
 const Util = require('./utils/util');
 const AdminRoutes = require('./routes/adminRoutes');
+const ClientRoutes = require('./routes/clientRoutes');
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.use(
 );
 
 app.use(AdminRoutes);
+app.use(ClientRoutes);
 app.use('/uploads', express.static(path.join(__dirname,'../uploads')));
 app.use('/static_files', express.static(path.join(__dirname, '../static_files')))
 

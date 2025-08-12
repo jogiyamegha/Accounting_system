@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import AdminLogin from "./AdminLogin";
+import ClientLogin from "../../client/Auth/ClientLogin";
 
 function CheckUser () {
     const { role } = useParams();
@@ -9,7 +10,7 @@ function CheckUser () {
         {role === 'admin' ? (
             <AdminLogin />
         ) : (
-            <p>Welcome, Client! Please login to your account.</p>
+            <ClientLogin />
         )}
     </div>
 }
