@@ -149,6 +149,7 @@ const GeneralMessages = (function () {
   GeneralMessages.PendingSubject = "Updates Pending";
   GeneralMessages.forgotPasswordEmailSubject = "Reset your password";
   GeneralMessages.signupEmailSucess = "Your Account is Ready!";
+  GeneralMessages.changePasswordSucess = "Your new Pasword is set successfully..";
   GeneralMessages.invitationLink = "Invitation link for login";
   return GeneralMessages;
 })();

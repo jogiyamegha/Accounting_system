@@ -14,7 +14,7 @@ exports.sendForgotPasswordMail = async (emailId, code, name) => {
 
   let data = {
     code: code,
-    name: name
+    name: name,
   };
 
   const template = Handlebars.compile(resetPasswordTemplate);
@@ -22,6 +22,30 @@ exports.sendForgotPasswordMail = async (emailId, code, name) => {
     await sendEmail(
       emailId,
       GeneralMessages.forgotPasswordEmailSubject,
+      template(data)
+    );
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+exports.sendChangedPasswordMail = async (emailId, newPassword, name) => {
+  const resetPasswordTemplate = fs
+    .readFileSync(
+      path.join(customerViewDirPath, "admin", "change-password.hbs")
+    )
+    .toString();
+
+  let data = {
+    newPassword: newPassword,
+    name: name,
+  };
+
+  const template = Handlebars.compile(resetPasswordTemplate);
+  try {
+    await sendEmail(
+      emailId,
+      GeneralMessages.changePasswordSucess,
       template(data)
     );
   } catch (e) {
@@ -84,11 +108,7 @@ exports.sendClientInvitationEmail = async (name, emailId, code) => {
   };
   const template = Handlebars.compile(invitationTemplate);
   try {
-    await sendEmail(
-      emailId,
-      GeneralMessages.invitationLink,
-      template(data)
-    );
+    await sendEmail(emailId, GeneralMessages.invitationLink, template(data));
   } catch (e) {
     console.log(e);
   }

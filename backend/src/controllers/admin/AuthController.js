@@ -137,6 +137,11 @@ exports.changePassword = async (req) => {
       newPassword,
       token
     );
+    Email.sendChangedPasswordMail(
+      user[TableFields.email],
+      newPassword,
+      user[TableFields.name_]
+    );
     return { token };
   } else throw new ValidationError(ValidationMsg.PasswordInvalid);
 };
