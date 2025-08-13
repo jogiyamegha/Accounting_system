@@ -1,5 +1,7 @@
 const API = require("../utils/apiBuilder");
 const AuthController = require('../controllers/client/AuthController');
+const ProfileController = require('../controllers/client/ProfileController');
+const CompanyController = require('../controllers/client/CompanyController');
 const { TableFields } = require("../utils/constants");
 const router = API.configRoute("/client")
 
@@ -34,6 +36,21 @@ const router = API.configRoute("/client")
 .asPOST(AuthController.changePassword)
 .build()
 
+/**
+ * 
+ * Profile Routes
+ * 
+ */
+
+.addPath("/client-profile")
+.asPOST(ProfileController.setClientProfile)
+.useClientAuth()
+.build()
+
+.addPath('/company-profile')
+.asPOST(CompanyController.addCompany)
+.useClientAuth()
+.build()
 
 .getRouter()
 module.exports = router;

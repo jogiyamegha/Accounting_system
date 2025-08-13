@@ -178,7 +178,17 @@ const Util = class {
     }
 
     static isValidMobileNumber(v) {
-        return v.length >= 7 && v.length <= 12;
+        if (v == null) return false; // null or undefined
+        const str = String(v).trim(); // ensure it's a string
+        console.log(str.length);
+        return str.length >= 7 && str.length <= 12;
+    }
+
+
+    static isValidTaxRegistrationNumber(v) {
+        if (v == null) return false; // null or undefined
+        const str = String(v).trim(); // convert numbers to string
+        return str.length === 15;
     }
 
     static isValidName = (name) => {
@@ -199,6 +209,13 @@ const Util = class {
             }
         }
         return stringValue;
+    }
+
+    static  parseDateString = (dateStr) => {
+        // Expecting DD-MM-YYYY format
+        if (!dateStr) return null;
+        const [day, month, year] = dateStr.split("-");
+        return new Date(`${year}-${month}-${day}`); // JS Date format
     }
 
     static populateMissingDates = (dataObject, startDate, endDate) => {

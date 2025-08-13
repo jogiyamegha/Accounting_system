@@ -2,6 +2,7 @@ const Client = require('../models/client');
 const { TableFields, TableNames, UserTypes, ValidationMsg, InterfaceType} = require('../../utils/constants');
 const ValidationError = require('../../utils/ValidationError');
 const Util = require('../../utils/util');
+const {MongoUtil} = require('../mongoose')
 
 class ClientService {
     static findByEmail = (email) => {
@@ -35,6 +36,23 @@ class ClientService {
                 }
             }
         )
+    }
+
+    static setProfile = async (reqUser, reqBody) => {
+        const id = reqUser[TableFields.ID];
+        await Client.updateOne(
+            { 
+                [TableFields.ID] : id 
+            }, 
+            { 
+                $set: {
+                    [TableFields.contact]: {
+                        [TableFields.phoneCountry]: reqBody[TableFields.phoneCountry],
+                        [TableFields.phone]: reqBody[TableFields.phone]
+                    }
+                }
+            }
+        );
     }
 
     static getUserByIdAndToken = (userId, token, lean = false) => {

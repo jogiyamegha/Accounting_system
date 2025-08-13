@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
 const { TableFields, TableNames, InterfaceType, ValidationMsg, UserTypes } = require('../../utils/constants');
-
+const Util = require('../../utils/util');
 const Schema = mongoose.Schema;
 
 const clientSchema = new Schema(
@@ -31,17 +31,25 @@ const clientSchema = new Schema(
             required: [true, ValidationMsg.PasswordEmpty],
         },
         [TableFields.contact]: {
-            [TableFields.phoneCountry]: {
-                type: String,
+            [TableFields.phoneCountry] : {
+                type : String,
+                trim : true,
+                lowercase : true
             },
-            [TableFields.phone]: {
-                type: Number,
+            [TableFields.phone] : {
+                type : Number,
+                trim : true,
+                validate: {
+                    validator(value) {
+                        return !value || Util.isValidMobileNumber(value);
+                    },
+                    message: () => ValidationMsg.PhoneInvalid
+                }                
             },
         },
-        [TableFields.companyName]: {
+        [TableFields.companyId]: {
             type: String,
             trim: true,
-            required : [true, ValidationMsg.CompanyNameEmpty]
         },
         [TableFields.registeredDate]: {
             type: Date,

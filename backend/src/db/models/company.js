@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const { TableFields, TableNames, ValidationMsg, LicenseTypes, BusinessTypes} = require('../../utils/constants');
-
+const { TableFields, TableNames, ValidationMsg } = require('../../utils/constants');
+const Util = require("../../utils/util");
+ 
 const Schema = mongoose.Schema;
-
+ 
 const companySchema = new Schema(
     {
         [TableFields.name_]: {
@@ -22,14 +23,6 @@ const companySchema = new Schema(
                 }
             },
         },
-        [TableFields.contact]: {
-            [TableFields.phoneCountry]: {
-                type: String,
-            },
-            [TableFields.phone]: {
-                type: Number,
-            },
-        },
         [TableFields.address]: {
             [TableFields.addressLine1]: {
                 type: String,
@@ -43,7 +36,7 @@ const companySchema = new Schema(
             [TableFields.landmark]: {
                 type: String,
             },
-            [TableFields.zipCode]: {
+            [TableFields.zipcode]: {
                 type: Number,
                 required: [true, ValidationMsg.ZipcodeEmpty],
             },
@@ -59,8 +52,9 @@ const companySchema = new Schema(
         },
         [TableFields.licenseDetails]: {
             [TableFields.licenseType]: {
-                type: Number,
-                enum: Object.values(LicenseTypes),
+                type: String,
+                trim: true,
+                // enum: Object.values(LicenseTypes),
             },
             [TableFields.licenseNumber]: {
                 type: String,
@@ -85,14 +79,21 @@ const companySchema = new Schema(
             },
         },
         [TableFields.taxRegistrationNumber]: {
-            type: String,
+            type: Number,
+            required: [true, ValidationMsg.TaxRegistrationNumberEmpty],
+            validate: {
+                validator(value) {
+                return !value || Util.isValidTaxRegistrationNumber(value);
+            },
+            message: () => ValidationMsg.InvalidTaxRegNumber
+        }
         },
         [TableFields.businessType]: {
-            type: Number,
-            enum: Object.values(BusinessTypes),
+            type: String,
+            // enum: Object.values(BusinessTypes),
         },
         [TableFields.contactPerson]: {
-            [TableFields.name]: {
+            [TableFields.name_]: {
                 type: String,
                 trim: true,
                 required: [true, ValidationMsg.NameEmpty],
@@ -100,9 +101,19 @@ const companySchema = new Schema(
             [TableFields.contact]: {
                 [TableFields.phoneCountry]: {
                     type: String,
+                    trim : true,
+                    lowercase : true
                 },
                 [TableFields.phone]: {
-                    type: Number,
+                    type : Number,
+                    trim : true,
+                    validate: {
+                        validator(value) {
+                            return !value || Util.isValidMobileNumber(value);
+                        },
+                        message: () => ValidationMsg.PhoneInvalid
+                    }
+
                 },
             },
         },
@@ -111,7 +122,8 @@ const companySchema = new Schema(
         timeStamps: true,
     }
 );
-
-
+ 
+ 
 const Company = mongoose.model(TableNames.Company, companySchema);
 module.exports = Company;
+ 

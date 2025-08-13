@@ -69,6 +69,7 @@ const LicenseTypes = (function () {
 
 const BusinessTypes = (function () {
   function BusinessTypes() {}
+
   return BusinessTypes;
 })();
 
@@ -133,6 +134,18 @@ const ValidationMsg = (function () {
   ValidationMsg.ClientExists = "Client already Exists";
   ValidationMsg.PasswordNotMatched = "Password doesn't matched.."
   ValidationMsg.EmailExists = 'user exists';
+  ValidationMsg.ClientNotExists = 'Client is Not Exists';
+  ValidationMsg.ContactNumberEmpty = 'Contact Number required!';
+  ValidationMsg.PhoneInvalid = 'phone numbe invalid';
+  ValidationMsg.PhoneCountryEmpty = 'Phone Country required';
+  ValidationMsg.NotUser = 'you can not set profile as you are not client!';
+  ValidationMsg.LicenseTypeEmpty = 'License Type required';
+  ValidationMsg.StartDateEmpty = 'StartDate required';
+  ValidationMsg.EndDateEmpty = 'EndDate required';
+  ValidationMsg.TaxRegistrationNumberEmpty = 'Tax Registration Number required';
+  ValidationMsg.BusinessTypeEmpty = 'BusinessType required';
+  ValidationMsg.InvalidTaxRegNumber = 'Invalid TaxRegistration Number';
+
   return ValidationMsg;
 })();
 
@@ -200,7 +213,7 @@ const TableFields = (function () {
   TableFields.addressLine2 = "addressLine2";
   TableFields.street = "street";
   TableFields.landmark = "landmark";
-  TableFields.zipCode = "zipCode";
+  TableFields.zipcode = "zipcode";
   TableFields.city = "city";
   TableFields.state = "state";
   TableFields.country = "country";
