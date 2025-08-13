@@ -9,6 +9,15 @@ const Util = class {
             ? false
             : true;
     }
+    static isPdfFile(fileOriginalName) {
+        return fileOriginalName
+            .toLocaleLowerCase()
+            .match(/\.(pdf)$/) == undefined
+            ? false
+            : true;
+    }
+
+ 
     static isAudioFile(fileOriginalName) {
         return fileOriginalName.toLocaleLowerCase().match(/\.(mp3|m4a)$/) == undefined ? false : true;
     }

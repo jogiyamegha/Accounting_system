@@ -145,6 +145,10 @@ const ValidationMsg = (function () {
   ValidationMsg.TaxRegistrationNumberEmpty = 'Tax Registration Number required';
   ValidationMsg.BusinessTypeEmpty = 'BusinessType required';
   ValidationMsg.InvalidTaxRegNumber = 'Invalid TaxRegistration Number';
+  ValidationMsg.ClientIdEmpty = 'ClientId required';
+  ValidationMsg.DocumentTypeRequired = 'DocumentType Required!';
+  ValidationMsg.FileUploadFailed = 'FileUpload Failed';
+  ValidationMsg.FileRequired = 'File Required';
 
   return ValidationMsg;
 })();

@@ -4,12 +4,9 @@ const Schema = mongoose.Schema;
 
 const documentSChema = new Schema(
     {
-        [TableFields.clientDetails]: {
-            [TableFields.ID]: false,
-            [TableFields.clientId]: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: TableNames.Client,
-            },
+        [TableFields.clientId]: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: TableNames.Client,
         },
         [TableFields.documents]: [
             {
