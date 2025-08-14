@@ -35,13 +35,13 @@ const Status = (function () {
 const DocumentType = (function () {
   function DocumentType() {}
   DocumentType.VATcertificate = 1;
-  DocumentType.CorporateTacDocument = 2;
+  DocumentType.CorporateTaxDocument = 2;
   DocumentType.BankStatement = 3;
-  DocumentType.bankStatement = 4;
-  DocumentType.Invoice = 5;
-  DocumentType.auditFiles = 6;
-  (DocumentType.TradeLicense = 7), (DocumentType.passport = 8);
-  DocumentType.Other = 9;
+  DocumentType.Invoice = 4;
+  DocumentType.auditFiles = 5;
+  DocumentType.TradeLicense = 6; 
+  DocumentType.passport = 7;
+  DocumentType.Other = 8;
   return DocumentType;
 })();
 

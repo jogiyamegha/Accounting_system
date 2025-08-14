@@ -31,12 +31,12 @@ function ClientLogin() {
             headers: {
                 "Content-Type": "application/json",
             },
+            credentials: 'include',
         });
    
         const data = await res.json()
    
         if (res.ok) {
-            localStorage.setItem("token", data.token);
    
             dispatch(setUser(data.user));
    

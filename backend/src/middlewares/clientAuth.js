@@ -5,9 +5,10 @@ const ValidationError = require('../utils/ValidationError');
 
 const auth = async (req, res, next) => {
     try {
-        const headerToken = req.header('Authorization').replace('Bearer ', '');
-        const decoded = jwt.verify(headerToken, process.env.JWT_CLIENT_PK);
-        const client = await ClientService.getUserByIdAndToken(decoded[TableFields.ID], headerToken)
+        // const headerToken = req.header('Authorization').replace('Bearer ', '');
+        const token = req.cookies.client_token;
+        const decoded = jwt.verify(token, process.env.JWT_CLIENT_PK);
+        const client = await ClientService.getUserByIdAndToken(decoded[TableFields.ID], token)
         .withBasicInfo()
         .execute()
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CLIENT_END_POINT } from "../../../utils/constants";
+import { CLIENT_END_POINT, DocStatus, DocumentType } from "../../../utils/constants";
 import "../../../styles/document.css";
  
 export default function DocumentPage() {
@@ -9,68 +9,82 @@ export default function DocumentPage() {
     const [documents, setDocuments] = useState([]);
     
     const documentTypes = [
-        "Aadhar Card",
-        "PAN Card",
-        "Passport",
-        "Driving License",
-        "Bank Statement",
+        "VATcertificate",
+        "CorporateTaxDocument",
+        "BankStatement",
+        "Driving bankStatement",
+        "Invoice ",
+        "auditFiles",
+        "TradeLicense",
+        "passport",
+        "Other"
     ];
     
     const handleAddDocument = () => {
         setDocuments((prev) => [
-        ...prev,
-        { documentType: "", file: null, comments: "", status: "pending" },
+            ...prev,
+            { documentType: "", file: null, comments: "", status: 1 },
         ]);
     };
     
     const handleChange = (index, field, value) => {
         setDocuments((prev) =>
-        prev.map((doc, i) => (i === index ? { ...doc, [field]: value } : doc))
+            prev.map((doc, i) => (i === index ? { ...doc, [field]: value } : doc))
         );
     };
     
     const handleUpload = async (index) => {
         try {
-        setError("");
-        const doc = documents[index];
-    
-        if (!doc.documentType || !doc.file) {
-            setError("Please select a document type and upload a file.");
-            return;
-        }
-    
-        const formData = new FormData();
-        formData.append("documentType", doc.documentType);
-        formData.append("document", doc.file);
-        formData.append("comments", doc.comments);
-    
-        const response = await fetch(`${CLIENT_END_POINT}/document`, {
-            method: "POST",
-            body: formData,
-        });
-    
-        const result = await response.json();
-        if (!response.ok) {
-            throw new Error(result.message || "Failed to upload document");
-        }
-    
-        alert(`${doc.documentType} uploaded successfully!`);
-        setDocuments((prev) =>
-            prev.map((d, i) =>
-            i === index ? { ...d, status: "uploaded" } : d
-            )
-        );
+            setError("");
+            const doc = documents[index];
+            console.log(doc);
+
+            if (!doc.documentType || !doc.file) {
+                setError("Please select a document type and upload a file.");
+                return;
+            }
+
+            const documentTypeCode = DocumentType[doc.documentType] || 0;
+            const docStatusCode = DocStatus.pending; 
+            const formData = new FormData();
+            formData.append("document", doc.file);                // File itself
+            formData.append("documentType", documentTypeCode);    // numeric code
+            formData.append("comments", doc.comments || "");
+            formData.append("uploadedAt", new Date().toISOString());
+            formData.append("docStatus", docStatusCode);          // numeric status code
+
+            const response = await fetch(`${CLIENT_END_POINT}/document`, {
+                method: "POST",
+                body: formData,
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to upload document");
+            }
+
+            alert(`${doc.documentType} uploaded successfully!`);
+            setDocuments((prev) =>
+                prev.map((d, i) =>
+                    i === index ? { ...d, status: "uploaded" } : d
+                )
+            );
         } catch (err) {
-        console.error(err);
-        setError(err.message);
+            console.error(err);
+            setError(err.message);
         }
     };
-    
+
     const handleFinalSubmit = () => {
-        const pendingDocs = documents.filter((doc) => doc.status !== "uploaded");
+        const pendingDocs = documents.filter((doc) => {
+            return doc.status !== "uploaded"
+        });
+
         if (pendingDocs.length > 0) {
-        alert("Some documents are not uploaded yet.");
-        return;
+            console.log("here j");
+            alert("Some required fields are empty, please add this fields before final submit..!");
+            return;
         }
         alert("All documents submitted successfully!");
         navigate("/client/home");
@@ -132,11 +146,11 @@ export default function DocumentPage() {
     
         {documents.length > 0 && (
             <button
-            type="button"
-            className="btn btn-primary final-submit-btn"
-            onClick={handleFinalSubmit}
+                type="button"
+                className="btn btn-primary final-submit-btn"
+                onClick={handleFinalSubmit}
             >
-            Final Submit
+                Final Submit
             </button>
         )}
         </div>

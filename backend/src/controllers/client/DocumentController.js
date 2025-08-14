@@ -1,4 +1,4 @@
-const { addPdfFile, removeFileById } = require('../../utils/storage');
+const { addPdfFile, removePdfFileById } = require('../../utils/storage');
 const DocumentService = require('../../db/services/DocumentService');
 const { Folders } = require('../../utils/metadata');
 const { TableFields, ValidationMsg, DocStatus } = require('../../utils/constants');
@@ -87,7 +87,7 @@ async function parseAndValidateDocument(reqBody, reqUser, providedFile, onValida
     } catch (error) {
         // -------- Rollback File on Failure --------
         if (persistedFileKey) {
-            await removeFileById(Folders.ClientDocument, persistedFileKey);
+            await removePdfFileById(Folders.ClientDocument, persistedFileKey);
         }
         throw error;
     }

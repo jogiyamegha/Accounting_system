@@ -25,8 +25,8 @@ export default function AddClient() {
                 body: JSON.stringify(formData),
                 headers: { 
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
+                credentials : 'include'
             });
         
             if (res.ok) {

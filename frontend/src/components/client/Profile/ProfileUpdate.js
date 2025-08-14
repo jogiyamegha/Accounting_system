@@ -60,19 +60,23 @@ export default function ProfileUpdate() {
             method: "POST",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
+            credentials: 'include'
         });
     
-        const result = await response.json();
+         console.log("1",response);
+
+        // const result = await response.json();
+        // console.log("2",result);
     
         if (!response.ok) {
-            throw new Error(result.message || "Failed to set profile");
+            throw new Error( "Failed to set profile");
         }
     
-        alert("Your Profile is set Successfully..");
-        navigate("/client/company-profile");
+            alert("Your Profile is set Successfully..");
+            navigate("/client/company-profile");
         } catch (error) {
-        console.error(error);
-        setError(error.message);
+            console.error(error);
+            setError(error.message);
         }
     };
     

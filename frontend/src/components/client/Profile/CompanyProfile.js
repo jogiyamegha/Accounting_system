@@ -2,6 +2,13 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CLIENT_END_POINT } from "../../../utils/constants";
 import '../../../styles/company.css';
+import { countries } from "../../../utils/countries";
+
+function formatDate(dateStr) {
+    if (!dateStr) return "";
+    const [year, month, day] = dateStr.split("-");
+    return `${day}-${month}-${year}`;
+}
  
 export default function CompanyProfile() {
     const companyNameInputRef = useRef();
@@ -46,10 +53,10 @@ export default function CompanyProfile() {
                 country: countryInputRef.current.value,
                 licenseType: licenseTypeInputRef.current.value,
                 licenseNumber: licenseNumberInputRef.current.value,
-                licenseIssueDate: licenseIssueDateInputRef.current.value,
-                licenseExpiry: licenseExpiryInputRef.current.value,
-                startDate: startDateInputRef.current.value,
-                endDate: endDateInputRef.current.value,
+                licenseIssueDate: formatDate(licenseIssueDateInputRef.current.value),
+                licenseExpiry: formatDate(licenseExpiryInputRef.current.value),
+                startDate: formatDate(startDateInputRef.current.value),
+                endDate: formatDate(endDateInputRef.current.value),
                 taxRegistrationNumber: taxRegistrationNumberInputRef.current.value,
                 businessType: businessTypeInputRef.current.value,
                 contactPersonName: contactPersonNameInputRef.current.value,
@@ -58,16 +65,19 @@ export default function CompanyProfile() {
             };
     
         try {
-            const response = await fetch(`${CLIENT_END_POINT}/company`, {
+
+            console.log(data);
+            const response = await fetch(`${CLIENT_END_POINT}/company-profile`, {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: { "Content-Type": "application/json" },
+                credentials: 'include',
             });
         
-            const result = await response.json();
-        
+            console.log(response);
+            
             if (!response.ok) {
-                throw new Error(result.message || "Failed to set company details");
+                throw new Error( "Failed to set company details");
             }
         
             alert("Your Company Details are set successfully.");
@@ -183,7 +193,16 @@ export default function CompanyProfile() {
     
             <div className="form-group">
             <label>Tax Registration Number</label>
-            <input type="text" ref={taxRegistrationNumberInputRef} />
+            <input type="text" ref={taxRegistrationNumberInputRef} 
+            maxLength={15}
+                onInput={(e) => {
+                e.target.value = e.target.value.replace(/\D/g, "");
+                if (e.target.value.length > 15) {
+                    e.target.value = e.target.value.trim(0, 15);
+                }
+                }}
+            
+            />
             </div>
     
             <div className="form-group">
@@ -203,10 +222,21 @@ export default function CompanyProfile() {
             <input type="text" ref={contactPersonNameInputRef} required />
             </div>
     
-            <div className="form-group">
-            <label>Phone Country Code</label>
-            <input type="text" ref={phoneCountryInputRef} required />
-            </div>
+            <div>
+                        <select
+                        ref={phoneCountryInputRef}
+                        //   defaultValue={userData.phoneCountry || ""}
+                            placeholder="Select Country"
+                        required
+                        >
+                        <option value="">--Select Country--</option>
+                        {countries.map((country, index) => (
+                            <option key={index} value={country.code}>
+                            {country.name} ({country.code})
+                            </option>
+                        ))}
+                        </select>
+                    </div>
     
             <div className="form-group">
             <label>Phone Number</label>

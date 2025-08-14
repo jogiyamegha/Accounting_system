@@ -33,29 +33,41 @@ exports.signUp = async(req) => {
     }
 }
 
-exports.login = async (req) => {
+exports.login = async (req, res) => {
     let email = req.body[TableFields.email];
     email = (email + '').trim().toLocaleLowerCase();
     let password = req.body[TableFields.password];
-    
-    if(!email) {
-        throw new ValidationError(ValidationMsg.EmailEmpty)
+    if (!email) {
+        throw new ValidationError(ValidationMsg.EmailEmpty);
     }
-    if(!password) {
-        throw new ValidationError(ValidationMsg.PasswordEmpty)
+    if (!password) {
+        throw new ValidationError(ValidationMsg.PasswordEmpty);
     }
-    
-    let user = await ClientService.findByEmail(email).withBasicInfo().withPassword().execute();
-    
-    if(user && (await user.isValidAuth(password))) {
-        const token = user.createAuthToken();
-        await ClientService.saveAuthToken(user[TableFields.ID] , token)
+    let user = await ClientService.findByEmail(email)
+        .withBasicInfo()
+        .withPassword()
+        .execute();
 
-        return { user, token };
+    if (user && (await user.isValidAuth(password))) {
+        const token = user.createAuthToken();
+        await ClientService.saveAuthToken(user[TableFields.ID], token);
+        // Set cookie instead of sending token to frontend
+        res.cookie("client_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // only https in prod
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        });
+        return { user };
+
     } else {
+
         throw new ValidationError(ValidationMsg.UnableToLogin);
+
     }
-}
+};
+
+ 
 
 exports.logout = async (req) => {
     const headerToken = req.header("Authorization").replace("Bearer ", "");

@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const DBController = require('./db/mongoose');
 const path = require('path');
 const cors = require('cors');
@@ -9,7 +10,12 @@ const AdminRoutes = require('./routes/adminRoutes');
 const ClientRoutes = require('./routes/clientRoutes');
 
 const app = express();
-app.use(cors());
+
+app.use(cookieParser());
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+}));
 
 env.config({
     path : './config/dev.env'
@@ -22,6 +28,7 @@ app.use(
         limit: 'sgb'
     })
 );
+
 
 app.use(AdminRoutes);
 app.use(ClientRoutes);

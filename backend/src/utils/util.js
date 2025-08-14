@@ -235,7 +235,6 @@ const Util = class {
         let endMonth = parseInt(moment(endDate).format("MM"));
         let startYear = parseInt(moment(endDate).format("YYYY"));
         let endYear = parseInt(moment(endDate).format("YYYY"));
-        // console.log(startMonth,endMonth)
         if (startMonth === endMonth) {
             const allDates = Array.from(
                 new Set(dataObject.map((entry) => moment(entry.createdAt).format("YYYY-MM-DD")))
@@ -244,21 +243,11 @@ const Util = class {
             const uniqueMonths = Array.from(
                 new Set(allDates.map((date) => moment(date).format("YYYY-MM-DD").toString().slice(0, 7)))
             );
-            // console.log(parseInt(moment(endDate).format("D")))
 
-            // Populate missing dates for each month in the dataObject with zeros
             uniqueMonths.forEach((month) => {
                 const monthDates = allDates.filter((date) =>
                     moment(date.toString().startsWith(month)).format("YYYY-MM-DD")
                 );
-                // for (let i = parseInt(moment(startDate).format("D")); i <= parseInt(moment(endDate).format("D")); i++) {
-                //     const day = i < 10 ? `0${i}` : `${i}`
-                //     const date = `${startYear}-${startMonth}-${day}`
-                //     console.log("monthDates",monthDates,"date",date)
-                //     if (!monthDates.includes(date)) {
-                //     dataObject.push({createdAt: date,emojiId:0,title:""})
-                //     }
-                // }
                 for (let i = parseInt(moment(startDate).format("D")); i <= parseInt(moment(endDate).format("D")); i++) {
                     const day = i < 10 ? `0${i}` : `${i}`;
                     const date = `${startYear}-${startMonth}-${day}`;
@@ -280,22 +269,10 @@ const Util = class {
             const uniqueMonths = Array.from(
                 new Set(allDates.map((date) => moment(date).format("YYYY-MM-DD").toString().slice(0, 7)))
             );
-            // console.log(parseInt(moment(endDate).format("D")))
 
             // Populate missing dates for each month in the dataObject with zeros
             uniqueMonths.forEach((month) => {
                 const monthDates = allDates.filter((date) => date.toString().startsWith(month));
-                // for (let i = parseInt(moment(startDate).format("D")); i <= parseInt(moment(monthEnd).format("D")); i++) {
-                //     const day = i < 10 ? `0${i}` : `${i}`
-                //     const month = startMonth < 10 ? `0${startMonth}` : `${startMonth}`
-
-                //     const date = `${startYear}-${month}-${day}`
-                //     // console.log(`${month}-${day}`)
-                //     // console.log(date)
-                //     if (!monthDates.includes(date)) {
-                //         dataObject.push({createdAt: date,emojiId:0,title:""})
-                //         }
-                // }
                 for (
                     let i = parseInt(moment(startDate).format("D"));
                     i <= parseInt(moment(monthEnd).format("D"));
@@ -312,17 +289,6 @@ const Util = class {
             });
             uniqueMonths.forEach((month) => {
                 const monthDates = allDates.filter((date) => date.toString().startsWith(month));
-                // console.log("dataObject",monthDates)
-
-                // for (let i = parseInt(moment(monthStart).format("D")); i <= parseInt(moment(endDate).format("D")); i++) {
-                //     const day = i < 10 ? `0${i}` : `${i}`
-                //     const month = endMonth < 10 ? `0${endMonth}` : `${endMonth}`
-                //     const date = `${endYear}-${month}-${day}`
-
-                //     if (!monthDates.includes(date.toString())) {
-                //         dataObject.push({createdAt: date,emojiId:0,title:""})
-                //         }
-                // }
                 for (
                     let i = parseInt(moment(monthStart).format("D"));
                     i <= parseInt(moment(endDate).format("D"));
@@ -337,18 +303,6 @@ const Util = class {
                     }
                 }
             });
-            // console.log("dataObject",dataObject)
-
-            // uniqueMonths.forEach((month) => {
-            //     const monthDates = allDates.filter((date) => moment(date.toString().startsWith(month)).format("YYYY-MM-DD"));
-            //     for (let i = 1; i <= moment(month + '-01').daysInMonth(); i++) {
-            //         const day = i < 10 ? `0${i}` : `${i}`;
-            //         const date = `${month}-${day}`;
-            //         if (!monthDates.includes(date)) {
-            //             dataObject.push({ createdAt: date, emojiId: 0, title: "" });
-            //         }
-            //     }
-            // });
         }
 
         // Sort dataObject based on dates

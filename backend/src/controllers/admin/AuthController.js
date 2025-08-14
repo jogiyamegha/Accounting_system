@@ -26,31 +26,40 @@ exports.addAdminUser = async (req) => {
   }
 };
 
-exports.login = async (req) => {
-  let email = req.body[TableFields.email];
-  email = (email + "").trim().toLocaleLowerCase();
-  let password = req.body[TableFields.password];
-
-  if (!email) {
-    throw new ValidationError(ValidationMsg.EmailEmpty);
-  }
-  if (!password) {
-    throw new ValidationError(ValidationMsg.PasswordEmpty);
-  }
-
-  let user = await AdminService.findByEmail(email)
-    .withBasicInfo()
-    .withPassword()
-    .execute();
-
-  if (user && (await user.isValidAuth(password))) {
-    const token = user.createAuthToken();
-    await AdminService.saveAuthToken(user[TableFields.ID], token);
-    return { user, token };
-  } else {
-    throw new ValidationError(ValidationMsg.UnableToLogin);
-  }
+exports.login = async (req, res) => {
+    let email = req.body[TableFields.email];
+    email = (email + "").trim().toLocaleLowerCase();
+    let password = req.body[TableFields.password];
+  
+    if (!email) {
+      throw new ValidationError(ValidationMsg.EmailEmpty);
+    }
+    if (!password) {
+      throw new ValidationError(ValidationMsg.PasswordEmpty);
+    }
+  
+    let user = await AdminService.findByEmail(email)
+      .withBasicInfo()
+      .withPassword()
+      .execute();
+  
+    if (user && (await user.isValidAuth(password))) {
+      const token = user.createAuthToken();
+      await AdminService.saveAuthToken(user[TableFields.ID], token);
+  
+      res.cookie("admin_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 24 *60 * 60 * 1000
+      })
+  
+      return { user };
+    } else {
+      throw new ValidationError(ValidationMsg.UnableToLogin);
+    }
 };
+ 
 
 exports.logout = async (req) => {
   const headerToken = req.header("Authorization").replace("Bearer ", "");
