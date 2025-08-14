@@ -1,7 +1,10 @@
 const API = require("../utils/apiBuilder");
 const AuthController = require('../controllers/admin/AuthController');
 const ClientController = require('../controllers/admin/ClientController');
+const DocumentController = require('../controllers/admin/DocumentController')
 const { TableFields } = require("../utils/constants");
+
+
 const router = API.configRoute("/admin")
 
 /**
@@ -51,6 +54,13 @@ const router = API.configRoute("/admin")
 .asPOST(ClientController.addClient)
 .useAdminAuth()
 .build()
+
+
+.addPath(`/update-doc-status/:${TableFields.clientId}/:${TableFields.documentId}`)
+.asUPDATE(DocumentController.updateDocumentStatus)
+.useAdminAuth()
+.build()
+
 
 .getRouter()
 module.exports = router;

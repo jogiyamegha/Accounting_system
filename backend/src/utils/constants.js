@@ -205,6 +205,7 @@ const TableFields = (function () {
   TableFields.isActive = "isActive";
   TableFields.clientDetails = "clientDetails";
   TableFields.clientId = "clientId";
+  TableFields.documentId = "documentId";
   TableFields.documents = "documents";
   TableFields.documentDetails = "documentDetails";
   TableFields.docStatus = "docStatus";

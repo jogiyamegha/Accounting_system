@@ -10,7 +10,7 @@ const documentSChema = new Schema(
         },
         [TableFields.documents]: [
             {
-                [TableFields.ID]: false,
+                
                 [TableFields.documentDetails]: {
                     [TableFields.docStatus]: {
                         type: Number,
