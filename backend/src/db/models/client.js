@@ -48,7 +48,7 @@ const clientSchema = new Schema(
             },
         },
         [TableFields.companyId]: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             trim: true,
         },
         [TableFields.registeredDate]: {

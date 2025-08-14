@@ -225,6 +225,20 @@ class ClientService {
     };
 
 
+    static updateCompanyinProfile = async(clientId, companyId) => {
+        return await Client.findByIdAndUpdate(
+            clientId,
+            {
+                $set: {
+                    [TableFields.companyId]: companyId
+                }
+            },
+            {
+                new: true
+            }
+        )
+    }
+
 }
 
 const ProjectionBuilder = class {

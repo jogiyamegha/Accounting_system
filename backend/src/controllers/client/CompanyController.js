@@ -1,4 +1,6 @@
+const ClientService = require("../../db/services/ClientService");
 const CompanyService = require("../../db/services/CompanyService");
+
 const { TableFields, ValidationMsg } = require("../../utils/constants");
 const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
@@ -17,8 +19,10 @@ exports.addCompany = async (req) => {
             let records = await CompanyService.insertRecord(
                 updatedFields
             );
+            await ClientService.updateCompanyinProfile(reqUser[TableFields.ID], records[TableFields.ID])
         }
     )
+
  
     return data;
  
