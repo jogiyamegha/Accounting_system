@@ -1,0 +1,93 @@
+/* Container */
+.form-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+ 
+/* Title */
+.form-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+ 
+/* Error Message */
+.error-message {
+  color: red;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+ 
+/* Document Card */
+.document-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background-color: #f9f9f9;
+}
+ 
+/* Form Elements */
+.form-select,
+.form-input {
+  flex: 1 1 200px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+ 
+/* Buttons */
+.btn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+ 
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+ 
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+ 
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+ 
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+ 
+/* Final Submit Button */
+.final-submit-btn {
+  width: 100%;
+  margin-top: 20px;
+}
+ 
+/* Responsive Layout */
+@media (max-width: 600px) {
+  .document-card {
+    flex-direction: column;
+  }
+ 
+  .form-select,
+  .form-input,
+  .btn {
+    width: 100%;
+  }
+}
+ 
+ 

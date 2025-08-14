@@ -13,6 +13,9 @@ import ClientSignup from './components/client/Auth/ClientSignup';
 import ClientChangePassword from './components/client/Auth/ClientChangePassword';
 import ClientForgotPassword from './components/client/Auth/ClientForgotPassword';
 import ClientVerifyOtp from './components/client/Auth/ClientVerifyOtp';
+import ProfileUpdate from './components/client/Profile/ProfileUpdate';
+import CompanyProfile from './components/client/Profile/CompanyProfile';
+import DocumentPage from './components/client/Profile/Document';
 
 function App() {
     return (
@@ -109,6 +112,27 @@ function App() {
                     path='/client/verify-otp'
                     element={
                         <ClientVerifyOtp />
+                    }
+                />
+
+                <Route 
+                    path='/client/client-profile'
+                    element={
+                        <ProfileUpdate />
+                    }
+                />
+
+                <Route 
+                    path='/client/company-profile'
+                    element={
+                        <CompanyProfile />
+                    }
+                />
+
+                <Route 
+                    path='/client/document'
+                    element={
+                        <DocumentPage />
                     }
                 />
 
