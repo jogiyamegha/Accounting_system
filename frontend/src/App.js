@@ -16,6 +16,7 @@ import ClientVerifyOtp from './components/client/Auth/ClientVerifyOtp';
 import ProfileUpdate from './components/client/Profile/ProfileUpdate';
 import CompanyProfile from './components/client/Profile/CompanyProfile';
 import DocumentPage from './components/client/Profile/Document';
+import ClientProfilePage from './components/client/Profile/ClientProfilePage';
 
 function App() {
     return (
@@ -112,6 +113,13 @@ function App() {
                     path='/client/verify-otp'
                     element={
                         <ClientVerifyOtp />
+                    }
+                />
+
+                <Route 
+                    path='/client/profile'
+                    element={
+                        <ClientProfilePage />
                     }
                 />
 

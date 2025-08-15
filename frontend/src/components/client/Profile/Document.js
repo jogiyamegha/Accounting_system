@@ -87,7 +87,7 @@ export default function DocumentPage() {
             return;
         }
         alert("All documents submitted successfully!");
-        navigate("/client/home");
+        navigate("/client/profile");
     };
     
     return (

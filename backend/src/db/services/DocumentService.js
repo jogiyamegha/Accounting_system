@@ -16,6 +16,12 @@ class DocumentService {
     });
   };
 
+  static getDocsByClientId = (clientId) => {
+    return new ProjectionBuilder(async function () {
+      return await Document.findOne({ [TableFields.clientId]: clientId }, this);
+    });
+  };
+
   static existsWithClient = async (clientId) => {
     return await Document.exists({
       [TableFields.clientId]: clientId,

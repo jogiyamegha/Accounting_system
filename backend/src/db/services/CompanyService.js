@@ -16,6 +16,12 @@ class CompanyService {
             return await Company.findOne({email}, this);
         })
     }
+
+    static getCompanyById = (userId) => {
+    return new ProjectionBuilder(async function () {
+      return await Company.findOne({ [TableFields.ID]: userId }, this);
+    });
+  };
  
     static existsWithEmail = async (email, exceptionId) => {
         return await Company.exists({

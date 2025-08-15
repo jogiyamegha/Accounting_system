@@ -40,7 +40,7 @@ function ClientLogin() {
    
             dispatch(setUser(data.user));
    
-            navigate("/");
+            navigate("/client/profile");
             } else {
                 alert( "Login failed");
             }

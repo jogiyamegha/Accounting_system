@@ -8,7 +8,7 @@ export const DocumentType = (function () {
   DocumentType.BankStatement = 3;
   DocumentType.Invoice = 4;
   DocumentType.auditFiles = 5;
-  DocumentType.TradeLicense = 6; 
+  DocumentType.TradeLicense = 6;
   DocumentType.passport = 7;
   DocumentType.Other = 8;
   return DocumentType;
@@ -21,3 +21,22 @@ export const DocStatus = (function () {
   DocStatus.rejected = 3;
   return DocStatus;
 })();
+
+
+export const statusMap = {
+  1: "Pending",
+  2: "Approved",
+  3: "Rejected",
+};
+
+
+export const docTypeMap = {
+  1: "VATcertificate",
+  2: "CorporateTaxDocument",
+  3: "BankStatement",
+  4: "Invoice",
+  5: "auditFiles",
+  6: "TradeLicense",
+  7: "passport",
+  8: "Other"
+}

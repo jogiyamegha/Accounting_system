@@ -44,6 +44,12 @@ const router = API.configRoute("/client")
  * 
  */
 
+.addPath('/profile')
+.asGET(ProfileController.getFullClientProfile)
+.useClientAuth()
+.build()
+
+
 .addPath("/client-profile")
 .asPOST(ProfileController.setClientProfile)
 .useClientAuth()

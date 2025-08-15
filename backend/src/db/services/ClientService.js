@@ -11,6 +11,12 @@ class ClientService {
         })
     }
 
+    static getUserById = (userId) => {
+        return new ProjectionBuilder(async function () {
+          return await Client.findOne({ [TableFields.ID]: userId }, this);
+        });
+      };
+
     static existsWithEmail = async (email, exceptionId) => {
         return await Client.exists({
             [TableFields.email] : email,
@@ -249,6 +255,7 @@ const ProjectionBuilder = class {
             projection[TableFields.email] = 1;
             projection[TableFields.userType] = 1;
             projection[TableFields.contact] = 1;
+            projection[TableFields.companyId] = 1;
             
             return this; 
         }
