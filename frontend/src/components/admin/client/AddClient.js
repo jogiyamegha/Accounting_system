@@ -6,7 +6,7 @@ export default function AddClient() {
         name: "",
         email: "",
         password: "",
-        companyName: "",
+        // companyName: "",
     });
     
     const [loading, setLoading] = useState(false);
@@ -71,14 +71,14 @@ export default function AddClient() {
                 onChange={handleChange}
                 required
             />
-            <input
+            {/* <input
                 type="text"
                 name="companyName"
                 placeholder="Company Name"
                 value={formData.companyName}
                 onChange={handleChange}
                 required
-            />
+            /> */}
             <button type="submit" disabled={loading}>
                 {loading ? "Adding..." : "Add Client"}
             </button>{" "}

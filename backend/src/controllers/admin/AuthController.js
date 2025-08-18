@@ -27,44 +27,67 @@ exports.addAdminUser = async (req) => {
 };
 
 exports.login = async (req, res) => {
-    let email = req.body[TableFields.email];
-    email = (email + "").trim().toLocaleLowerCase();
-    let password = req.body[TableFields.password];
-  
-    if (!email) {
-      throw new ValidationError(ValidationMsg.EmailEmpty);
-    }
-    if (!password) {
-      throw new ValidationError(ValidationMsg.PasswordEmpty);
-    }
-  
-    let user = await AdminService.findByEmail(email)
-      .withBasicInfo()
-      .withPassword()
-      .execute();
-  
-    if (user && (await user.isValidAuth(password))) {
-      const token = user.createAuthToken();
-      await AdminService.saveAuthToken(user[TableFields.ID], token);
-  
-      res.cookie("admin_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 24 *60 * 60 * 1000
-      })
-  
-      return { user };
-    } else {
-      throw new ValidationError(ValidationMsg.UnableToLogin);
-    }
-};
- 
+  let email = req.body[TableFields.email];
+  email = (email + "").trim().toLocaleLowerCase();
+  let password = req.body[TableFields.password];
 
-exports.logout = async (req) => {
-  const headerToken = req.header("Authorization").replace("Bearer ", "");
-  AdminService.removeAuth(req.user[TableFields.ID], headerToken);
-  console.log("You Logged Out....");
+  if (!email) {
+    throw new ValidationError(ValidationMsg.EmailEmpty);
+  }
+  if (!password) {
+    throw new ValidationError(ValidationMsg.PasswordEmpty);
+  }
+
+  let user = await AdminService.findByEmail(email)
+    .withBasicInfo()
+    .withPassword()
+    .execute();
+
+  if (user && (await user.isValidAuth(password))) {
+    const token = user.createAuthToken();
+    await AdminService.saveAuthToken(user[TableFields.ID], token);
+
+    res.cookie("admin_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    return  res.json({ role: "admin", user });;
+  } else {
+    throw new ValidationError(ValidationMsg.UnableToLogin);
+  }
+};
+
+// exports.logout = async (req) => {
+//   const headerToken = req.header("Authorization").replace("Bearer ", "");
+//   AdminService.removeAuth(req.user[TableFields.ID], headerToken);
+//   console.log("You Logged Out....");
+// };
+
+exports.logout = async (req, res) => {
+  try {
+    const token = req.cookies.admin_token;
+    if (!token) {
+      throw new ValidationError("No active session found");
+    }
+
+    // Remove token from DB
+    await AdminService.removeAuth(req.user[TableFields.ID], token);
+
+    // Clear cookie
+    res.clearCookie("admin_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    console.log("You Logged Out....");
+    return { message: "Logged out successfully" };
+  } catch (err) {
+    throw err;
+  }
 };
 
 exports.forgotPassword = async (req) => {
@@ -73,7 +96,9 @@ exports.forgotPassword = async (req) => {
 
   if (!providedEmail) throw new ValidationError(ValidationMsg.EmailEmpty);
 
-  let { code, email, name } = await AdminService.getResetPasswordToken(providedEmail);
+  let { code, email, name } = await AdminService.getResetPasswordToken(
+    providedEmail
+  );
   Email.sendForgotPasswordMail(email, code, name);
 };
 
@@ -119,7 +144,7 @@ exports.forgotPasswordCodeExists = async (req) => {
 
 exports.changePassword = async (req) => {
   // let { oldPassword, newPassword } = req.body;
-  let providedEmail = req.body[TableFields.email]
+  let providedEmail = req.body[TableFields.email];
 
   let { newPassword, confirmPassword } = req.body;
 
@@ -144,7 +169,7 @@ exports.changePassword = async (req) => {
     if (!user.isValidPassword(newPassword))
       throw new ValidationError(ValidationMsg.PasswordInvalid);
     const token = user.createAuthToken();
-   
+
     await AdminService.updatePasswordAndInsertLatestToken(
       user,
       newPassword,

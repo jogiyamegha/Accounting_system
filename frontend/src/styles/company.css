@@ -16,7 +16,9 @@
 ======================= */
 .form-container {
   max-width: 850px; /* Proper readable width */
-  margin: 2rem auto;
+  margin: auto;
+  margin-top: 3rem;
+
   padding: 2rem;
   background: var(--bg);
   border-radius: var(--radius);

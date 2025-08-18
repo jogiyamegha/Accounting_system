@@ -9,7 +9,6 @@ export default function ClientSignup() {
         email: "",
         password: "",
         confirmPassword: "",
-        companyName: "",
     });
     
     const navigate = useNavigate();
@@ -43,7 +42,6 @@ export default function ClientSignup() {
             name: formData.name,
             email: formData.email,
             password: formData.password,
-            companyName: formData.companyName,
             }),
             headers: {
             "Content-Type": "application/json",
@@ -86,14 +84,7 @@ export default function ClientSignup() {
             required
             />
     
-            <input
-            type="text"
-            name="companyName"
-            placeholder="Company Name"
-            value={formData.companyName}
-            onChange={handleChange}
-            required
-            />
+            
     
             <input
             type="password"

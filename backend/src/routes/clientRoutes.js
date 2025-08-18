@@ -13,6 +13,16 @@ const router = API.configRoute("/client")
  * 
  */
 
+.addPath('/')
+.asGET((req, res) => {
+    res.json({
+        success: true,
+        user: req.user 
+    });
+})
+.useClientAuth()
+.build()
+
 .addPath("/signup")
 .asPOST(AuthController.signUp)
 .build()

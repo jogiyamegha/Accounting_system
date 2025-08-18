@@ -83,6 +83,21 @@
     text-decoration: underline;
 }
  
+.client-link, .admin-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #4f46e5;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.client-link:hover, .admin-link:hover {
+    color: #4338ca;
+    text-decoration: underline;
+}
+
 /* Responsive */
 @media (max-width: 500px) {
     .login-container {

@@ -6,7 +6,8 @@
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin-top: 3rem;
 }
 
 /* Titles */
@@ -26,9 +27,11 @@
 
 /* Sections */
 .profile-section {
+  position: relative;
   margin-bottom: 25px;
   padding: 15px;
-  background: #f9f9f9;
+  padding-bottom: 20px;
+  background: #edecec;
   border-radius: 8px;
 }
 
@@ -42,6 +45,20 @@
 .info-grid p {
   margin: 0;
   color: #444;
+}
+
+.profile-section .fa-solid {
+  position: absolute;
+  bottom: 10px;   /* distance from bottom of the section */
+  right: 10px;    /* distance from right of the section */
+  cursor: pointer;
+  font-size: 18px; /* adjust size */
+  color: #007bff;  /* icon color */
+  transition: color 0.2s;
+}
+
+.profile-section .fa-solid:hover {
+  color: #0056b3; /* darker on hover */
 }
 
 /* Document List */
@@ -74,12 +91,23 @@
 }
 
 /* Status Colors */
-.status-1 { background: #fff3cd; color: #856404; } /* Pending */
-.status-2 { background: #f8d7da; color: #721c24; } /* Rejected */
-.status-3 { background: #d4edda; color: #155724; } /* Approved */
+.status-1 {
+  background: #fff3cd;
+  color: #856404;
+} /* Pending */
+.status-2 {
+  background: #f8d7da;
+  color: #721c24;
+} /* Rejected */
+.status-3 {
+  background: #d4edda;
+  color: #155724;
+} /* Approved */
 
 /* Messages */
-.loading-text, .error-text, .no-docs {
+.loading-text,
+.error-text,
+.no-docs {
   text-align: center;
   color: #777;
   margin: 15px 0;
@@ -89,5 +117,11 @@
 @media (max-width: 768px) {
   .info-grid {
     grid-template-columns: 1fr;
+  }
+
+  .profile-section .fa-solid {
+    bottom: 8px;
+    right: 8px;
+    font-size: 16px;
   }
 }

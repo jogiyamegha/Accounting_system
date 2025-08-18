@@ -275,7 +275,7 @@ export default function ProtectedRoute({
             setAuthChecked(true);
         }
     
-    }, [dispatch, config.endpoint, userType]);
+    }, [config.endpoint, dispatch, detectedUserType, userType]);
 
     useEffect(() => {
         if (!authChecked) {

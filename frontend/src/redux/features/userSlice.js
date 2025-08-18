@@ -28,7 +28,8 @@ const initialState = {
     user: null,       // Logged in user details
     token: null,      // Optional if you’re storing JWT in Redux
     userType: null,   // "admin" or "client"
-    loading: false    // Loader for auth requests
+    loading: false,   // Loader for auth requests
+    role: null,
 };
  
 const userSlice = createSlice(
@@ -40,12 +41,14 @@ const userSlice = createSlice(
                 state.user = action.payload.user;
                 state.token = action.payload.token || null;
                 state.userType = action.payload.userType || null;
+                state.role = action.payload.role || null;
                 state.loading = false;
             },
             clearUser: (state) => {
                 state.user = null;
                 state.token = null;
                 state.userType = null;
+                state.role = null;
                 state.loading = false;
             },
             setLoading: (state, action) => {

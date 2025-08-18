@@ -49,14 +49,14 @@ async function parseAndValidateClient(
     if(isFieldEmpty(reqBody[TableFields.password])){
         throw new ValidationError(ValidationMsg.PasswordEmpty);
     }
-    if(isFieldEmpty(reqBody[TableFields.companyName])){
-        throw new ValidationError(ValidationMsg.CompanyNameEmpty);
-    }
+    // if(isFieldEmpty(reqBody[TableFields.companyName])){
+    //     throw new ValidationError(ValidationMsg.CompanyNameEmpty);
+    // }
     const response = await onValidationCompleted({
         [TableFields.name_] : reqBody[TableFields.name_],
         [TableFields.email] : reqBody[TableFields.email],
         [TableFields.password] : reqBody[TableFields.password],
-        [TableFields.companyName] : reqBody[TableFields.companyName],
+        // [TableFields.companyName] : reqBody[TableFields.companyName],
         [TableFields.userType] : 2
     })
     return response;
