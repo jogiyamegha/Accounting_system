@@ -35,6 +35,8 @@ exports.signUp = async (req) => {
   if (user && user.isValidPassword(password)) {
     const token = user.createAuthToken();
     await ClientService.saveAuthToken(user[TableFields.ID], token);
+
+    Email.sendClientSignupMail(user[TableFields.name_], email, password)
     return { user, token };
   }
 };

@@ -98,6 +98,14 @@ export default function Navbar() {
           )}
 
           {role && (
+            <>
+              <Link to="/client/profile" className="nav-link">
+                Profile
+              </Link>
+            </>
+          )}
+
+          {role && (
             <button onClick={handleLogout} className="nav-link button">
               Logout
             </button>

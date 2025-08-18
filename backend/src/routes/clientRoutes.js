@@ -66,6 +66,11 @@ const router = API.configRoute("/client")
 .build()
 
 .addPath('/company-profile')
+.asGET(CompanyController.getFullCompanyDetails)
+.useClientAuth()
+.build()
+
+.addPath('/company-profile')
 .asPOST(CompanyController.addCompany)
 .useClientAuth()
 .build()

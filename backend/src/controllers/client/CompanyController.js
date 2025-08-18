@@ -11,15 +11,27 @@ exports.addCompany = async (req) => {
     const reqUser = req.user;
  
     //already exists logic here..
+
+    let user = await ClientService.getUserById(reqUser[TableFields.ID]).withBasicInfo().execute()
+
+    let existingCompany = await CompanyService.getCompanyById(user[TableFields.companyId]).withBasicInfo().execute()
+
  
     let data = await parseAndValidateCompany(
         reqBody,
         undefined,
         async(updatedFields) => {
-            let records = await CompanyService.insertRecord(
-                updatedFields
-            );
-            await ClientService.updateCompanyinProfile(reqUser[TableFields.ID], records[TableFields.ID])
+            let records;
+            if(existingCompany){
+                records = await CompanyService.updateRecord(existingCompany[TableFields.ID], updatedFields)
+            }else{
+
+                records = await CompanyService.insertRecord(
+                    updatedFields
+                );
+                await ClientService.updateCompanyinProfile(reqUser[TableFields.ID], records[TableFields.ID])
+            }
+            return records;
         }
     )
 
@@ -27,7 +39,25 @@ exports.addCompany = async (req) => {
     return data;
  
 }
+
+
  
+exports.getFullCompanyDetails = async (req) => {
+    const reqBody = req.body;
+    const reqUser = req.user;
+ 
+    //already exists logic here..
+
+    let user = await ClientService.getUserById(reqUser[TableFields.ID]).withBasicInfo().execute()
+
+    if(!user) throw new ValidationError(ValidationMsg.RecordNotFound);
+
+    let existingCompany = await CompanyService.getCompanyById(user[TableFields.companyId]).withBasicInfo().execute();
+    if(!existingCompany) throw new ValidationError(ValidationMsg.RecordNotFound);
+
+    return existingCompany;
+    
+}
  
 async function parseAndValidateCompany(
     reqBody,

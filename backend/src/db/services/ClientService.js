@@ -52,6 +52,7 @@ class ClientService {
             }, 
             { 
                 $set: {
+                    [TableFields.name_]: reqBody[TableFields.name_],
                     [TableFields.contact]: {
                         [TableFields.phoneCountry]: reqBody[TableFields.phoneCountry],
                         [TableFields.phone]: reqBody[TableFields.phone]

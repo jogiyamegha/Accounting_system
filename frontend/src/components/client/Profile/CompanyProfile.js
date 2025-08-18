@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CLIENT_END_POINT } from "../../../utils/constants";
 import '../../../styles/company.css';
@@ -9,8 +9,23 @@ function formatDate(dateStr) {
     const [year, month, day] = dateStr.split("-");
     return `${day}-${month}-${year}`;
 }
+
+function formatForDateInput(isoString) {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  const month = (d.getMonth() + 1).toString().padStart(2, "0");
+  const day = d.getDate().toString().padStart(2, "0");
+  const year = d.getFullYear();
+  return `${year}-${month}-${day}`; // this is what input[type="date"] needs
+}
  
 export default function CompanyProfile() {
+
+    const navigate = useNavigate();
+    const [error, setError] = useState("");
+    const [existingProfile, setExistingProfile] = useState(null);
+
+
     const companyNameInputRef = useRef();
     const companyEmailInputRef = useRef();
     const addressLine1InputRef = useRef();
@@ -32,9 +47,54 @@ export default function CompanyProfile() {
     const contactPersonNameInputRef = useRef();
     const phoneCountryInputRef = useRef();
     const phoneInputRef = useRef();
+
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await fetch(`${CLIENT_END_POINT}/company-profile`, {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+
+                console.log("data",data)
+                setExistingProfile(data);
+
+                // Populate refs with existing data
+                if (data) {
+                    companyNameInputRef.current.value = data.name || "";
+                    companyEmailInputRef.current.value = data.email || "";
+                    addressLine1InputRef.current.value = data.address.addressLine1 || "";
+                    addressLine2InputRef.current.value = data.address.addressLine2 || "";
+                    streetInputRef.current.value = data.address.street || "";
+                    landmarkInputRef.current.value = data.address.landmark || "";
+                    zipcodeInputRef.current.value = data.address.zipcode || "";
+                    cityInputRef.current.value = data.address.city || "";
+                    stateInputRef.current.value = data.address.state || "";
+                    countryInputRef.current.value = data.address.country || "";
+                    licenseTypeInputRef.current.value = data.licenseDetails.licenseType || "";
+                    licenseNumberInputRef.current.value = data.licenseDetails.licenseNumber || "";
+                    licenseIssueDateInputRef.current.value = formatForDateInput(data.licenseDetails.licenseIssueDate) || "";
+                    licenseExpiryInputRef.current.value = formatForDateInput(data.licenseDetails.licenseExpiry) || "";
+                    startDateInputRef.current.value = formatForDateInput(data.financialYear.startDate) || "";
+                    endDateInputRef.current.value = formatForDateInput(data.financialYear.endDate) || "";
+                    taxRegistrationNumberInputRef.current.value = data.taxRegistrationNumber || "";
+                    businessTypeInputRef.current.value = data.businessType || "";
+                    contactPersonNameInputRef.current.value = data.contactPerson.name || "";
+                    phoneCountryInputRef.current.value = data.contactPerson.contact.phoneCountry || "";
+                    phoneInputRef.current.value = data.contactPerson.contact.phone || "";
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchProfile();
+    }, []);
     
-    const navigate = useNavigate();
-    const [error, setError] = useState("");
+    
     
         const submitHandler = async (event) => {
             event.preventDefault();
@@ -66,7 +126,7 @@ export default function CompanyProfile() {
     
         try {
 
-            console.log(data);
+            // console.log(data);
             const response = await fetch(`${CLIENT_END_POINT}/company-profile`, {
                 method: "POST",
                 body: JSON.stringify(data),
@@ -74,14 +134,14 @@ export default function CompanyProfile() {
                 credentials: 'include',
             });
         
-            console.log(response);
+            // console.log(response);
             
             if (!response.ok) {
                 throw new Error( "Failed to set company details");
             }
         
             alert("Your Company Details are set successfully.");
-            navigate("/client/document");
+            navigate("/client/profile");
         } catch (error) {
             console.error(error);
             setError(error.message);
@@ -182,12 +242,12 @@ export default function CompanyProfile() {
             </div>
     
             <div className="form-group">
-            <label>Start Date</label>
+            <label>Financial Start Date</label>
             <input type="date" ref={startDateInputRef} />
             </div>
     
             <div className="form-group">
-            <label>End Date</label>
+            <label>Financial End Date</label>
             <input type="date" ref={endDateInputRef} />
             </div>
     
@@ -255,7 +315,7 @@ export default function CompanyProfile() {
             </div>
     
             <button type="submit" className="submit-btn">
-            Submit Company Details
+            {existingProfile ? "Update Company Details" : "Submit Company Details"}
             </button>
         </form>
         </div>
