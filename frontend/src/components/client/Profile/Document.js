@@ -49,7 +49,7 @@ export default function DocumentPage() {
             const formData = new FormData();
             formData.append("document", doc.file);                // File itself
             formData.append("documentType", documentTypeCode);    // numeric code
-            formData.append("comments", doc.comments || "");
+            // formData.append("comments", doc.comments || "");
             formData.append("uploadedAt", new Date().toISOString());
             formData.append("docStatus", docStatusCode);          // numeric status code
 
@@ -125,13 +125,13 @@ export default function DocumentPage() {
                 onChange={(e) => handleChange(index, "file", e.target.files[0])}
             />
     
-            <input
+            {/* <input
                 type="text"
                 className="form-input"
                 placeholder="Comments"
                 value={doc.comments}
                 onChange={(e) => handleChange(index, "comments", e.target.value)}
-            />
+            /> */}
     
             <button
                 type="button"

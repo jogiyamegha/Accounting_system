@@ -21,6 +21,8 @@ import ClientProfilePage from "./components/client/Profile/ClientProfilePage";
 import Layout from "./components/Layout";
 import Signup from "./components/auth/Signup";
 import Login from "./components/auth/Login";
+import DocStatusChange from "./components/admin/client/DocStatusChange";
+import Dashboard from "./components/admin/Dashboard";
 
 function App() {
   return (
@@ -78,6 +80,17 @@ function App() {
 
         {/* -------- Admin Routes ---------- */}
         <Route
+          path="/admin/dashboard"
+          element={
+              <Layout>
+                <ProtectedRoute>
+                    <Dashboard />
+                </ProtectedRoute>
+              </Layout>
+          }
+        />
+
+        <Route
           path="/admin/add-client"
           element={
               <Layout>
@@ -87,6 +100,19 @@ function App() {
               </Layout>
           }
         />
+
+        <Route
+          path="/admin/document"
+          element={
+              <Layout>
+                <ProtectedRoute>
+                    <DocStatusChange />
+                </ProtectedRoute>
+              </Layout>
+          }
+        />
+
+
         <Route
           path="/admin/forgot-password"
           element={

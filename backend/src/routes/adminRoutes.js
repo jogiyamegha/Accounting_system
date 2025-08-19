@@ -55,6 +55,11 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath('/documents')
+.asPOST(DocumentController.getDocumentsForAdmin)
+.useAdminAuth()
+.build()
+
 
 .addPath(`/update-doc-status/:${TableFields.clientId}/:${TableFields.documentId}`)
 .asUPDATE(DocumentController.updateDocumentStatus)

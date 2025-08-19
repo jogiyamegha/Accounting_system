@@ -114,6 +114,29 @@ exports.sendClientInvitationEmail = async (name, emailId, code) => {
   }
 };
 
+
+exports.sendDocStatusMail = async (name, emailId, status, comments) => {
+  const invitationTemplate = fs
+    .readFileSync(
+      path.join(customerViewDirPath, "client", "client-docStatus.hbs")
+    )
+    .toString();
+  let data = {
+    name: name,
+    status: status,
+    comment: comments,
+    email: emailId,
+  };
+
+  // console.log("1",data);
+  const template = Handlebars.compile(invitationTemplate);
+  try {
+    await sendEmail(emailId, GeneralMessages.DocStatus, template(data));
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 async function sendEmail(
   receiverEMail,
   subject,

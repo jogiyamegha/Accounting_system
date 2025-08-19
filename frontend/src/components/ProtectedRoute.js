@@ -250,12 +250,12 @@ export default function ProtectedRoute({
         try {
             const response = await fetch(config.endpoint, {
                 method: "GET",
-                credentials: "include", // ✅ Always send cookies
+                credentials: "include", 
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
-            console.log("object");
+            // console.log("object");
             console.log("response",response);
 
             const data = await response.json();
@@ -263,7 +263,8 @@ export default function ProtectedRoute({
             if (response.ok && data.user) {
                 dispatch(setUser({ user : {
                     ...data.user,
-                    userType: detectedUserType
+                    userType: detectedUserType,
+                    role: data.role || null,
                 }}));
             } else {
                 dispatch(clearUser());
@@ -300,7 +301,7 @@ export default function ProtectedRoute({
         user.role &&
         !allowedRoles.includes(user.role)
     ) {
-        return <Navigate to="/unauthorized" replace />;
+        return <Navigate to="/client/login" replace />;
     }
 
     return children;

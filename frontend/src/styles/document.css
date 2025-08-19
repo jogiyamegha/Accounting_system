@@ -1,95 +1,129 @@
 /* Container */
 .form-container {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-  margin-top: 3rem;
-
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
- 
+
 /* Title */
 .form-title {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-  font-weight: bold;
+  margin-bottom: 1.8rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 0.5px;
 }
- 
+
 /* Error Message */
 .error-message {
-  color: red;
-  font-size: 0.95rem;
-  margin-bottom: 15px;
+  color: #e63946;
+  font-size: 1rem;
+  margin-bottom: 1rem;
   text-align: center;
+  font-weight: 500;
 }
- 
+
 /* Document Card */
 .document-card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-  margin-top: 15px;
+  border: 1px solid #e0e0e0;
+  padding: 1.2rem;
+  border-radius: 10px;
+  margin-top: 1.2rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  background-color: #f9f9f9;
+  gap: 1rem;
+  background: #fafafa;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
- 
+
+.document-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
 /* Form Elements */
 .form-select,
 .form-input {
-  flex: 1 1 200px;
-  padding: 8px;
+  flex: 1 1 250px;
+  padding: 10px 12px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
- 
+
+.form-select:focus,
+.form-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.25);
+}
+
 /* Buttons */
 .btn {
-  padding: 10px 14px;
+  padding: 10px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.95rem;
   cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
- 
+
 .btn-primary {
-  background-color: #007bff;
-  color: white;
+  background: #007bff;
+  color: #fff;
 }
- 
+.btn-primary:hover {
+  background: #0056b3;
+}
+
 .btn-secondary {
-  background-color: #6c757d;
-  color: white;
+  background: #6c757d;
+  color: #fff;
 }
- 
+.btn-secondary:hover {
+  background: #545b62;
+}
+
 .btn-success {
-  background-color: #28a745;
-  color: white;
+  background: #28a745;
+  color: #fff;
 }
- 
+.btn-success:hover {
+  background: #218838;
+}
+
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
- 
+
 /* Final Submit Button */
 .final-submit-btn {
   width: 100%;
-  margin-top: 20px;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px;
 }
- 
+
 /* Responsive Layout */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .document-card {
     flex-direction: column;
+    gap: 0.8rem;
   }
- 
+
   .form-select,
   .form-input,
   .btn {
     width: 100%;
   }
 }
- 
- 

@@ -165,6 +165,7 @@ const ResponseMessages = (function () {
 const GeneralMessages = (function () {
   function GeneralMessages() {}
   GeneralMessages.PendingSubject = "Updates Pending";
+  GeneralMessages.DocStatus = "Document's Update Message";
   GeneralMessages.forgotPasswordEmailSubject = "Reset your password";
   GeneralMessages.signupEmailSucess = "Your Account is Ready!";
   GeneralMessages.changePasswordSucess = "Your new Pasword is set successfully..";

@@ -67,7 +67,7 @@ class DocumentService {
     return updatedDoc;
   };
 
-  static updateDocStatus = async (clientId, documentId, newStatus) => {
+  static updateDocStatus = async (clientId, documentId, newStatus, comment) => {
     if (typeof newStatus === "string") {
       const statusMap = {
         pending: DocStatus.pending,
@@ -95,7 +95,9 @@ class DocumentService {
 
     const updatedDoc = await Document.updateOne(
       { [TableFields.clientId]: clientId },
-      { $set: { "documents.$[elem].documentDetails.docStatus": newStatus } },
+      { $set: { "documents.$[elem].documentDetails.docStatus": newStatus ,
+        "documents.$[elem].documentDetails.comments": comment
+      } },
       { arrayFilters: [{ "elem._id": documentId }] }
     );
 

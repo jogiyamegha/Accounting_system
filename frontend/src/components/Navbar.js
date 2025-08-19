@@ -26,7 +26,7 @@ export default function Navbar() {
         if (res.ok) {
           const data = await res.json();
           if (data.success) {
-            dispatch(setUser({ role: "admin" }));
+            dispatch(setUser({ user: data.user, userType: 1, role: "admin" }));
             return;
           }
         }
@@ -42,7 +42,7 @@ export default function Navbar() {
         if (res.ok) {
           const data = await res.json();
           if (data.success) {
-            dispatch(setUser({ role: "client" }));
+            dispatch(setUser({ user: data.user, userType: 2, role: "client" }));
             return;
           }
         }
@@ -59,15 +59,20 @@ export default function Navbar() {
 
   // 🔹 Logout handler
   const handleLogout = async () => {
+    const endpoint =
+      role === "admin"
+        ? `${ADMIN_END_POINT}/logout`
+        : `${CLIENT_END_POINT}/logout`;
+
     try {
-      const res = await fetch(`http://localhost:8000/${role}/logout`, {
+      const res = await fetch(endpoint, {
         method: "POST",
         credentials: "include",
       });
 
       if (res.ok) {
         dispatch(clearUser());
-        navigate("/"); // redirect after logout
+        navigate("/", { replace: true }); // redirect after logout
       }
     } catch (err) {
       console.error("Logout failed", err);
@@ -97,10 +102,18 @@ export default function Navbar() {
             </>
           )}
 
-          {role && (
+          {role === "client" && (
             <>
               <Link to="/client/profile" className="nav-link">
                 Profile
+              </Link>
+            </>
+          )}
+
+          {role === "admin" && (
+            <>
+              <Link to="/admin/dashboard" className="nav-link">
+                Dashboard
               </Link>
             </>
           )}

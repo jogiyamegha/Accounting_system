@@ -43,7 +43,7 @@ export default function HomePage() {
       {/* Call to Action */}
       <section className="cta">
         <h2>Ready to Simplify Your Accounting?</h2>
-        <a href="/signup" className="btn primary">Sign Up Now</a>
+        <a href="/client/signup" className="btn primary">Sign Up Now</a>
       </section>
 
     </div>

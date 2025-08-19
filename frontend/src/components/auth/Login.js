@@ -47,7 +47,7 @@ function Login() {
             user : data.user,
             role : data.role
         }));
-        navigate(isAdmin ? "/" : "/client/profile");
+        navigate(isAdmin ? "/admin/dashboard" : "/client/profile");
       } else {
         alert("Login failed");
       }

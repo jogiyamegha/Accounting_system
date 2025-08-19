@@ -66,7 +66,7 @@ async function parseAndValidateDocument(reqBody, reqUser, providedFile, onValida
             [TableFields.docStatus]: reqBody[TableFields.docStatus] || DocStatus.pending,
             [TableFields.documentType]: reqBody[TableFields.documentType],
             [TableFields.document]: persistedFileKey,
-            [TableFields.comments]: reqBody[TableFields.comments] || "",
+            // [TableFields.comments]: reqBody[TableFields.comments] || "",
             [TableFields.uploadedAt]: new Date()
         };
 
