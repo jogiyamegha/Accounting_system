@@ -53,12 +53,19 @@ const DocStatus = (function () {
   return DocStatus;
 })();
 
+const DurationType = (function () {
+  function DurationType() {}
+  DurationType.monthly = 1;
+  DurationType.quaterly = 2;
+  return DurationType;
+})();
+
 const ServiceType = (function () {
   function ServiceType() {}
-  ServiceType.VAT = 1;
-  ServiceType.corporateTax = 2;
-  ServiceType.accounting = 3;
-  ServiceType.general = 5;
+  ServiceType.VATServices = 1;
+  ServiceType.CorporateTaxServices = 2;
+  ServiceType.AccountingServices = 3;
+  ServiceType.AuditAndCompliance= 4;
   return ServiceType;
 })();
 
@@ -111,6 +118,7 @@ const ValidationMsg = (function () {
   ValidationMsg.LicenseExpiryEmpty = "LicenseExpiry required!";
   ValidationMsg.ZipcodeEmpty = "zipCode required!";
   ValidationMsg.ServiceTypeEmpty = "ServiceType required";
+  ValidationMsg.DurationTypeEmpty = "DurationType required";
   ValidationMsg.ReceiverIdEmpty = "ReceiverId required";
   ValidationMsg.MessageEmpty = "message required!";
   ValidationMsg.InvalidPassResetCode = "The Password Reset Token is Invalid.";
@@ -149,6 +157,8 @@ const ValidationMsg = (function () {
   ValidationMsg.DocumentTypeRequired = 'DocumentType Required!';
   ValidationMsg.FileUploadFailed = 'FileUpload Failed';
   ValidationMsg.FileRequired = 'File Required';
+  ValidationMsg.DescriptionEmpty = 'Description is Required.';
+  ValidationMsg.AmountEmpty = 'Amount is Required.';
 
   return ValidationMsg;
 })();
@@ -253,17 +263,20 @@ const TableFields = (function () {
   TableFields.notificationType = "notificationType";
   TableFields.serviceType = "serviceType";
   TableFields.targetCompletionDate = "targetCompletionDate";
+  TableFields.targetCompletionDurationInYears = "targetCompletionDurationInYears";
   TableFields.description = "description";
   TableFields.assignedStaff = "assignedStaff";
   TableFields.accountantName = "accountantName";
   TableFields.note = "note";
   TableFields.requestedOn = "requestedOn";
   TableFields.status = "status";
+  TableFields.requestStatus = "requestStatus";
   TableFields.serviceDetails = "serviceDetails";
   TableFields.serviceId = "serviceId";
   TableFields.serviceStartDate = "serviceStartDate";
   TableFields.serviceEndDate = "serviceEndDate";
   TableFields.clients = "clients";
+  TableFields.durationType = "durationType";
   TableFields.startingAmount = "startingAmount";
   TableFields.totalAmount = "totalAmount";
   TableFields.requiredDocumentList = "requiredDocumentList";
@@ -350,4 +363,5 @@ module.exports = {
   DefaultConfigTypes,
   ApiResponseCode,
   ResponseFields,
+  DurationType,
 };

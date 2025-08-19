@@ -4,6 +4,7 @@ const ProfileController = require('../controllers/client/ProfileController');
 const CompanyController = require('../controllers/client/CompanyController');
 const { TableFields } = require("../utils/constants");
 const DocumentController = require('../controllers/client/DocumentController');
+const VATController = require('../controllers/client/VATController')
 const PDFHandler = require('../middlewares/pdfHandler');
 const router = API.configRoute("/client")
 
@@ -79,6 +80,11 @@ const router = API.configRoute("/client")
 .asPOST(DocumentController.addDocument)
 .userMiddlewares(PDFHandler.single([TableFields.document]))
 .useClientAuth()
+.build()
+
+.addPath('/request-service')
+.asPOST(VATController.addVatService)
+// .useClientAuth()
 .build()
 
 .getRouter()
