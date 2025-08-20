@@ -51,6 +51,17 @@ const router = API.configRoute("/admin")
 .asPOST(AuthController.changePassword)
 .build()
 
+/**
+ * 
+ * Client-Management Routes
+ * 
+ */
+
+.addPath('/client-management')
+.asPOST(ClientController.getAllClients)
+// .useAdminAuth()
+.build()
+
 .addPath('/add-client')
 .asPOST(ClientController.addClient)
 .useAdminAuth()

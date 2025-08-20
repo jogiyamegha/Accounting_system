@@ -74,6 +74,18 @@ exports.addClient = async (req) => {
 
 }
 
+exports.getAllClients = async (req) => {
+  // nalytics code here
+  return await ClientService.listClients({
+    ...req.query,
+  })
+    .withBasicInfo()
+    .execute();
+};
+
+
+
+
 async function parseAndValidateClient(
     reqBody,
     onValidationCompleted = async (updatedFields) => {}

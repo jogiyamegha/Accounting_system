@@ -12,7 +12,7 @@ export default function Sidebar() {
             <a href="/dashboard">📊 Dashboard</a>
           </li>
           <li>
-            <a href="/clients">👥 Client Management</a>
+            <a href="/admin/client-managemant">👥 Client Management</a>
           </li>
           <li>
             <a href="/calendar">📅 Calendar Management</a>
