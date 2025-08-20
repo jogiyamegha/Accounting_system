@@ -175,7 +175,9 @@ function App() {
           path="/client/profile"
           element={
             <Layout>
-              <ClientProfilePage />
+              <ProtectedRoute >
+                <ClientProfilePage />
+              </ProtectedRoute>
             </Layout>
           }
         />

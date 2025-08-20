@@ -93,3 +93,6 @@ const ProjectionBuilder = class {
     };
   }
 };
+
+
+module.exports = CalenderEventService;
