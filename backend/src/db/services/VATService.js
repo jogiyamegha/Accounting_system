@@ -2,6 +2,7 @@ const { TableFields, ValidationMsg } = require("../../utils/constants");
 const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
 const VATservice = require("../models/VATservice");
+const { MongoUtil } = require("../mongoose");
 
 class VATService {
   static findById = (id) => {
@@ -16,12 +17,12 @@ class VATService {
   };
 
   static getVatServiceByClientId = (clientId) => {
+    // console.log(clientId);
     return new ProjectionBuilder(async function () {
       return await VATservice.findOne(
         {
-          [TableFields.clientDetail]: {
-            [TableFields.clientId]: clientId,
-          },
+          [`${TableFields.clientDetails}.${TableFields.clientId}`]:
+            MongoUtil.toObjectId(clientId),
         },
         this
       );
@@ -53,9 +54,9 @@ const ProjectionBuilder = class {
     const projection = {};
     this.withBasicInfo = () => {
       projection[TableFields.ID] = 1;
-      projection[TableFields.clients] = 1;
+      projection[TableFields.clientDetails] = 1;
       projection[TableFields.serviceDetails] = 1;
-      projection[TableFields.requiredDocumentList] = 1;
+      // projection[TableFields.requiredDocumentList] = 1;
       return this;
     };
 
@@ -79,6 +80,5 @@ const ProjectionBuilder = class {
     };
   }
 };
-
 
 module.exports = VATService;

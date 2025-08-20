@@ -3,6 +3,7 @@ const AuthController = require('../controllers/admin/AuthController');
 const ClientController = require('../controllers/admin/ClientController');
 const DocumentController = require('../controllers/admin/DocumentController')
 const ServiceController = require('../controllers/admin/ServiceController');
+const VATController = require('../controllers/admin/VATController')
 const { TableFields } = require("../utils/constants");
 
 
@@ -72,6 +73,10 @@ const router = API.configRoute("/admin")
 .asPOST(ServiceController.addService)
 // .useAdminAuth()
 .build()
+
+// .addPath('/approve-vat-request')
+// .asPOST(VATController.approveVATRequest)
+// .build()
 
 
 
