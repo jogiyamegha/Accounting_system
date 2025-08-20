@@ -28,7 +28,6 @@ const clientSchema = new Schema(
             type: String,
             minlength: 8,
             trim: true,
-            required: [true, ValidationMsg.PasswordEmpty],
         },
         [TableFields.contact]: {
             [TableFields.phoneCountry] : {

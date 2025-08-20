@@ -1,58 +1,88 @@
+
+
 import { useRef } from "react";
+
 import { useDispatch } from "react-redux";
+
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { setUser } from "../../redux/features/userSlice";
-import { CLIENT_END_POINT } from "../../utils/constants";
+
+import { setUser, setError } from "../../redux/features/userSlice"; // ✅ also import setError
+
+import { ADMIN_END_POINT, CLIENT_END_POINT } from "../../utils/constants"; // ✅ use ADMIN_END_POINT
+
 import "../../styles/login.css";
 
 function Login() {
   const emailInputRef = useRef();
+
   const passwordInputRef = useRef();
+
   const dispatch = useDispatch();
+
   const navigate = useNavigate();
+
   const location = useLocation();
 
-  // check from route whether it's admin or client login
+  // ✅ Detect whether current route is admin login or client login
+
   const isAdmin = location.pathname.includes("admin");
 
   async function submitHandler(event) {
     event.preventDefault();
-    const enteredEmail = emailInputRef.current.value;
+    const enteredEmail = emailInputRef.current.value.trim();
+
     const enteredPassword = passwordInputRef.current.value;
 
-    const authData = {
-      email: enteredEmail,
-      password: enteredPassword,
-    };
+    const authData = { email: enteredEmail, password: enteredPassword };
 
     try {
       const endpoint = isAdmin
-        ? "http://localhost:8000/admin/login"
+        ? `${ADMIN_END_POINT}/login` // ✅ use constant
         : `${CLIENT_END_POINT}/login`;
 
+      console.log(endpoint);
       const res = await fetch(endpoint, {
         method: "POST",
+
         body: JSON.stringify(authData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
+
+        headers: { "Content-Type": "application/json" },
+
+        credentials: "include", // ✅ for cookies
       });
 
       const data = await res.json();
-    //   console.log("DATA",data)
 
-      if (res.ok) {
-        dispatch(setUser({
-            user : data.user,
-            role : data.role
-        }));
-        navigate(isAdmin ? "/" : "/client/profile");
+      if (res.ok && data.user) {
+        // ✅ keep consistent with refactored userSlice
+
+        dispatch(
+          setUser({
+            user: data.user,
+
+            role: isAdmin ? "admin" : "client",
+
+            userType: isAdmin ? "admin" : "client",
+
+            token: data.token || null, // ✅ optional if backend returns JWT
+          })
+        );
+
+        // ✅ redirect to proper page
+
+        navigate(isAdmin ? "/admin/dashboard" : "/client/profile", {
+          replace: true,
+        });
       } else {
-        alert("Login failed");
+        dispatch(setError(data.message || "Login failed"));
+
+        alert(data.message || "Login failed");
       }
     } catch (error) {
       console.error("Login error:", error);
+
+      dispatch(setError("Something went wrong. Please try again."));
+
       alert("Something went wrong. Please try again.");
     }
   }
@@ -68,7 +98,12 @@ function Login() {
 
         <div className="form-group">
           <label htmlFor="password">Password</label>
-          <input type="password" id="password" ref={passwordInputRef} required />
+          <input
+            type="password"
+            id="password"
+            ref={passwordInputRef}
+            required
+          />
         </div>
 
         <button type="submit" className="login-button">

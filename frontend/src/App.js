@@ -185,7 +185,9 @@ function App() {
           path="/client/client-profile"
           element={
             <Layout>
-              <ProfileUpdate />
+              <ProtectedRoute>
+                <ProfileUpdate />
+              </ProtectedRoute>
             </Layout>
           }
         />
@@ -193,7 +195,10 @@ function App() {
           path="/client/company-profile"
           element={
             <Layout>
-              <CompanyProfile />
+              <ProtectedRoute>
+
+                <CompanyProfile />
+              </ProtectedRoute>
             </Layout>
           }
         />
@@ -201,7 +206,11 @@ function App() {
           path="/client/document"
           element={
             <Layout>
+
+              <ProtectedRoute>
+
               <DocumentPage />
+              </ProtectedRoute>
             </Layout>
           }
         />

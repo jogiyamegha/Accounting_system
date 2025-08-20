@@ -141,7 +141,7 @@ export default function CompanyProfile() {
             }
         
             alert("Your Company Details are set successfully.");
-            navigate("/client/profile");
+            navigate("/client/document");
         } catch (error) {
             console.error(error);
             setError(error.message);

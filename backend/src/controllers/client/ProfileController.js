@@ -22,12 +22,13 @@ exports.setClientProfile = async (req) => {
 
 exports.getFullClientProfile = async (req) => {
   let reqUser = req.user;
+  console.log("reqUseri backefcgvhbjn", reqUser);
 
   let client = await ClientService.getUserById(reqUser[TableFields.ID])
     .withBasicInfo()
     .execute();
 
-    // console.log(client)
+    console.log(client)
   if (!client) throw new ValidationError(ValidationMsg.RecordNotFound);
 
   let companyId = client[TableFields.companyId];

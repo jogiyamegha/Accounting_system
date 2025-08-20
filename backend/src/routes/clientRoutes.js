@@ -14,7 +14,7 @@ const router = API.configRoute("/client")
  * 
  */
 
-.addPath('/')
+.addPath('/client')
 .asGET((req, res) => {
     res.json({
         success: true,

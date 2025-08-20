@@ -5,8 +5,7 @@ export default function AddClient() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        password: "",
-        // companyName: "",
+        // password: "",
     });
     
     const [loading, setLoading] = useState(false);
@@ -63,22 +62,6 @@ export default function AddClient() {
                 onChange={handleChange}
                 required
             />
-            <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-            />
-            {/* <input
-                type="text"
-                name="companyName"
-                placeholder="Company Name"
-                value={formData.companyName}
-                onChange={handleChange}
-                required
-            /> */}
             <button type="submit" disabled={loading}>
                 {loading ? "Adding..." : "Add Client"}
             </button>{" "}

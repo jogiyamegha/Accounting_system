@@ -21,10 +21,12 @@ export default function ClientProfilePage() {
           credentials: "include", // send cookies
         });
 
-        // if (!res.ok) throw new Error("Failed to fetch profile");
 
+        if (!res.ok) throw new Error("Failed to fetch profile");
+
+        console.log("response",res);
         const data = await res.json();
-        // console.log("data",res)
+        console.log("data",res)
 
         setProfile(data);
       } catch (err) {
@@ -38,7 +40,10 @@ export default function ClientProfilePage() {
   }, []);
 
   if (loading) return <p>Loading profile...</p>;
-  if (!profile) return null; // navigation already handled
+  if (!profile) {
+    navigate('/client/client-profile')
+    return null; // navigation already handled
+  }
 
   return (
     <div className="profile-container">
@@ -61,7 +66,7 @@ export default function ClientProfilePage() {
         <i
           className="fa-solid fa-pen"
           
-          onClick={() => navigate("/client/client-profile")}
+          onClick={() => navigate("/client/profile")}
           title="Edit Personal Information"
         ></i>
       </section>

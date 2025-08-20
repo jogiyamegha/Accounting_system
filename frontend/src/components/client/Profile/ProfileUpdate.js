@@ -47,7 +47,7 @@ export default function ProfileUpdate() {
             }
 
             alert("Your Profile is set Successfully..");
-            navigate("/client/profile");
+            navigate("/client/company-profile");
         } catch (error) {
             console.error(error);
             setError(error.message);
