@@ -1,16 +1,42 @@
-import { Link } from "react-router-dom";
 import "../styles/sidebar.css";
 
 export default function Sidebar() {
   return (
     <aside className="sidebar">
-      <div className="sidebar-title">Admin Panel</div>
-      <ul className="sidebar-menu">
-        <li><Link to="/admin/dashboard">Dashboard</Link></li>
-        <li><Link to="/admin/clients">Clients</Link></li>
-        <li><Link to="/admin/documents">Documents</Link></li>
-        <li><Link to="/admin/settings">Settings</Link></li>
-      </ul>
+      <div className="sidebar-header">
+        <h2>Admin Panel</h2>
+      </div>
+      <nav className="sidebar-nav">
+        <ul>
+          <li>
+            <a href="/dashboard">📊 Dashboard</a>
+          </li>
+          <li>
+            <a href="/clients">👥 Client Management</a>
+          </li>
+          <li>
+            <a href="/calendar">📅 Calendar Management</a>
+          </li>
+          <li>
+            <a href="/documents">📂 Document Management</a>
+          </li>
+          <li>
+            <a href="/services">🛠 Service Management</a>
+          </li>
+          <li>
+            <a href="/reports">📈 Reports & Insights</a>
+          </li>
+          <li>
+            <a href="/notifications">🔔 Notifications Management</a>
+          </li>
+          <li>
+            <a href="/cms">📝 CMS Management</a>
+          </li>
+          <li className="logout">
+            <a href="/logout">🚪 Logout</a>
+          </li>
+        </ul>
+      </nav>
     </aside>
   );
 }
