@@ -75,6 +75,7 @@ exports.addClient = async (req) => {
 }
 
 exports.getAllClients = async (req) => {
+    console.log("object");
   // nalytics code here
   return await ClientService.listClients({
     ...req.query,

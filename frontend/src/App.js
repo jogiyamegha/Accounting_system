@@ -20,6 +20,7 @@ import Signup from "./components/auth/Signup";
 import Login from "./components/auth/Login";
 import DocStatusChange from "./components/admin/client/DocStatusChange";
 import Dashboard from "./components/admin/Dashboard";
+import ClientManagement from "./components/admin/client/ClientManagement";
 
 function App() {
   return (
@@ -91,6 +92,17 @@ function App() {
               <Layout>
                 <ProtectedRoute>
                     <AddClient />
+                </ProtectedRoute>
+              </Layout>
+          }
+        />
+
+        <Route
+          path="/admin/client-management"
+          element={
+              <Layout>
+                <ProtectedRoute>
+                    <ClientManagement />
                 </ProtectedRoute>
               </Layout>
           }
