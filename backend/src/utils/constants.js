@@ -159,6 +159,7 @@ const ValidationMsg = (function () {
   ValidationMsg.FileRequired = 'File Required';
   ValidationMsg.DescriptionEmpty = 'Description is Required.';
   ValidationMsg.AmountEmpty = 'Amount is Required.';
+  ValidationMsg.PositionEmpty = 'position required';
 
   return ValidationMsg;
 })();
@@ -282,7 +283,8 @@ const TableFields = (function () {
   TableFields.requiredDocumentList = "requiredDocumentList";
   TableFields.value = "value";
   TableFields.authType = 'authType';
-  TableFields.passwordResetTokenExpiresAt = 'passwordResetTokenExpiresAt'
+  TableFields.passwordResetTokenExpiresAt = 'passwordResetTokenExpiresAt';
+  TableFields.position ="position";
 
   return TableFields;
 })();

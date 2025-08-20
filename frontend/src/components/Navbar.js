@@ -7,24 +7,26 @@ import { clearUser } from "../redux/features/userSlice";
 import { ADMIN_END_POINT, CLIENT_END_POINT } from "../utils/constants";
  
 export default function Navbar() {
-  console.log("heereee");
+  console.log("navigation");
   const { role, user } = useSelector((state) => state.user);
   console.log(role, user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleLogout = async () => {
+    console.log("object Object");
     const endpoint =
       role === "admin"
         ? `${ADMIN_END_POINT}/logout`
         : `${CLIENT_END_POINT}/logout`;
-    
+
+    console.log("endpoint", endpoint);
     try {
       const res = await fetch(endpoint, {
         method: "POST",
-        credentials: "include", 
+        credentials: "include",
       });
-      dispatch(clearUser()); 
-      console.log("res in nav",res);
+      dispatch(clearUser());
+      console.log("res in nav", res);
 
       if (res.ok) {
         console.log("Logout success");
@@ -32,58 +34,56 @@ export default function Navbar() {
         console.warn("Backend logout failed, but local state cleared");
       }
       navigate("/", { replace: true });
-
     } catch (err) {
       console.error("Logout error", err);
 
       dispatch(clearUser());
-
-      // localStorage.removeItem("user");
-
       navigate("/", { replace: true });
-
     }
-
   };
- 
+
+  console.log(role);
   return (
-<nav className="navbar">
-<div className="navbar-container">
-<h2 className="navbar-logo">Logo</h2>
-<div className="navbar-links">
-<Link to="/" className="nav-link">Home</Link>
- 
+    <nav className="navbar">
+      <div className="navbar-container">
+        <h2 className="navbar-logo">Logo</h2>
+        <div className="navbar-links">
+          <Link to="/" className="nav-link">
+            Home
+          </Link>
+
           {!role && (
-<>
-<Link to="/admin/signup" className="nav-link">Register</Link>
-<Link to="/admin/login" className="nav-link">Login</Link>
-</>
-
+            <>
+              <Link to="/admin/signup" className="nav-link">
+                Register
+              </Link>
+              <Link to="/admin/login" className="nav-link">
+                Login
+              </Link>
+            </>
           )}
- 
+
           {role === "client" && (
-<Link to="/client/profile" className="nav-link">Profile</Link>
-
+            <Link to="/client/profile" className="nav-link">
+              Profile
+            </Link>
           )}
- 
+
           {role === "admin" && (
-<Link to="/admin/dashboard" className="nav-link">Dashboard</Link>
-
+            <Link to="/admin/dashboard" className="nav-link">
+              Dashboard
+            </Link>
           )}
- 
+
           {role && (
-<button onClick={handleLogout} className="nav-link button">
-
+            <button onClick={handleLogout} className="nav-link button">
               Logout
-</button>
-
+            </button>
           )}
-</div>
-</div>
-</nav>
-
+        </div>
+      </div>
+    </nav>
   );
-
 }
 
  

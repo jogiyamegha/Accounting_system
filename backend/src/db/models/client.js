@@ -46,6 +46,11 @@ const clientSchema = new Schema(
                 }                
             },
         },
+        [TableFields.position] : {
+            type : String,
+            trim : true,
+            required:[true, ValidationMsg.PositionEmpty]
+        },
         [TableFields.companyId]: {
             type: mongoose.Schema.Types.ObjectId,
             trim: true,

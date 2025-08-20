@@ -20,7 +20,6 @@ exports.getDocumentsForAdmin = async (req) => {
 
 }
 
-
 exports.updateDocumentStatus = async (req) => {
     const clientId = req.params.clientId;
     const documentId = req.params.documentId;
@@ -35,7 +34,27 @@ exports.updateDocumentStatus = async (req) => {
 
     Email.sendDocStatusMail(user[TableFields.name_], user[TableFields.email], docStatus, comment )
     return updatedDoc;
+}
 
-    
+exports.addClientDocument = async (req) => {
+    const reqBody = req.body;
+    const reqUser = req.user;
+    const document = req.file;
+    const clientId = reqUser[TableFields.ID];
 
+    const existsWithClientId = await DocumentService.existsWithClient(clientId);
+
+    const result = await parseAndValidateDocument(
+        reqBody,
+        reqUser,
+        document,
+        async function (updatedFields) {
+            if (!existsWithClientId) {
+                return await DocumentService.insertRecord(updatedFields);
+            } else {
+                return await DocumentService.upsertDocumentForClient(clientId, updatedFields);
+            }
+        }
+    );
+    return result;
 }

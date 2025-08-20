@@ -1,8 +1,6 @@
 import "./App.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Routes, Route } from "react-router-dom";
-// import CheckUser from "./components/admin/auth/CheckUser";
-// import AdminSignup from "./components/admin/auth/AdminSignup";
 import AddClient from "./components/admin/client/AddClient";
 import HomePage from "./components/layout/HomePage";
 import PublicRoute from "./components/PublicRoute";
@@ -10,7 +8,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminForgotPassword from "./components/admin/auth/AdminForgotPassword";
 import AdminChangePassword from "./components/admin/auth/AdminChangePassword";
 import AdminVerifyOtp from "./components/admin/auth/AdminVerifyOtp";
-// import ClientSignup from "./components/client/Auth/ClientSignup";
 import ClientChangePassword from "./components/client/Auth/ClientChangePassword";
 import ClientForgotPassword from "./components/client/Auth/ClientForgotPassword";
 import ClientVerifyOtp from "./components/client/Auth/ClientVerifyOtp";
@@ -27,8 +24,6 @@ import Dashboard from "./components/admin/Dashboard";
 function App() {
   return (
     <>
-      {/* Navbar will be visible everywhere */}
-
       <Routes>
         {/* -------- Public Routes ---------- */}
         <Route
