@@ -377,3 +377,23 @@ function isFieldEmpty(existingField) {
     }
     return true;
 }
+
+
+exports.getClientDetails = async (req, res) => {
+    console.log("in backend");
+    const clientId = req.params[TableFields.clientId];
+    console.log(clientId);
+ 
+    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+    const associatedCompanyId = client[TableFields.companyId];
+    const associatedCompany = await CompanyService.getCompanyById(associatedCompanyId).withBasicInfo().execute();
+    console.log(associatedCompany);
+ 
+    const document = await DocumentService.getDocsByClientId(clientId).withBasicInfo().execute();
+    console.log(document);
+    return res.json({
+        client,
+        company: associatedCompany,
+        document,
+    });
+}

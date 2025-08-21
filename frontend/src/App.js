@@ -21,6 +21,11 @@ import Login from "./components/auth/Login";
 import DocStatusChange from "./components/admin/client/DocStatusChange";
 import Dashboard from "./components/admin/Dashboard";
 import ClientManagement from "./components/admin/client/ClientManagement";
+import ClientDetail from "./components/admin/client/ClientDetail";
+ 
+ 
+
+
 
 function App() {
   return (
@@ -106,6 +111,17 @@ function App() {
                 </ProtectedRoute>
               </Layout>
           }
+        />
+
+        <Route
+          path="/admin/client-detail/:clientId"
+            element={
+              <Layout>
+                <ProtectedRoute>
+                  <ClientDetail />
+                </ProtectedRoute>
+              </Layout>
+            }
         />
 
         <Route

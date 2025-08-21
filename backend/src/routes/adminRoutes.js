@@ -68,6 +68,11 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/client-detail/:${TableFields.clientId}`)
+.asGET(ClientController.getClientDetails)
+.useAdminAuth()
+.build()
+
 .addPath('/documents')
 .asPOST(DocumentController.getDocumentsForAdmin)
 .useAdminAuth()

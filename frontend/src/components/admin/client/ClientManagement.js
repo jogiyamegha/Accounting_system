@@ -69,9 +69,11 @@ export default function ClientManagement() {
     navigate("/admin/add-client");
   };
 
-  const handleView = (id) => {
-    navigate(`/admin/client/${id}`);
+   const handleView = (clientId) => {
+    console.log(" clientId in ClientManagen=ment");
+    navigate(`/admin/client-detail/${clientId}`);
   };
+ 
 
   const handleEdit = (id) => {
     navigate(`/admin/client/edit/${id}`);

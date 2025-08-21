@@ -48,3 +48,14 @@ export function formDataToJSON(formData) {
   }
   return obj;
 }
+
+export const documentType = {
+  1: "VATcertificate",
+  2: "CorporateTaxDocument",
+  3: "BankStatement",
+  4: "Invoice",
+  5: "auditFiles",
+  6: "TradeLicense",
+  7: "passport",
+  8: "Other"
+}
