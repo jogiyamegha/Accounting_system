@@ -8,6 +8,7 @@ const {
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
+const { MongoUtil } = require('../../db/mongoose');
 
 class CompanyService {
   static findByEmail = (email) => {

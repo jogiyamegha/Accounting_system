@@ -20,10 +20,8 @@ const {
 
 exports.addClient = async (req) => {
   const reqBody = req.body;
-  console.log("reqBody", reqBody);
   const reqUser = req.user;
   const files = req.files || [];
-  console.log("files", files);
   const email = reqBody[TableFields.email];
   if (!email) {
     throw new ValidationError(ValidationMsg.EmailEmpty);
@@ -76,15 +74,12 @@ exports.addClient = async (req) => {
 
   const existsWithClientId = await DocumentService.existsWithClient(clientId);
 
-  //   console.log(company);
-
   const result = await parseAndValidateDocuments(
     reqBody,
     clientId,
     files,
     async function (payload) {
       // payload = { clientId, documents: [{ documentDetails }, ...] }
-      console.log("payload", payload);
       if (!existsWithClientId) {
         return await DocumentService.insertRecord(payload);
       } else {
@@ -118,7 +113,7 @@ exports.deleteClient = async (req) => {
     }
  
     const companyId = client[TableFields.companyId];
-    const company = await CompanyService.companyExists(companyId).withBasicInfo().execute();
+    const company = await CompanyService.companyExists(companyId);
     if(!company) {
         throw new ValidationError(ValidationMsg.CompanyNotExists)
     }
@@ -126,7 +121,6 @@ exports.deleteClient = async (req) => {
  
 
 exports.getAllClients = async (req) => {
-  console.log("object");
   // nalytics code here
   return await ClientService.listClients({
     ...req.query,
@@ -292,8 +286,6 @@ async function parseAndValidateDocuments(
     }
   }
 
-  console.log("docs", docs);
-
   const payload = {
     [TableFields.clientId]: clientId,
     [TableFields.documents]: docs,
@@ -310,9 +302,7 @@ function isFieldEmpty(existingField) {
 }
 
 exports.getClientDetails = async (req, res) => {
-  console.log("in backend");
   const clientId = req.params[TableFields.clientId];
-  console.log(clientId);
 
   const client = await ClientService.getUserById(clientId)
     .withBasicInfo()
@@ -323,12 +313,10 @@ exports.getClientDetails = async (req, res) => {
   )
     .withBasicInfo()
     .execute();
-  console.log(associatedCompany);
 
   const document = await DocumentService.getDocsByClientId(clientId)
     .withBasicInfo()
     .execute();
-  console.log(document);
   return res.json({
     client,
     company: associatedCompany,

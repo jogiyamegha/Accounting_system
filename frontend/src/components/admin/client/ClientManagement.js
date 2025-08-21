@@ -79,10 +79,10 @@ export default function ClientManagement() {
     navigate(`/admin/client/edit/${id}`);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (clientId) => {
     if (window.confirm("Are you sure you want to delete this client?")) {
       try {
-        await fetch(`/api/clients/${id}`, { method: "DELETE" });
+        await fetch(`${ADMIN_END_POINT}/delete-client/${clientId}`, { method: "DELETE" });
 
         fetchClients(); // refresh list
       } catch (error) {

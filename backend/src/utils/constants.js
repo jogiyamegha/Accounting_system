@@ -288,6 +288,7 @@ const TableFields = (function () {
   TableFields.authType = "authType";
   TableFields.passwordResetTokenExpiresAt = "passwordResetTokenExpiresAt";
   TableFields.position = "position";
+  TableFields.deleted = 'deleted';
 
   return TableFields;
 })();

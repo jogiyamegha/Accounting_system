@@ -75,7 +75,7 @@ const router = API.configRoute("/admin")
  
 .addPath(`/delete-client/:${TableFields.clientId}`)
 .asDELETE(ClientController.deleteClient)
-.useAdminAuth()
+// .useAdminAuth()
 .build()
 
 

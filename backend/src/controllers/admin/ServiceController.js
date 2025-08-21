@@ -14,10 +14,8 @@ exports.addService = async (req) => {
   const type = reqBody[TableFields.serviceType];
 
   let existingService = await ServiceService.existsWithType(type);
-  //   console.log(existinfService)
 
   if (existingService) {
-    console.log("under if");
     let result = await parseAndValidateService(
       reqBody,
       existingService,
