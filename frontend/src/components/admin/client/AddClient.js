@@ -54,8 +54,28 @@ export default function AddClient() {
   const handleClientChange = (e) =>
     setClient({ ...client, [e.target.name]: e.target.value });
 
-  const handleCompanyChange = (e) =>
-    setCompany({ ...company, [e.target.name]: e.target.value });
+  // const handleCompanyChange = (e) =>
+  //   setCompany({ ...company, [e.target.name]: e.target.value });
+
+  const handleCompanyChange = (e) => {
+    const { name, value } = e.target;
+
+    setCompany((prev) => {
+      const updated = { ...prev, [name]: value };
+
+      // Validate license expiry against issue date
+      if (
+        name === "licenseExpiry" &&
+        updated.licenseIssueDate &&
+        value < updated.licenseIssueDate
+      ) {
+        alert("License expiry date cannot be earlier than issue date!");
+        return prev; // prevent invalid update
+      }
+
+      return updated;
+    });
+  };
 
   const handleAddDocument = () =>
     setDocuments((prev) => [...prev, { documentType: "", file: null }]);
@@ -287,7 +307,7 @@ export default function AddClient() {
             onChange={handleCompanyChange}
             required
           />
-          <label>licenseIssueDate</label>
+          <label>License Issue Date :</label>
           <input
             type="date"
             name="licenseIssueDate"
@@ -310,13 +330,18 @@ export default function AddClient() {
             <option value="Non-Profit">Non-Profit</option>
           </select>
 
-          <label>licenseIssueDate</label>
+          <label>License Expiry Date :</label>
           <input
             type="date"
             name="licenseExpiry"
             value={company.licenseExpiry}
             onChange={handleCompanyChange}
             required
+            min={
+              company.licenseIssueDate
+                ? company.licenseIssueDate
+                : new Date().toISOString().split("T")[0]
+            }
           />
           <input
             type="text"

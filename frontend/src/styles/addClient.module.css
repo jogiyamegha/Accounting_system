@@ -1,20 +1,15 @@
 /* Container for the page */
 
 .addClientContainer {
-
   padding: 20px;
   background-color: #f5f6fa;
   min-height: 100vh;
   margin-left: 240px; /* assuming sidebar width */
-
 }
- 
 
 /* Page title */
 
-
 .addClientContainer h2 {
-
   font-size: 28px;
 
   font-weight: 600;
@@ -22,28 +17,22 @@
   margin-bottom: 20px;
 
   color: #2f3640;
-
 }
- 
+
 /* Form container - cards arranged horizontally */
 
 .addClientContainer.addClientForm {
-
   width: 90%;
   display: flex;
 
   gap: 20px;
 
-  flex-wrap: wrap; 
-  
-  
-
+  flex-wrap: wrap;
 }
- 
+
 /* Card sections */
 
 .cardSection {
-
   background-color: #ffffff;
 
   padding: 20px;
@@ -61,13 +50,11 @@
   grid-template-columns: repeat(3, 1fr); /* 3 fields per row */
 
   gap: 15px;
-
 }
- 
+
 /* Make section titles span full width */
 
 .cardSection h3 {
-
   grid-column: 1 / -1;
 
   font-size: 20px;
@@ -77,13 +64,17 @@
   color: #2f3640;
 
   margin-bottom: 10px;
-
 }
- 
+
+
+.cardSection label {
+  font-weight: 400;
+  margin-top: 8px;
+  margin-left: 4px;
+}
 /* Inputs and selects full width inside grid cells */
 
-.cardSection  input {
-
+.cardSection input {
   padding: 10px 12px;
 
   border: 1px solid #dcdde1;
@@ -95,11 +86,9 @@
   width: 85%;
 
   transition: border-color 0.2s;
-
 }
 
-.cardSection  select {
-
+.cardSection select {
   width: 92%;
   padding: 10px 12px;
 
@@ -109,27 +98,21 @@
 
   font-size: 14px;
 
-
   transition: border-color 0.2s;
-
 }
- 
+
 .cardSection input:focus,
-
 .cardSection select:focus {
-
   outline: none;
 
   border-color: #487eb0;
 
   box-shadow: 0 0 5px rgba(72, 126, 176, 0.3);
-
 }
- 
+
 /* Buttons inside card span full width */
 
 .cardSection button {
-
   grid-column: 1 / -1;
 
   background-color: #487eb0;
@@ -147,27 +130,21 @@
   cursor: pointer;
 
   transition: background-color 0.2s;
-
 }
- 
+
 .cardSection button:hover {
-
   background-color: #40739e;
-
 }
- 
-.cardSection button:disabled {
 
+.cardSection button:disabled {
   background-color: #a4b0be;
 
   cursor: not-allowed;
-
 }
- 
+
 /* Document block */
 
 .documentBlock {
-
   display: flex;
 
   gap: 10px;
@@ -177,39 +154,29 @@
   margin-bottom: 10px;
 
   grid-column: 1 / -1; /* spans full width */
-
 }
- 
+
 .documentBlock select {
-
   flex: 1;
-
 }
- 
+
 .documentBlock input[type="file"] {
-
   flex: 2;
-
 }
- 
+
 /* Add Document button */
 
 .btnAddDocument {
-
   background-color: #00a8ff;
-
 }
- 
+
 .btnAddDocument:hover {
-
   background-color: #0097e6;
-
 }
- 
+
 /* Error message */
 
 .errorMessage {
-
   color: #e84118;
 
   font-size: 14px;
@@ -217,39 +184,26 @@
   font-weight: 500;
 
   margin-bottom: 10px;
-
 }
- 
+
 /* Responsive: below 1024px - 2 fields per row */
 
 @media (max-width: 1024px) {
-
   .card-section {
-
     grid-template-columns: repeat(2, 1fr);
-
   }
-
 }
- 
+
 /* Responsive: below 768px - 1 field per row */
 
 @media (max-width: 768px) {
-
   .add-client-container {
-
     margin-left: 0;
 
     padding: 15px;
-
   }
- 
+
   .card-section {
-
     grid-template-columns: 1fr;
-
   }
-
 }
-
- 

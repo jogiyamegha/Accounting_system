@@ -9,6 +9,16 @@ import {
 import "../../../styles/clientDetail.css";
 import Sidebar from "../../Sidebar";
 
+
+function formatDateToDDMMYYYY(dateString) {
+  if (!dateString) return ""; // handle null or undefined
+  const date = new Date(dateString);
+  const day = ("0" + date.getDate()).slice(-2);
+  const month = ("0" + (date.getMonth() + 1)).slice(-2);
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
 export default function ClientDetail() {
   const { clientId } = useParams();
   const [data, setData] = useState(null);
@@ -104,15 +114,15 @@ export default function ClientDetail() {
               </p>
               <p>
                 <strong>Issue Date:</strong>{" "}
-                {new Date(
+                {formatDateToDDMMYYYY(
                   company.licenseDetails.licenseIssueDate
-                ).toLocaleDateString()}
+                )}
               </p>
               <p>
                 <strong>Expiry Date:</strong>{" "}
-                {new Date(
+                {formatDateToDDMMYYYY(
                   company.licenseDetails.licenseExpiry
-                ).toLocaleDateString()}
+                )}
               </p>
             </>
           )}
@@ -170,7 +180,7 @@ export default function ClientDetail() {
                 </p>
                 <p>
                   <strong>Uploaded:</strong>{" "}
-                  {new Date(doc.documentDetails.uploadedAt).toLocaleString()}
+                  {formatDateToDDMMYYYY(doc.documentDetails.uploadedAt)}
                 </p>
                 <p>
                   <a

@@ -67,9 +67,9 @@ button {
 button:hover {
   background: var(--primary-hover);
   transform: translateY(-1px);
-}
+} */
 
-button:active {
+/* button:active {
   transform: translateY(0);
 }
 
