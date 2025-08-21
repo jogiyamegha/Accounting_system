@@ -38,10 +38,7 @@ app.use('/static_files', express.static(path.join(__dirname, '../static_files'))
 app.get("/admin/files/:filename", (req, res) => {
     const filename = req.params.filename;
     const filePath = path.join(__dirname, "../uploads/document", filename);
- 
-    console.log("Requested file:", filename);
-    console.log("Resolved path:", filePath);
- 
+
     if (fs.existsSync(filePath)) {
         res.setHeader("Content-Type", "application/pdf");
         res.sendFile(path.resolve(filePath));
@@ -49,6 +46,7 @@ app.get("/admin/files/:filename", (req, res) => {
         res.status(404).json({ error: "File not found" });
     }
 });
+
  
 
 app.get('/', (req, res) => {
