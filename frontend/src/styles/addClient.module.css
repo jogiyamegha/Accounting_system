@@ -1,11 +1,11 @@
 /* Container for the page */
 
-.add-client-container {
+.addClientContainer {
 
   padding: 20px;
   background-color: #f5f6fa;
   min-height: 100vh;
-  margin-left: 250px; /* assuming sidebar width */
+  margin-left: 240px; /* assuming sidebar width */
 
 }
  
@@ -13,7 +13,7 @@
 /* Page title */
 
 
-.add-client-container h2 {
+.addClientContainer h2 {
 
   font-size: 28px;
 
@@ -27,19 +27,22 @@
  
 /* Form container - cards arranged horizontally */
 
-.add-client-form {
+.addClientContainer.addClientForm {
 
+  width: 90%;
   display: flex;
 
   gap: 20px;
 
-  flex-wrap: wrap; /* allows cards to wrap on smaller screens */
+  flex-wrap: wrap; 
+  
+  
 
 }
  
 /* Card sections */
 
-.card-section {
+.cardSection {
 
   background-color: #ffffff;
 
@@ -63,7 +66,7 @@
  
 /* Make section titles span full width */
 
-.card-section h3 {
+.cardSection h3 {
 
   grid-column: 1 / -1;
 
@@ -79,9 +82,7 @@
  
 /* Inputs and selects full width inside grid cells */
 
-.card-section input,
-
-.card-section select {
+.cardSection  input {
 
   padding: 10px 12px;
 
@@ -96,10 +97,26 @@
   transition: border-color 0.2s;
 
 }
- 
-.card-section input:focus,
 
-.card-section select:focus {
+.cardSection  select {
+
+  width: 92%;
+  padding: 10px 12px;
+
+  border: 1px solid #dcdde1;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+
+
+  transition: border-color 0.2s;
+
+}
+ 
+.cardSection input:focus,
+
+.cardSection select:focus {
 
   outline: none;
 
@@ -111,7 +128,7 @@
  
 /* Buttons inside card span full width */
 
-.card-section button {
+.cardSection button {
 
   grid-column: 1 / -1;
 
@@ -133,13 +150,13 @@
 
 }
  
-.card-section button:hover {
+.cardSection button:hover {
 
   background-color: #40739e;
 
 }
  
-.card-section button:disabled {
+.cardSection button:disabled {
 
   background-color: #a4b0be;
 
@@ -149,7 +166,7 @@
  
 /* Document block */
 
-.document-block {
+.documentBlock {
 
   display: flex;
 
@@ -163,13 +180,13 @@
 
 }
  
-.document-block select {
+.documentBlock select {
 
   flex: 1;
 
 }
  
-.document-block input[type="file"] {
+.documentBlock input[type="file"] {
 
   flex: 2;
 
@@ -177,13 +194,13 @@
  
 /* Add Document button */
 
-.btn-add-document {
+.btnAddDocument {
 
   background-color: #00a8ff;
 
 }
  
-.btn-add-document:hover {
+.btnAddDocument:hover {
 
   background-color: #0097e6;
 
@@ -191,7 +208,7 @@
  
 /* Error message */
 
-.error-message {
+.errorMessage {
 
   color: #e84118;
 

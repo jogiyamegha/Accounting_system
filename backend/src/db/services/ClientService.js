@@ -261,10 +261,20 @@ class ClientService {
       let searchTerm = filter.searchTerm;
       if (searchTerm) {
         searchQuery = {
-          [TableFields.name_]: {
-            $regex: Util.wrapWithRegexQry(searchTerm),
-            $options: "i",
-          },
+          $or: [
+            {
+              [TableFields.name_]: {
+                $regex: Util.wrapWithRegexQry(searchTerm),
+                $options: "i",
+              },
+            },
+            {
+              [TableFields.email]: {
+                $regex: Util.wrapWithRegexQry(searchTerm),
+                $options: "i",
+              },
+            },
+          ],
         };
       }
 

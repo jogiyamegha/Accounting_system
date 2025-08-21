@@ -49,6 +49,7 @@ export default function ClientManagement() {
       );
 
       const data = await response.json();
+      console.log("data",data)
 
       setClients(data.records || []);
 
@@ -113,7 +114,7 @@ export default function ClientManagement() {
         <div className="client-search">
           <input
             type="text"
-            placeholder="Search by client name..."
+            placeholder="Search by client name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

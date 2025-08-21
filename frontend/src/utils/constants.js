@@ -40,3 +40,11 @@ export const docTypeMap = {
   7: "passport",
   8: "Other"
 }
+
+export function formDataToJSON(formData) {
+  const obj = {};
+  for (let [key, value] of formData.entries()) {
+    obj[key] = value instanceof File ? value.name : value;
+  }
+  return obj;
+}

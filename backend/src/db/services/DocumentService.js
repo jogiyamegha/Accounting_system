@@ -67,6 +67,23 @@ class DocumentService {
     return updatedDoc;
   };
 
+  static upsertManyDocumentsForClient = async (clientId, documentsArray) => {
+    // documentsArray = [{ documentDetails: {...} }, ...]
+    if (!Array.isArray(documentsArray) || documentsArray.length === 0) {
+      return await Document.findOne({ [TableFields.clientId]: clientId });
+    }
+    const updated = await Document.findOneAndUpdate(
+      { [TableFields.clientId]: clientId },
+      {
+        $push: {
+          [TableFields.documents]: { $each: documentsArray },
+        },
+      },
+      { upsert: true, new: true }
+    );
+    return updated;
+  };
+
   static updateDocStatus = async (clientId, documentId, newStatus, comment) => {
     if (typeof newStatus === "string") {
       const statusMap = {

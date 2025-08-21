@@ -14,7 +14,7 @@
 
 /* Form container */
 form {
-  max-width: 400px;
+  width: 90%;
   margin: 2rem auto;
   padding: 1.5rem;
   background: var(--bg-color);
@@ -36,7 +36,7 @@ form p {
 /* Inputs and selects */
 input,
 select {
-  width: 100%;
+  width: 90%;
   padding: 0.75rem;
   font-size: 1rem;
   border: 1px solid var(--border-color);
@@ -110,10 +110,10 @@ select:focus-visible {
 }
 
 /* Large screens (desktop with more space) */
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
   form {
     max-width: 600px;
     padding: 2rem;
     gap: 1.2rem;
   }
-}
+} */

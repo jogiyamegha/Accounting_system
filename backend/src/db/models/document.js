@@ -35,7 +35,7 @@ const documentSChema = new Schema(
         ],
     },
     {
-        timeStamps: true,
+        timestamps: true,
     }
 );
 

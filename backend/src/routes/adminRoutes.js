@@ -64,6 +64,7 @@ const router = API.configRoute("/admin")
 
 .addPath('/add-client')
 .asPOST(ClientController.addClient)
+// .userMiddlewares(PDFHandler.uploadAnyPDF("files")) // <-- handles documents[0][file], documents[1][file], ...
 .useAdminAuth()
 .build()
 

@@ -96,7 +96,7 @@ const companySchema = new Schema(
             [TableFields.name_]: {
                 type: String,
                 trim: true,
-                required: [true, ValidationMsg.NameEmpty],
+                // required: [true, ValidationMsg.NameEmpty],
             },
             [TableFields.contact]: {
                 [TableFields.phoneCountry]: {
@@ -107,12 +107,12 @@ const companySchema = new Schema(
                 [TableFields.phone]: {
                     type : Number,
                     trim : true,
-                    validate: {
-                        validator(value) {
-                            return !value || Util.isValidMobileNumber(value);
-                        },
-                        message: () => ValidationMsg.PhoneInvalid
-                    }
+                    // validate: {
+                    //     validator(value) {
+                    //         return !value || Util.isValidMobileNumber(value);
+                    //     },
+                    //     message: () => ValidationMsg.PhoneInvalid
+                    // }
 
                 },
             },

@@ -1,8 +1,14 @@
 import "../styles/sidebar.css";
+import logo from "../assets/logo.svg";
 
 export default function Sidebar() {
   return (
     <aside className="sidebar">
+      <div className="sidebar-header1">
+        {/* Example SVG logo */}
+        <img src={logo} alt="Logo" className="logo-svg" />
+      </div>
+
       <div className="sidebar-header">
         <h2>Admin Panel</h2>
       </div>
