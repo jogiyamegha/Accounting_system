@@ -71,7 +71,7 @@
 .document-item {
   display: flex;
   justify-content: space-between;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: #fff;
   border: 1px solid #eee;
   border-radius: 6px;

@@ -1,0 +1,134 @@
+/* Container */
+.client-detail-page {
+  margin-left: 240px; /* aligned with sidebar */
+  padding: 2rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #1f2937;
+  transition: all 0.3s ease;
+}
+
+/* Page Title */
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #111827;
+  letter-spacing: 0.5px;
+}
+
+/* Cards */
+.clientCard {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 1.8rem 2rem;
+  margin-bottom: 1.8rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.clientCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+.clientCard-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  color: #1f2937;
+}
+
+/* Document List */
+.document-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.document-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.8rem 0;
+  transition: background 0.2s ease;
+}
+
+.document-item:hover {
+  background-color: #f1f5f9;
+  border-radius: 8px;
+}
+
+.document-item:last-child {
+  border-bottom: none;
+}
+
+/* Links */
+.view-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.view-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+  transform: translateX(2px);
+}
+
+/* Status / Messages */
+.loading-text,
+.error-text,
+.empty-text {
+  font-size: 1rem;
+  margin: 1rem 0;
+  font-weight: 500;
+}
+
+.loading-text {
+  color: #6b7280;
+}
+
+.error-text {
+  color: #dc2626;
+}
+
+.empty-text {
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .client-detail-page {
+    margin-left: 220px;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .client-detail-page {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .clientCard {
+    padding: 1.2rem 1.5rem;
+  }
+
+  .page-title {
+    font-size: 1.7rem;
+  }
+
+  .clientCard-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Smooth transition for all elements inside clientCards */
+.clientCard * {
+  transition: all 0.3s ease;
+}
