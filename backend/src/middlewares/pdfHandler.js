@@ -67,6 +67,20 @@ const PDFHandler = class {
       });
     };
   };
+
+  static uploadMultiplePDFs = function (fieldName, maxCount = 10) {
+    const m1 = uploader.array(fieldName, maxCount);
+    return (req, resp, next) => {
+      m1(req, resp, function (err) {
+        if (err) {
+          return resp
+            .status(ApiResponseCode.ClientOrServerError)
+            .send(Util.getErrorMessage(err));
+        }
+        next();
+      });
+    };
+  };
 };
 
 module.exports = PDFHandler;

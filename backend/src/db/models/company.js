@@ -92,6 +92,10 @@ const companySchema = new Schema(
             type: String,
             // enum: Object.values(BusinessTypes),
         },
+          [TableFields.deleted] : {
+            type: Boolean,
+            default: false
+        },
         [TableFields.contactPerson]: {
             [TableFields.name_]: {
                 type: String,

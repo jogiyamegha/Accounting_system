@@ -39,6 +39,12 @@ class CompanyService {
     });
   };
 
+  static companyExists = async (companyId) => {
+    return await Company.exists({
+      [TableFields.companyId] : MongoUtil.toObjectId(companyId),
+    })
+  }
+
   static insertRecord = async (companyFields) => {
     const company = new Company(companyFields);
 

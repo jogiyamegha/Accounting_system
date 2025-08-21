@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const DBController = require('./db/mongoose');
 const path = require('path');
+const fs = require('fs');
 const cors = require('cors');
 const cron = require('node-cron');
 const env = require('dotenv');
@@ -34,6 +35,21 @@ app.use(AdminRoutes);
 app.use(ClientRoutes);
 app.use('/uploads', express.static(path.join(__dirname,'../uploads')));
 app.use('/static_files', express.static(path.join(__dirname, '../static_files')))
+app.get("/admin/files/:filename", (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, "../uploads/document", filename);
+ 
+    console.log("Requested file:", filename);
+    console.log("Resolved path:", filePath);
+ 
+    if (fs.existsSync(filePath)) {
+        res.setHeader("Content-Type", "application/pdf");
+        res.sendFile(path.resolve(filePath));
+    } else {
+        res.status(404).json({ error: "File not found" });
+    }
+});
+ 
 
 app.get('/', (req, res) => {
     res.sendStatus(200);
@@ -44,16 +60,7 @@ DBController.initConnection(async () => {
     httpServer.listen(process.env.PORT, async function() {
         console.log("Server is running on", Util.getBaseURL());
 
-        //This is used to find app usage time of every users
-        // cron.schedule(
-        //     "0 12 * * *",   //daily check at 11:00 AM
-        //     // "* * * * *",
-        //     async () => {
-        //         console.log("here")
-        //         await CronController.bookingStatusPending();
-        //         await CronController.inquiryReplyPending()
-        //     }
-        // )
+        
     })
 })
 

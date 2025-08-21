@@ -39,7 +39,7 @@ const DocumentType = (function () {
   DocumentType.BankStatement = 3;
   DocumentType.Invoice = 4;
   DocumentType.auditFiles = 5;
-  DocumentType.TradeLicense = 6; 
+  DocumentType.TradeLicense = 6;
   DocumentType.passport = 7;
   DocumentType.Other = 8;
   return DocumentType;
@@ -65,7 +65,7 @@ const ServiceType = (function () {
   ServiceType.VATServices = 1;
   ServiceType.CorporateTaxServices = 2;
   ServiceType.AccountingServices = 3;
-  ServiceType.AuditAndCompliance= 4;
+  ServiceType.AuditAndCompliance = 4;
   return ServiceType;
 })();
 
@@ -140,26 +140,27 @@ const ValidationMsg = (function () {
   ValidationMsg.RecordNotFound = "Record not Found!";
   ValidationMsg.OldPasswordIncorrect = "Entered old password is incorrect.";
   ValidationMsg.ClientExists = "Client already Exists";
-  ValidationMsg.PasswordNotMatched = "Password doesn't matched.."
-  ValidationMsg.EmailExists = 'user exists';
-  ValidationMsg.ClientNotExists = 'Client is Not Exists';
-  ValidationMsg.ContactNumberEmpty = 'Contact Number required!';
-  ValidationMsg.PhoneInvalid = 'phone numbe invalid';
-  ValidationMsg.PhoneCountryEmpty = 'Phone Country required';
-  ValidationMsg.NotUser = 'you can not set profile as you are not client!';
-  ValidationMsg.LicenseTypeEmpty = 'License Type required';
-  ValidationMsg.StartDateEmpty = 'StartDate required';
-  ValidationMsg.EndDateEmpty = 'EndDate required';
-  ValidationMsg.TaxRegistrationNumberEmpty = 'Tax Registration Number required';
-  ValidationMsg.BusinessTypeEmpty = 'BusinessType required';
-  ValidationMsg.InvalidTaxRegNumber = 'Invalid TaxRegistration Number';
-  ValidationMsg.ClientIdEmpty = 'ClientId required';
-  ValidationMsg.DocumentTypeRequired = 'DocumentType Required!';
-  ValidationMsg.FileUploadFailed = 'FileUpload Failed';
-  ValidationMsg.FileRequired = 'File Required';
-  ValidationMsg.DescriptionEmpty = 'Description is Required.';
-  ValidationMsg.AmountEmpty = 'Amount is Required.';
-  ValidationMsg.PositionEmpty = 'position required';
+  ValidationMsg.PasswordNotMatched = "Password doesn't matched..";
+  ValidationMsg.EmailExists = "user exists";
+  ValidationMsg.ClientNotExists = "Client is Not Exists";
+  ValidationMsg.ContactNumberEmpty = "Contact Number required!";
+  ValidationMsg.PhoneInvalid = "phone numbe invalid";
+  ValidationMsg.PhoneCountryEmpty = "Phone Country required";
+  ValidationMsg.NotUser = "you can not set profile as you are not client!";
+  ValidationMsg.LicenseTypeEmpty = "License Type required";
+  ValidationMsg.StartDateEmpty = "StartDate required";
+  ValidationMsg.EndDateEmpty = "EndDate required";
+  ValidationMsg.TaxRegistrationNumberEmpty = "Tax Registration Number required";
+  ValidationMsg.BusinessTypeEmpty = "BusinessType required";
+  ValidationMsg.InvalidTaxRegNumber = "Invalid TaxRegistration Number";
+  ValidationMsg.ClientIdEmpty = "ClientId required";
+  ValidationMsg.DocumentTypeRequired = "DocumentType Required!";
+  ValidationMsg.FileUploadFailed = "FileUpload Failed";
+  ValidationMsg.FileRequired = "File Required";
+  ValidationMsg.DescriptionEmpty = "Description is Required.";
+  ValidationMsg.AmountEmpty = "Amount is Required.";
+  ValidationMsg.PositionEmpty = "position required";
+  ValidationMsg.CompanyNotExists = "Company Not Exists";
 
   return ValidationMsg;
 })();
@@ -179,7 +180,8 @@ const GeneralMessages = (function () {
   GeneralMessages.DocStatus = "Document's Update Message";
   GeneralMessages.forgotPasswordEmailSubject = "Reset your password";
   GeneralMessages.signupEmailSucess = "Your Account is Ready!";
-  GeneralMessages.changePasswordSucess = "Your new Pasword is set successfully..";
+  GeneralMessages.changePasswordSucess =
+    "Your new Pasword is set successfully..";
   GeneralMessages.invitationLink = "Invitation link for login";
   return GeneralMessages;
 })();
@@ -264,7 +266,8 @@ const TableFields = (function () {
   TableFields.notificationType = "notificationType";
   TableFields.serviceType = "serviceType";
   TableFields.targetCompletionDate = "targetCompletionDate";
-  TableFields.targetCompletionDurationInYears = "targetCompletionDurationInYears";
+  TableFields.targetCompletionDurationInYears =
+    "targetCompletionDurationInYears";
   TableFields.description = "description";
   TableFields.assignedStaff = "assignedStaff";
   TableFields.accountantName = "accountantName";
@@ -282,9 +285,9 @@ const TableFields = (function () {
   TableFields.totalAmount = "totalAmount";
   TableFields.requiredDocumentList = "requiredDocumentList";
   TableFields.value = "value";
-  TableFields.authType = 'authType';
-  TableFields.passwordResetTokenExpiresAt = 'passwordResetTokenExpiresAt';
-  TableFields.position ="position";
+  TableFields.authType = "authType";
+  TableFields.passwordResetTokenExpiresAt = "passwordResetTokenExpiresAt";
+  TableFields.position = "position";
 
   return TableFields;
 })();

@@ -70,53 +70,52 @@ export default function AddClient() {
     setDocuments((prev) => prev.filter((_, i) => i !== index));
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const formData = {}
-
       //   console.log("client",client)
-      
+
       // console.log("company",company)
 
-      console.log("docs",documents)
-      
-      // documents.forEach((doc, index) => {
-      //   if (!doc.documentType || !doc.file) {
-      //     throw new Error(`Document ${index + 1} missing type or file`);
-      //   }
-      //   formData.append(`documents[${index}][documentType]`, doc.documentType);
-      //   formData.append(`documents[${index}][file]`, doc.file, doc.file.name);
-      // });
+      console.log("docs", documents);
 
+      const merged = Object.assign({}, client, company);
+      console.log(merged);
 
-      
+      const formData = new FormData();
 
-      Object.assign(formData, client, company, documents)
-      console.log(formData)
+      for (const [key, value] of Object.entries(merged)) {
+        formData.append(key, value);
+      }
+
+      documents.forEach((doc, index) => {
+        formData.append(`documents[${index}][file]`, doc.file);
+        formData.append(`documents[${index}][documentType]`, doc.documentType);
+      });
+
+      console.log([...formData.entries()]);
 
       // ✅ Send FormData directly
-      // const response = await fetch(`${ADMIN_END_POINT}/add-client`, {
-      //   method: "POST",
-      //   // body: formData,
-      //   body: JSON.stringify(formData),
-      //   headers: { "Content-Type": "application/json" },
-      //   credentials: "include",
-      // });
+      const response = await fetch(`${ADMIN_END_POINT}/add-client`, {
+        method: "POST",
+        // body: formData,
+        body: formData,
+        // headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
 
-      // if (!response.ok) {
-      //   const errorText = await response.text();
-      //   throw new Error(errorText || "Failed to add client");
-      // }
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to add client");
+      }
 
       // const data = await response.json();
       // console.log("3", data);
-      // alert("Client added successfully!");
-      // navigate("/admin/client-management");
+      alert("Client added successfully!");
+      navigate("/admin/client-management");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -181,10 +180,6 @@ export default function AddClient() {
             onChange={handleClientChange}
             required
           />
-
-          
-          
-          
         </div>
 
         {/* Company Info Card */}
@@ -300,6 +295,21 @@ export default function AddClient() {
             onChange={handleCompanyChange}
             required
           />
+
+          <select
+            name="businessType"
+            value={company.businessType}
+            onChange={handleCompanyChange}
+            required
+          >
+            <option value="">--Select Business Type--</option>
+            <option value="Sole Proprietorship">Sole Proprietorship</option>
+            <option value="Partnership">Partnership</option>
+            <option value="Corporation">Corporation</option>
+            <option value="LLC">LLC</option>
+            <option value="Non-Profit">Non-Profit</option>
+          </select>
+
           <label>licenseIssueDate</label>
           <input
             type="date"
@@ -314,29 +324,15 @@ export default function AddClient() {
             placeholder="Tax Registration Number"
             value={company.taxRegistrationNumber}
             onChange={handleCompanyChange}
-             maxLength={15}
-                onInput={(e) => {
-                e.target.value = e.target.value.replace(/\D/g, "");
-                if (e.target.value.length > 15) {
-                    e.target.value = e.target.value.trim(0, 15);
-                }
-                }}
+            maxLength={15}
+            onInput={(e) => {
+              e.target.value = e.target.value.replace(/\D/g, "");
+              if (e.target.value.length > 15) {
+                e.target.value = e.target.value.trim(0, 15);
+              }
+            }}
             required
           />
-          
-          <select
-            name="businessType"
-            value={company.businessType}
-            onChange={handleCompanyChange}
-            required
-          >
-            <option value="">--Select Business Type--</option>
-            <option value="Sole Proprietorship">Sole Proprietorship</option>
-            <option value="Partnership">Partnership</option>
-            <option value="Corporation">Corporation</option>
-            <option value="LLC">LLC</option>
-            <option value="Non-Profit">Non-Profit</option>
-          </select>
         </div>
 
         {/* Documents Card */}
@@ -366,7 +362,8 @@ export default function AddClient() {
                   </option>
                 ))}
               </select>
-              + <input
+              +{" "}
+              <input
                 type="file"
                 accept="application/pdf,.pdf"
                 onChange={(e) =>

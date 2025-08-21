@@ -33,6 +33,10 @@ const documentSChema = new Schema(
                 },
             },
         ],
+        [TableFields.deleted] : {
+            type: Boolean,
+            default: false
+        },
     },
     {
         timestamps: true,

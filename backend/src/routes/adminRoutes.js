@@ -64,9 +64,20 @@ const router = API.configRoute("/admin")
 
 .addPath('/add-client')
 .asPOST(ClientController.addClient)
-// .userMiddlewares(PDFHandler.uploadAnyPDF("files")) // <-- handles documents[0][file], documents[1][file], ...
+.userMiddlewares(PDFHandler.uploadAnyPDF())
 .useAdminAuth()
 .build()
+
+.addPath(`/edit-client/:${TableFields.clientId}`)
+.asUPDATE(ClientController.editClient)
+.useAdminAuth()
+.build()
+ 
+.addPath(`/delete-client/:${TableFields.clientId}`)
+.asDELETE(ClientController.deleteClient)
+.useAdminAuth()
+.build()
+
 
 .addPath(`/client-detail/:${TableFields.clientId}`)
 .asGET(ClientController.getClientDetails)

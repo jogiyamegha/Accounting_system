@@ -322,6 +322,8 @@ const Util = class {
         }
         return array[mid];
     }
+
+    
     
 };
 module.exports = Util;

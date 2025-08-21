@@ -67,6 +67,10 @@ const clientSchema = new Schema(
             type: Number,
             enum: Object.values(UserTypes),
         },
+        [TableFields.deleted] : {
+            type: Boolean,
+            default: false
+        },
         [TableFields.passwordResetToken]: {
             type: String,
             trim: true,
