@@ -1,0 +1,238 @@
+/* Container for the page */
+
+.add-client-container {
+
+  padding: 20px;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  margin-left: 250px; /* assuming sidebar width */
+
+}
+ 
+
+/* Page title */
+
+
+.add-client-container h2 {
+
+  font-size: 28px;
+
+  font-weight: 600;
+
+  margin-bottom: 20px;
+
+  color: #2f3640;
+
+}
+ 
+/* Form container - cards arranged horizontally */
+
+.add-client-form {
+
+  display: flex;
+
+  gap: 20px;
+
+  flex-wrap: wrap; /* allows cards to wrap on smaller screens */
+
+}
+ 
+/* Card sections */
+
+.card-section {
+
+  background-color: #ffffff;
+
+  padding: 20px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  flex: 1;
+
+  min-width: 350px;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr); /* 3 fields per row */
+
+  gap: 15px;
+
+}
+ 
+/* Make section titles span full width */
+
+.card-section h3 {
+
+  grid-column: 1 / -1;
+
+  font-size: 20px;
+
+  font-weight: 500;
+
+  color: #2f3640;
+
+  margin-bottom: 10px;
+
+}
+ 
+/* Inputs and selects full width inside grid cells */
+
+.card-section input,
+
+.card-section select {
+
+  padding: 10px 12px;
+
+  border: 1px solid #dcdde1;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+
+  width: 85%;
+
+  transition: border-color 0.2s;
+
+}
+ 
+.card-section input:focus,
+
+.card-section select:focus {
+
+  outline: none;
+
+  border-color: #487eb0;
+
+  box-shadow: 0 0 5px rgba(72, 126, 176, 0.3);
+
+}
+ 
+/* Buttons inside card span full width */
+
+.card-section button {
+
+  grid-column: 1 / -1;
+
+  background-color: #487eb0;
+
+  color: #ffffff;
+
+  padding: 10px 15px;
+
+  font-size: 14px;
+
+  border: none;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  transition: background-color 0.2s;
+
+}
+ 
+.card-section button:hover {
+
+  background-color: #40739e;
+
+}
+ 
+.card-section button:disabled {
+
+  background-color: #a4b0be;
+
+  cursor: not-allowed;
+
+}
+ 
+/* Document block */
+
+.document-block {
+
+  display: flex;
+
+  gap: 10px;
+
+  align-items: center;
+
+  margin-bottom: 10px;
+
+  grid-column: 1 / -1; /* spans full width */
+
+}
+ 
+.document-block select {
+
+  flex: 1;
+
+}
+ 
+.document-block input[type="file"] {
+
+  flex: 2;
+
+}
+ 
+/* Add Document button */
+
+.btn-add-document {
+
+  background-color: #00a8ff;
+
+}
+ 
+.btn-add-document:hover {
+
+  background-color: #0097e6;
+
+}
+ 
+/* Error message */
+
+.error-message {
+
+  color: #e84118;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  margin-bottom: 10px;
+
+}
+ 
+/* Responsive: below 1024px - 2 fields per row */
+
+@media (max-width: 1024px) {
+
+  .card-section {
+
+    grid-template-columns: repeat(2, 1fr);
+
+  }
+
+}
+ 
+/* Responsive: below 768px - 1 field per row */
+
+@media (max-width: 768px) {
+
+  .add-client-container {
+
+    margin-left: 0;
+
+    padding: 15px;
+
+  }
+ 
+  .card-section {
+
+    grid-template-columns: 1fr;
+
+  }
+
+}
+
+ 

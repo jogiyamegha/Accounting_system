@@ -47,8 +47,8 @@ export default function DocumentPage() {
             const documentTypeCode = DocumentType[doc.documentType] || 0;
             const docStatusCode = DocStatus.pending; 
             const formData = new FormData();
-            formData.append("document", doc.file);                // File itself
-            formData.append("documentType", documentTypeCode);    // numeric code
+            formData.append("document", doc.file);               
+            formData.append("documentType", documentTypeCode);    
             // formData.append("comments", doc.comments || "");
             formData.append("uploadedAt", new Date().toISOString());
             formData.append("docStatus", docStatusCode);          // numeric status code

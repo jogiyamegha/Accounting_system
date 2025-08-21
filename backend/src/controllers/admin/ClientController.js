@@ -9,6 +9,7 @@ const DocumentService = require('../../db/services/DocumentService');
 
 exports.addClient = async (req) => {
     const reqBody = req.body;
+    console.log(reqBody);
     const reqUser = req.user;
     const email = reqBody[TableFields.email];
     if(!email) {
