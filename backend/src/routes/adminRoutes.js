@@ -94,7 +94,13 @@ const router = API.configRoute("/admin")
  * Invoice Routes
  */
 
-.addPath(`/add-invoice/:${TableFields.clientId}`)
+.addPath(`/generate-invoice/:${TableFields.clientId}`)
+.asGET(ClientController.getClientDetails)
+.useAdminAuth()
+.build()
+
+
+.addPath(`/generate-invoice/:${TableFields.clientId}`)
 .asPOST(InvoiceController.addInvoice)
 .userMiddlewares(PDFHandler.uploadAnyPDF())
 .useAdminAuth()

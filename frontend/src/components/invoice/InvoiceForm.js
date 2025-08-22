@@ -1,9 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./InvoiceForm.module.css";
+import { ADMIN_END_POINT, generateInvoiceNumber } from "../../utils/constants";
+import { useNavigate, useParams } from "react-router-dom";
+
 
 const InvoiceForm = ({ onSubmit }) => {
+  const { clientId } = useParams();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    invoiceNumber: "",
+    invoiceNumber: generateInvoiceNumber(),
     userName: "",
     position: "",
     companyName: "",
@@ -99,6 +108,46 @@ const InvoiceForm = ({ onSubmit }) => {
     }
   };
 
+  useEffect(() => {
+    const fetchClientDetails = async () => {
+      try {
+        const res = await fetch(
+          `${ADMIN_END_POINT}/generate-invoice/${clientId}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch client details");
+
+        const result = await res.json();
+        setData(result);
+
+        // pre-fill formData with client + company info
+        const { client, company } = result;
+        setFormData((prev) => ({
+          ...prev,
+          userName: client.name || "",
+          position: client.position || "",
+          companyName: company.name || "",
+          address: `${company.address.addressLine1}, ${company.address.addressLine2}, ${company.address.street}, ${company.address.landmark}, ${company.address.city}, ${company.address.state}, ${company.address.zipcode}, ${company.address.country}` || "",
+        }));
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClientDetails();
+  }, [clientId]);
+
+  if (loading) return <p className="loading-text">Loading client details...</p>;
+  if (error) return <p className="error-text">{error}</p>;
+  if (!data) return <p className="empty-text">No client details found</p>;
+
   return (
     <form onSubmit={handleSubmit} className={styles.formContainer}>
       <h1 className={styles.mainTitle}>Create New Invoice</h1>
@@ -111,17 +160,13 @@ const InvoiceForm = ({ onSubmit }) => {
               <label htmlFor="invoiceNumber" className={styles.inputLabel}>
                 Invoice Number
               </label>
-              <input
+               <input
                 type="text"
                 id="invoiceNumber"
                 name="invoiceNumber"
                 value={formData.invoiceNumber}
-                pattern="^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$"
-                title="Please enter a valid invoice number (alphanumeric with optional hyphens)"
-                onChange={handleInputChange}
+                readOnly
                 className={styles.inputField}
-                placeholder="12012"
-                required
               />
             </div>
             <div className={styles.checkboxContainer}>
@@ -151,12 +196,12 @@ const InvoiceForm = ({ onSubmit }) => {
                 id="userName"
                 name="userName"
                 value={formData.userName}
-                pattern="^[a-zA-Z.\s]+$"
                 title="Please enter a valid name (letters, spaces, periods only)"
                 onChange={handleInputChange}
                 className={styles.inputField}
                 placeholder="Kerry p. reuter"
                 maxLength={30}
+                readOnly
                 required
               />
             </div>
@@ -169,12 +214,12 @@ const InvoiceForm = ({ onSubmit }) => {
                 id="position"
                 name="position"
                 value={formData.position}
-                pattern="^[a-zA-Z\s\-.'’]+$"
                 title="Please enter a valid position (letters, spaces, hyphens, and periods only)"
                 maxLength={40}
                 onChange={handleInputChange}
                 className={styles.inputField}
                 placeholder="CEO of Happy Monster"
+                readOnly
                 required
               />
             </div>
@@ -188,11 +233,11 @@ const InvoiceForm = ({ onSubmit }) => {
                 name="companyName"
                 maxLength={30}
                 value={formData.companyName}
-                pattern="^[a-zA-Z\s\-.'’,]+$"
                 title="Please enter a valid company name (letters, spaces, hyphens, and periods only)"
                 onChange={handleInputChange}
                 className={styles.inputField}
                 placeholder="Happy Monster, UK"
+                readOnly
                 required
               />
             </div>
@@ -209,6 +254,7 @@ const InvoiceForm = ({ onSubmit }) => {
                 onChange={handleInputChange}
                 className={styles.inputField}
                 placeholder="303 Ashton Lane Austin, TX 78701"
+                readOnly
                 required
               />
             </div>

@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import InvoiceForm from "../../invoice/InvoiceForm";
 import InvoicePreview from "../../invoice/InvoicePreview";
 
-export default function App() {
+export default function GenerateInvoice() {
     const [invoiceData, setInvoiceData] = useState(null);
 
     const [isClient, setIsClient] = useState(false);

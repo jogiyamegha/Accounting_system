@@ -22,6 +22,7 @@ import DocStatusChange from "./components/admin/client/DocStatusChange";
 import Dashboard from "./components/admin/Dashboard";
 import ClientManagement from "./components/admin/client/ClientManagement";
 import ClientDetail from "./components/admin/client/ClientDetail";
+import GenerateInvoice from "./components/admin/client/GenerateInvoice";
  
  
 
@@ -123,6 +124,18 @@ function App() {
               </Layout>
             }
         />
+
+        <Route
+          path="/admin/generate-invoice/:clientId"
+            element={
+              <Layout>
+                <ProtectedRoute>
+                  <GenerateInvoice />
+                </ProtectedRoute>
+              </Layout>
+            }
+        />
+
 
         <Route
           path="/admin/document"

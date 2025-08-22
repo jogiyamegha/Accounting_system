@@ -132,3 +132,25 @@
 .clientCard * {
   transition: all 0.3s ease;
 }
+
+
+
+.add-client-btn {
+  padding: 8px 16px;
+
+  background-color: #4caf50;
+
+  color: #fff;
+
+  border: none;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  transition: background 0.3s;
+}
+
+.add-client-btn:hover {
+  background-color: #45a049;
+}

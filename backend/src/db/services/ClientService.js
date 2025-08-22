@@ -298,6 +298,7 @@ const ProjectionBuilder = class {
       projection[TableFields.userType] = 1;
       projection[TableFields.contact] = 1;
       projection[TableFields.companyId] = 1;
+      projection[TableFields.position] = 1;
 
       return this;
     };

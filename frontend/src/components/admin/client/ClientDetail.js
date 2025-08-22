@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   ADMIN_END_POINT,
   DocStatus,
@@ -8,6 +8,7 @@ import {
 
 import "../../../styles/clientDetail.css";
 import Sidebar from "../../Sidebar";
+
 
 
 function formatDateToDDMMYYYY(dateString) {
@@ -24,6 +25,11 @@ export default function ClientDetail() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleGenerateInvoice = async (clientId) => {
+    navigate(`/admin/generate-invoice/${clientId}`);
+  }
 
   useEffect(() => {
     const fetchClientDetails = async () => {
@@ -61,8 +67,10 @@ export default function ClientDetail() {
     <div className="client-detail-page">
       <Sidebar />
       <h2 className="page-title">Client Details</h2>
+        <button onClick={() => handleGenerateInvoice(client._id)}>
+            Generate Invoice
+        </button>
 
-      {/* Client Info */}
       {client && (
         <div className="clientCard">
           <h3 className="clientCard-title">👤 Client Information</h3>
@@ -194,7 +202,10 @@ export default function ClientDetail() {
                   >
                     View Document
                   </a>
+
+                  
                 </p>
+                
               </li>
             ))}
           </ul>
@@ -202,6 +213,40 @@ export default function ClientDetail() {
           <p className="empty-text">No documents uploaded</p>
         )}
       </div>
+
+
+        <div className="clientCard">
+           <h3 className="clientCard-title">📄 Invoices</h3>
+
+            <ul className="document-list">
+              <li className="document-item">
+                <p>
+                  <a
+                    // href={`${ADMIN_END_POINT}/files/${doc.documentDetails.document.replace(
+                    //   "uploads/document/",
+                    //   ""
+                    // )}`}
+                    href={`${ADMIN_END_POINT}/files/uploads/invoices`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="view-link"
+                  >
+                    View invoice
+                  </a>
+
+                  <button className="add-client-btn" >
+                    View Invoice
+                  </button>
+
+                  <button className="add-client-btn">
+                    Download Invoice
+                  </button>
+                </p>
+              </li>
+            </ul>
+        </div>
+
+
     </div>
   );
 }
