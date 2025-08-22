@@ -10,6 +10,7 @@ const invoiceSchema = new Schema(
         },
         [TableFields.invoiceList]: [
             {
+                [TableFields.ID] : false,
                 [TableFields.invoice] : {
                     type : String,
                     trim : true

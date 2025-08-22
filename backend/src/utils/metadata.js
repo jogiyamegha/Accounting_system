@@ -1,5 +1,6 @@
 const Folders = {
     ClientDocument : "uploads/document",
+    ClientInvoice : "uploads/invoice"
 };
  
  

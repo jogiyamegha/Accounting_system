@@ -3,7 +3,8 @@ const AuthController = require('../controllers/admin/AuthController');
 const ClientController = require('../controllers/admin/ClientController');
 const DocumentController = require('../controllers/admin/DocumentController')
 const ServiceController = require('../controllers/admin/ServiceController');
-const VATController = require('../controllers/admin/VATController')
+const VATController = require('../controllers/admin/VATController');
+const InvoiceController = require('../controllers/admin/InvoiceController');
 const { TableFields } = require("../utils/constants");
 const PDFHandler = require('../middlewares/pdfHandler');
 
@@ -89,6 +90,16 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+/**
+ * Invoice Routes
+ */
+
+.addPath(`/add-invoice/:${TableFields.clientId}`)
+.asPOST(InvoiceController.addInvoice)
+.userMiddlewares(PDFHandler.uploadAnyPDF())
+.useAdminAuth()
+.build()
+ 
 
 .addPath(`/update-doc-status/:${TableFields.clientId}/:${TableFields.documentId}`)
 .asUPDATE(DocumentController.updateDocumentStatus)
