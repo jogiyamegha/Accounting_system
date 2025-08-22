@@ -70,7 +70,6 @@ export default function ClientManagement() {
   };
 
    const handleView = (clientId) => {
-    console.log(" clientId in ClientManagen=ment");
     navigate(`/admin/client-detail/${clientId}`);
   };
  
@@ -90,6 +89,10 @@ export default function ClientManagement() {
       }
     }
   };
+
+  const handleGenerateInvoice = async (clientId) => {
+    navigate(`/admin/generate-invoice/${clientId}`);
+  }
 
   // Pagination helpers
 
@@ -154,6 +157,9 @@ export default function ClientManagement() {
                         </button>
                         <button onClick={() => handleDelete(client._id)}>
                           Delete
+                        </button>
+                        <button onClick={() => handleGenerateInvoice(client._id)}>
+                          Generate Invoice
                         </button>
                       </td>
                     </tr>

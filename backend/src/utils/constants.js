@@ -197,6 +197,7 @@ const TableNames = (function () {
   TableNames.Service = "services";
   TableNames.ClientService = "clientServices";
   TableNames.VATservice = "VATservices";
+  TableNames.Invoice = 'invoices';
   return TableNames;
 })();
 
@@ -289,6 +290,8 @@ const TableFields = (function () {
   TableFields.passwordResetTokenExpiresAt = "passwordResetTokenExpiresAt";
   TableFields.position = "position";
   TableFields.deleted = 'deleted';
+  TableFields.invoiceList = 'invoiceList';
+  TableFields.invoice = 'invoice';
 
   return TableFields;
 })();
