@@ -42,7 +42,7 @@ app.get("/admin/files/:filename", (req, res) => {
         res.sendFile(path.resolve(filePath));
     } else {
         res.status(404).json({ error: "Document not found" });
-    }
+    }   
 });
  
 // 🔹 API route to serve invoices by filename

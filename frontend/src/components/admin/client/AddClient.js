@@ -223,6 +223,13 @@ export default function AddClient() {
             placeholder="Contact Number"
             value={client.phone}
             onChange={handleClientChange}
+            maxLength={10}
+              onInput={(e) => {
+                  e.target.value = e.target.value.replace(/\D/g, "")
+                  if(e.target.value.length > 10){
+                      e.target.value = e.target.value.slice(0, 10)
+                  }
+              }}
             required
           />
         </div>
@@ -413,7 +420,7 @@ export default function AddClient() {
               />
               <button
                 type="button"
-                className="btn-remove-document"
+                className={classes.addBtn}
                 onClick={() => handleRemoveDocument(index)}
               >
                 Remove
@@ -423,7 +430,7 @@ export default function AddClient() {
         </div>
  
         <div style={{ width: "100%" }}>
-          <button type="submit" disabled={loading}>
+          <button  type="submit" disabled={loading}>
             {loading ? "Adding..." : "+ Add Client"}
           </button>
         </div>

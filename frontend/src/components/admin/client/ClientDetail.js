@@ -97,7 +97,6 @@ export default function ClientDetail() {
   if (!data) return <p className="empty-text">No client details found</p>;
 
   const { client, company, document, invoice } = data;
-  console.log("jhhjcv", data);
 
   // 🔹 View & Download invoice helpers
 

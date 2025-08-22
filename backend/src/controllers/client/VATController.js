@@ -131,14 +131,10 @@ async function parseAndValidateVATService(
     (d) => d[TableFields.documentDetails][TableFields.documentType] === docType
   );
 
-  console.log("h",filteredDocs)
-
   let onlyDocuments = filteredDocs.map(
     (d) => d[TableFields.documentDetails][TableFields.document]
   );
-
-  console.log("2",onlyDocuments)
-
+  
   let vatDoc = [];
 
   let submittedDoc = {

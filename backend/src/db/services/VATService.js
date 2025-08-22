@@ -17,7 +17,6 @@ class VATService {
   };
 
   static getVatServiceByClientId = (clientId) => {
-    // console.log(clientId);
     return new ProjectionBuilder(async function () {
       return await VATservice.findOne(
         {

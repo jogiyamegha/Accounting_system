@@ -40,7 +40,6 @@ function Login() {
         ? `${ADMIN_END_POINT}/login` // ✅ use constant
         : `${CLIENT_END_POINT}/login`;
 
-      console.log(endpoint);
       const res = await fetch(endpoint, {
         method: "POST",
 

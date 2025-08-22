@@ -24,9 +24,7 @@ export default function ClientProfilePage() {
 
         if (!res.ok) throw new Error("Failed to fetch profile");
 
-        console.log("response",res);
         const data = await res.json();
-        console.log("data",res)
 
         setProfile(data);
       } catch (err) {

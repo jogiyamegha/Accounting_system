@@ -49,7 +49,6 @@ export default function ClientManagement() {
       );
 
       const data = await response.json();
-      console.log("data",data)
 
       setClients(data.records || []);
 

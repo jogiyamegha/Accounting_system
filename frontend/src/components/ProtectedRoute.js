@@ -81,9 +81,7 @@ export default function ProtectedRoute({
 
       });
 
-      console.log(response);
       const data = await response.json();
-      console.log("dfgvhbjnkm",data);
  
       if (response.ok && data.user) {
 

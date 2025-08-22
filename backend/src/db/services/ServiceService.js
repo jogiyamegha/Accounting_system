@@ -42,7 +42,6 @@ class ServiceService {
   };
 
   static existsWithType = async (type, exceptionId) => {
-    console.log(type)
     let serviceType;
     if (typeof type === "string") {
       const serviceTypeMap = {
@@ -53,7 +52,6 @@ class ServiceService {
       };
 
       serviceType = serviceTypeMap[type];
-    //   console.log("ST",serviceType)
     }
 
     return await Service.exists({

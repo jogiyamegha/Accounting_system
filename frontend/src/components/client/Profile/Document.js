@@ -37,7 +37,6 @@ export default function DocumentPage() {
         try {
             setError("");
             const doc = documents[index];
-            console.log(doc);
 
             if (!doc.documentType || !doc.file) {
                 setError("Please select a document type and upload a file.");
@@ -82,7 +81,6 @@ export default function DocumentPage() {
         });
 
         if (pendingDocs.length > 0) {
-            console.log("here j");
             alert("Some required fields are empty, please add this fields before final submit..!");
             return;
         }

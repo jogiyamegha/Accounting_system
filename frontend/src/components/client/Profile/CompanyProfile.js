@@ -59,7 +59,6 @@ export default function CompanyProfile() {
                 if (!response.ok) return;
                 const data = await response.json();
 
-                console.log("data",data)
                 setExistingProfile(data);
 
                 // Populate refs with existing data
@@ -126,16 +125,13 @@ export default function CompanyProfile() {
     
         try {
 
-            // console.log(data);
             const response = await fetch(`${CLIENT_END_POINT}/company-profile`, {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: { "Content-Type": "application/json" },
                 credentials: 'include',
             });
-        
-            // console.log(response);
-            
+                    
             if (!response.ok) {
                 throw new Error( "Failed to set company details");
             }

@@ -108,8 +108,6 @@ class DocumentService {
       (doc) => doc._id.toString() === documentId.toString()
     );
 
-    // console.log("matchedDoc", matchedDoc);
-
     const updatedDoc = await Document.updateOne(
       { [TableFields.clientId]: clientId },
       { $set: { "documents.$[elem].documentDetails.docStatus": newStatus ,
@@ -118,7 +116,6 @@ class DocumentService {
       { arrayFilters: [{ "elem._id": documentId }] }
     );
 
-    // console.log(updatedDoc);
 
     return updatedDoc;
   };

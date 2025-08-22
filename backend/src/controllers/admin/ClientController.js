@@ -320,7 +320,6 @@ exports.getClientDetails = async (req, res) => {
   const invoice = await InvoiceService.getInvoiceByClientId(clientId)
     .withBasicInfo()
     .execute();
-  console.log(invoice);
   
   return res.json({
     client,

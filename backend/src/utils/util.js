@@ -168,7 +168,6 @@ const Util = class {
     };
 
     static msToTime(duration) {
-        console.log(duration);
         var minutes = Math.floor((duration / (1000 * 60)) % 60),
             hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
 
@@ -189,7 +188,6 @@ const Util = class {
     static isValidMobileNumber(v) {
         if (v == null) return false; // null or undefined
         const str = String(v).trim(); // ensure it's a string
-        console.log(str.length);
         return str.length >= 7 && str.length <= 12;
     }
 
@@ -260,7 +258,6 @@ const Util = class {
         } else {
             const monthEnd = moment(startDate).endOf("month").format("YYYY-MM-DD");
             const monthStart = moment(endDate).startOf("month").format("YYYY-MM-DD");
-            // console.log("monthEnd",monthEnd,"monthStart",monthStart)
 
             const allDates = Array.from(
                 new Set(dataObject.map((entry) => moment(entry.createdAt).format("YYYY-MM-DD")))

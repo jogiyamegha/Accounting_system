@@ -15,7 +15,6 @@ exports.addInvoice = async (req) => {
     const reqUser = req.user;
     const clientId = req.params.clientId;
     const files = req.files;
-    console.log("1",files);
     
     const client = await ClientService.getUserById(MongoUtil.toObjectId(clientId))
         .withBasicInfo()
@@ -73,7 +72,6 @@ async function parseAndValidateInvoice(
                 file.buffer
             );
             persistedFileKey = newFileKey;
-            // console.log(persistedFileKey);
         } catch (err) {
             console.log("Error in saving invoice:", err);
             throw new ValidationError("File Generation failed");

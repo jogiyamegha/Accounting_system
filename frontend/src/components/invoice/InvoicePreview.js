@@ -25,7 +25,7 @@ export default function InvoicePreview({ data }) {
         throw new Error("Failed to send invoice");
       }
 
-      const result = await res.json();
+      // const result = await res.json();
 
       navigate(`/admin/client-detail/${data.clientId}`);
     } catch (error) {

@@ -143,6 +143,17 @@
   cursor: not-allowed;
 }
 
+.addBtn {
+  background-color: #f44336;
+
+  color: #fff;
+}
+
+.addBtn:hover{
+    background-color: #d32f2f;
+
+}
+
 /* Document block */
 
 .documentBlock {
@@ -173,6 +184,17 @@
 
 .btnAddDocument:hover {
   background-color: #0097e6;
+}
+
+.addBtn {
+  background-color: #f44336;
+
+  color: #fff;
+}
+
+.addBtn:hover{
+    background-color: #d32f2f;
+
 }
 
 /* Error message */
