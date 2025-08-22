@@ -1,0 +1,65 @@
+.previewContainer {
+  max-width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+}
+ 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+ 
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: rgb(31, 41, 55);
+}
+ 
+.editButton {
+  padding: 0.5rem 1.5rem;
+  background-color: rgb(75, 85, 99);
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+ 
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+ 
+.editButton:hover {
+  background-color: rgb(55, 65, 81);
+}
+ 
+.viewerContainer {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  padding: 1rem;
+  height: 100vh;
+}
+ 
+.downloadLink {
+  display: block;
+  width: 50%;
+  text-align: center;
+  margin: 1rem auto 2rem;
+  padding: 0.75rem 1.5rem;
+  background-color: rgb(22, 163, 74);
+  color: white;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+ 
+  text-decoration: none;
+  transition: background-color 0.15s ease-in-out;
+}
+ 
+.downloadLink:hover {
+  background-color: rgb(21, 128, 61);
+}
+ 
+ 
