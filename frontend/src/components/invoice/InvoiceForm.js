@@ -104,7 +104,7 @@ const InvoiceForm = ({ onSubmit }) => {
     }
 
     if (onSubmit) {
-      onSubmit(trimmedData);
+      onSubmit({ ...trimmedData, clientId });
     }
   };
 

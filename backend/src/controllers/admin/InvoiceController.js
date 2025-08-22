@@ -15,6 +15,7 @@ exports.addInvoice = async (req) => {
     const reqUser = req.user;
     const clientId = req.params.clientId;
     const files = req.files;
+    console.log("1",files);
     
     const client = await ClientService.getUserById(MongoUtil.toObjectId(clientId))
         .withBasicInfo()
@@ -39,6 +40,7 @@ exports.addInvoice = async (req) => {
         }
         }
     );
+    return result;
 };
     
 async function parseAndValidateInvoice(
@@ -51,13 +53,17 @@ async function parseAndValidateInvoice(
         throw new ValidationError(ValidationMsg.ClientIdEmpty);
     }
     
+    // if (!reqBody.invoiceNumber || reqBody.invoiceNumber.trim() === "") {
+    //     throw new ValidationError("Invoice number is required");
+    // }
+ 
     let invsList = [];
     
     for (const file of files) {
-        const match = file.fieldname.match(/invoices\[(\d+)\]\[file\]/);
+        // const match = file.fieldname.match(/invoices\[(\d+)\]\[file\]/);
     
-        if (match) {
-        const index = match[1];
+        // if (match) {
+        // const index = match[1];
     
         let persistedFileKey = null;
         try {
@@ -67,6 +73,7 @@ async function parseAndValidateInvoice(
                 file.buffer
             );
             persistedFileKey = newFileKey;
+            // console.log(persistedFileKey);
         } catch (err) {
             console.log("Error in saving invoice:", err);
             throw new ValidationError("File Generation failed");
@@ -74,8 +81,10 @@ async function parseAndValidateInvoice(
     
             invsList.push({
                 [TableFields.invoice]: persistedFileKey,
+                // [TableFields.invoiceNumber]: reqBody.invoiceNumber,
+ 
             });
-        }
+        
     }
     
     const payload = {

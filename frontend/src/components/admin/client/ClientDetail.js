@@ -5,40 +5,52 @@ import {
   DocStatus,
   DocumentType,
 } from "../../../utils/constants";
-
 import "../../../styles/clientDetail.css";
+
 import Sidebar from "../../Sidebar";
-
-
 
 function formatDateToDDMMYYYY(dateString) {
   if (!dateString) return ""; // handle null or undefined
+
   const date = new Date(dateString);
+
   const day = ("0" + date.getDate()).slice(-2);
+
   const month = ("0" + (date.getMonth() + 1)).slice(-2);
+
   const year = date.getFullYear();
+
   return `${day}/${month}/${year}`;
 }
 
 export default function ClientDetail() {
   const { clientId } = useParams();
+
   const [data, setData] = useState(null);
+
+  const [invoices, setInvoices] = useState({ invoiceList: [] });
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const handleGenerateInvoice = async (clientId) => {
     navigate(`/admin/generate-invoice/${clientId}`);
-  }
+  };
 
   useEffect(() => {
     const fetchClientDetails = async () => {
       try {
         const res = await fetch(
           `${ADMIN_END_POINT}/client-detail/${clientId}`,
+
           {
             method: "GET",
+
             credentials: "include",
+
             headers: { "Content-Type": "application/json" },
           }
         );
@@ -46,6 +58,7 @@ export default function ClientDetail() {
         if (!res.ok) throw new Error("Failed to fetch client details");
 
         const result = await res.json();
+
         setData(result);
       } catch (err) {
         setError(err.message);
@@ -54,22 +67,81 @@ export default function ClientDetail() {
       }
     };
 
+    const fetchInvoices = async () => {
+      try {
+        const res = await fetch(
+          `${ADMIN_END_POINT}/clients/${clientId}/invoices`,
+
+          { credentials: "include" }
+        );
+
+        if (res.ok) {
+          const result = await res.json();
+
+          setInvoices(result);
+        }
+      } catch (err) {
+        console.error("Error fetching invoices:", err);
+      }
+    };
+
     fetchClientDetails();
+
+    fetchInvoices();
   }, [clientId]);
 
   if (loading) return <p className="loading-text">Loading client details...</p>;
+
   if (error) return <p className="error-text">{error}</p>;
+
   if (!data) return <p className="empty-text">No client details found</p>;
 
-  const { client, company, document } = data;
+  const { client, company, document, invoice } = data;
+  console.log("jhhjcv", data);
+
+  // 🔹 View & Download invoice helpers
+
+  const handleViewInvoice = (filename) => {
+    window.open(`${ADMIN_END_POINT}/invoices/${filename}`, "_blank");
+  };
+
+  const handleDownloadInvoice = async (filename) => {
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/invoices/${filename}`, {
+        credentials: "include",
+      });
+
+      const blob = await res.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+
+      a.href = url;
+
+      a.download = filename;
+
+      document.body.appendChild(a);
+
+      a.click();
+
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Error downloading invoice:", err);
+    }
+  };
 
   return (
     <div className="client-detail-page">
       <Sidebar />
       <h2 className="page-title">Client Details</h2>
-        <button onClick={() => handleGenerateInvoice(client._id)}>
-            Generate Invoice
-        </button>
+      <button onClick={() => handleGenerateInvoice(client._id)}>
+        Generate Invoice
+      </button>
+
+      {/* Client Info */}
 
       {client && (
         <div className="clientCard">
@@ -80,6 +152,7 @@ export default function ClientDetail() {
           <p>
             <strong>Email:</strong> {client.email}
           </p>
+
           {client.contact && (
             <p>
               <strong>Contact:</strong> {client.contact.phoneCountry}{" "}
@@ -90,6 +163,7 @@ export default function ClientDetail() {
       )}
 
       {/* Company Info */}
+
       {company && (
         <div className="clientCard">
           <h3 className="clientCard-title">🏢 Company Information</h3>
@@ -122,15 +196,11 @@ export default function ClientDetail() {
               </p>
               <p>
                 <strong>Issue Date:</strong>{" "}
-                {formatDateToDDMMYYYY(
-                  company.licenseDetails.licenseIssueDate
-                )}
+                {formatDateToDDMMYYYY(company.licenseDetails.licenseIssueDate)}
               </p>
               <p>
                 <strong>Expiry Date:</strong>{" "}
-                {formatDateToDDMMYYYY(
-                  company.licenseDetails.licenseExpiry
-                )}
+                {formatDateToDDMMYYYY(company.licenseDetails.licenseExpiry)}
               </p>
             </>
           )}
@@ -164,6 +234,7 @@ export default function ClientDetail() {
       {/* Documents */}
       <div className="clientCard">
         <h3 className="clientCard-title">📄 Documents</h3>
+
         {document && document.documents && document.documents.length > 0 ? (
           <ul className="document-list">
             {document.documents.map((doc, index) => (
@@ -194,6 +265,7 @@ export default function ClientDetail() {
                   <a
                     href={`${ADMIN_END_POINT}/files/${doc.documentDetails.document.replace(
                       "uploads/document/",
+
                       ""
                     )}`}
                     target="_blank"
@@ -202,10 +274,7 @@ export default function ClientDetail() {
                   >
                     View Document
                   </a>
-
-                  
                 </p>
-                
               </li>
             ))}
           </ul>
@@ -214,39 +283,53 @@ export default function ClientDetail() {
         )}
       </div>
 
+      <div>
+        <h3 className="text-xl font-semibold mb-2">Invoices</h3>
 
-        <div className="clientCard">
-           <h3 className="clientCard-title">📄 Invoices</h3>
+        {invoice?.invoiceList?.length > 0 ? (
+          <table className="min-w-full border border-gray-300">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border px-4 py-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {invoice.invoiceList.map((doc, idx) => (
+                <tr key={idx}>
+                  <td>
+                    <p>{idx + 1 }</p>
+                  </td>
+                  <td className="border px-4 py-2">
+                    <a
+                      href={`${ADMIN_END_POINT}/invoice/${doc.invoice.replace(
+                        "uploads/invoice/",
+                        ""
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline mr-4"
+                    >
+                      View
+                    </a>
 
-            <ul className="document-list">
-              <li className="document-item">
-                <p>
-                  <a
-                    // href={`${ADMIN_END_POINT}/files/${doc.documentDetails.document.replace(
-                    //   "uploads/document/",
-                    //   ""
-                    // )}`}
-                    href={`${ADMIN_END_POINT}/files/uploads/invoices`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="view-link"
-                  >
-                    View invoice
-                  </a>
-
-                  <button className="add-client-btn" >
-                    View Invoice
-                  </button>
-
-                  <button className="add-client-btn">
-                    Download Invoice
-                  </button>
-                </p>
-              </li>
-            </ul>
-        </div>
-
-
+                    <a
+                      href={`${ADMIN_END_POINT}/invoice/${doc.invoice.replace(
+                        "uploads/invoice/",
+                        ""
+                      )}?download=true`}
+                      className="text-green-600 underline"
+                    >
+                      Download
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No invoices available</p>
+        )}
+      </div>
     </div>
   );
 }

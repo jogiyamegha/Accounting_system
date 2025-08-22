@@ -6,7 +6,7 @@ const {
   DocumentType,
   docTypeMap,
 } = require("../../utils/constants");
-
+const InvoiceService = require('../../db/services/InvoiceService');
 const ValidationError = require("../../utils/ValidationError");
 const { sendClientInvitationEmail } = require("../../emails/email");
 const Util = require("../../utils/util");
@@ -317,11 +317,19 @@ exports.getClientDetails = async (req, res) => {
   const document = await DocumentService.getDocsByClientId(clientId)
     .withBasicInfo()
     .execute();
+  const invoice = await InvoiceService.getInvoiceByClientId(clientId)
+    .withBasicInfo()
+    .execute();
+  console.log(invoice);
+  
   return res.json({
     client,
     company: associatedCompany,
     document,
+    invoice
   });
+
+
 };
 
 

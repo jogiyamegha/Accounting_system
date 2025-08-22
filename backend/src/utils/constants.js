@@ -292,6 +292,8 @@ const TableFields = (function () {
   TableFields.deleted = 'deleted';
   TableFields.invoiceList = 'invoiceList';
   TableFields.invoice = 'invoice';
+    TableFields.invoiceNumber = 'invoiceNumber';
+
 
   return TableFields;
 })();
