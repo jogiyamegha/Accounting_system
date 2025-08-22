@@ -46,7 +46,7 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-header">
-        <h2>Admin Panel</h2>
+        <h2 style={{ color: "white" }}>Admin Panel</h2>
       </div>
       <nav className="sidebar-nav">
         <ul>
@@ -75,7 +75,7 @@ export default function Sidebar() {
             <a href="/cms">📝 CMS Management</a>
           </li>
           <li className="logout">
-            <button onClick={handleLogout} >Logout</button>
+            <button onClick={handleLogout}>Logout</button>
           </li>
         </ul>
       </nav>

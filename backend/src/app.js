@@ -34,7 +34,7 @@ app.use(AdminRoutes);
 app.use(ClientRoutes);
  
 // 🔹 API route to serve documents by filename
-app.get("/admin/document/:filename", (req, res) => {
+app.get("/admin/files/:filename", (req, res) => {
     const filename = req.params.filename;
     const filePath = path.join(__dirname, "../uploads/document", filename);
     if (fs.existsSync(filePath)) {

@@ -1,4 +1,4 @@
-.previewContainer {
+/* .previewContainer {
   max-width: 1024px;
   margin-left: auto;
   margin-right: auto;
@@ -62,4 +62,29 @@
   background-color: rgb(21, 128, 61);
 }
  
- 
+  */
+
+  .btnDiv{
+    text-align: center;
+    padding-top: 1rem;
+  }
+
+.saveBtn{
+  
+    margin-top: 1rem auto;
+  padding: 1rem 2rem;
+  background-color: #16a34a; /* green-600 */
+  color: white;
+  font-weight: 700; /* bold */
+  font-size: 1.125rem; /* 18px */
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.saveBtn:hover{
+  background-color: #15803d; /* green-700 */
+  
+}

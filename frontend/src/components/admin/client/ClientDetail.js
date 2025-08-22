@@ -136,10 +136,14 @@ export default function ClientDetail() {
   return (
     <div className="client-detail-page">
       <Sidebar />
-      <h2 className="page-title">Client Details</h2>
-      <button onClick={() => handleGenerateInvoice(client._id)}>
-        Generate Invoice
-      </button>
+      <div className="adjustment">
+
+        <h2 className="page-title">Client Details</h2>
+        <button className="gtBtn" onClick={() => handleGenerateInvoice(client._id)}>
+          Generate Invoice
+        </button>
+      </div>
+
 
       {/* Client Info */}
 
@@ -233,7 +237,7 @@ export default function ClientDetail() {
 
       {/* Documents */}
       <div className="clientCard">
-        <h3 className="clientCard-title">📄 Documents</h3>
+        <h3 className="clientCard-title">📃 Documents</h3>
 
         {document && document.documents && document.documents.length > 0 ? (
           <ul className="document-list">
@@ -283,23 +287,26 @@ export default function ClientDetail() {
         )}
       </div>
 
-      <div>
-        <h3 className="text-xl font-semibold mb-2">Invoices</h3>
+      <div className="clientCard">
+        <h3 className="text-xl font-semibold mb-2">📑Invoices</h3>
 
         {invoice?.invoiceList?.length > 0 ? (
-          <table className="min-w-full border border-gray-300">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border px-4 py-2 text-left">Actions</th>
+          <table className="invoice-item">
+            {/* <thead> */}
+              <tr className="">
+                <th className="">Index</th>
+                <th className="">Name</th>
+                <th className="">Actions</th>
               </tr>
-            </thead>
+            {/* </thead> */}
             <tbody>
               {invoice.invoiceList.map((doc, idx) => (
-                <tr key={idx}>
+                <tr key={idx} className="invoice-row">
                   <td>
-                    <p>{idx + 1 }</p>
+                    <p className="index">{idx + 1 }</p>
                   </td>
-                  <td className="border px-4 py-2">
+                  <td>File</td>
+                  <td className="buttons">
                     <a
                       href={`${ADMIN_END_POINT}/invoice/${doc.invoice.replace(
                         "uploads/invoice/",
@@ -307,7 +314,7 @@ export default function ClientDetail() {
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 underline mr-4"
+                      className="view"
                     >
                       View
                     </a>
@@ -317,7 +324,7 @@ export default function ClientDetail() {
                         "uploads/invoice/",
                         ""
                       )}?download=true`}
-                      className="text-green-600 underline"
+                      className="download"
                     >
                       Download
                     </a>

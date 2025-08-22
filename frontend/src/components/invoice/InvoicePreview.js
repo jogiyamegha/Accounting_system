@@ -2,6 +2,7 @@ import { pdf, PDFViewer } from "@react-pdf/renderer";
 import { ADMIN_END_POINT } from "../../utils/constants";
 import InvoicePDF from "./InvoicePDF";
 import { useNavigate } from "react-router-dom";
+import classes from './InvoicePreview.module.css'
 
 export default function InvoicePreview({ data }) {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function InvoicePreview({ data }) {
   };
 
   return (
-    <div>
+    <div className={classes.btnDiv}>
       {/* Show PDF preview in browser */}
       <PDFViewer width="100%" height="600">
         <InvoicePDF data={data} />
@@ -42,7 +43,7 @@ export default function InvoicePreview({ data }) {
       {/* Button to send PDF to backend */}
       <button
         onClick={handleSaveToBackend}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+        className={classes.saveBtn}
       >
         Save Invoice
       </button>

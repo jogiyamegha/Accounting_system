@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ADMIN_END_POINT, formDataToJSON } from "../../../utils/constants";
+import { ADMIN_END_POINT } from "../../../utils/constants";
 import { countries } from "../../../utils/countries";
 import classes from "../../../styles/addClient.module.css";
 import Sidebar from "../../Sidebar";
-
+ 
 export default function AddClient() {
   const navigate = useNavigate();
-
+ 
   const [client, setClient] = useState({
     name: "",
     email: "",
@@ -15,7 +15,7 @@ export default function AddClient() {
     phone: "",
     position: "",
   });
-
+ 
   const [company, setCompany] = useState({
     companyName: "",
     companyEmail: "",
@@ -34,7 +34,7 @@ export default function AddClient() {
     taxRegistrationNumber: "",
     businessType: "",
   });
-
+ 
   const documentTypes = [
     "VATcertificate",
     "CorporateTaxDocument",
@@ -46,94 +46,120 @@ export default function AddClient() {
     "passport",
     "Other",
   ];
-
+ 
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const handleClientChange = (e) =>
-    setClient({ ...client, [e.target.name]: e.target.value });
-
-  // const handleCompanyChange = (e) =>
-  //   setCompany({ ...company, [e.target.name]: e.target.value });
-
+ 
+  const handleClientChange = (e) => {
+    const { name, value } = e.target;
+ 
+    // Validation for name & position (only alphabets and spaces)
+    if ((name === "name" || name === "position") && /\d/.test(value)) {
+      return; // prevent numbers
+    }
+ 
+    setClient({ ...client, [name]: value });
+  };
+ 
   const handleCompanyChange = (e) => {
     const { name, value } = e.target;
-
+ 
     setCompany((prev) => {
-      const updated = { ...prev, [name]: value };
-
-      // Validate license expiry against issue date
+      let updated = { ...prev, [name]: value };
+ 
+      // Validation: companyName & landmark should not contain numbers
+      if ((name === "companyName" || name === "landmark") && /\d/.test(value)) {
+        return prev;
+      }
+ 
+      // Zip code → only digits & length 6
+      if (name === "zipcode") {
+        if (!/^\d{0,6}$/.test(value)) return prev; // block non-digits
+      }
+ 
+      // Tax registration number → max 15 digits
+      if (name === "taxRegistrationNumber") {
+        if (!/^\d{0,15}$/.test(value)) return prev;
+      }
+ 
+      // License expiry should not be earlier than issue date
       if (
         name === "licenseExpiry" &&
         updated.licenseIssueDate &&
         value < updated.licenseIssueDate
       ) {
         alert("License expiry date cannot be earlier than issue date!");
-        return prev; // prevent invalid update
+        return prev;
       }
-
+ 
+      // License issue date should not be in future
+      if (name === "licenseIssueDate") {
+        const today = new Date().toISOString().split("T")[0];
+        if (value > today) {
+          alert("License issue date cannot be in the future!");
+          return prev;
+        }
+      }
+ 
       return updated;
     });
   };
-
+ 
   const handleAddDocument = () =>
     setDocuments((prev) => [...prev, { documentType: "", file: null }]);
-
+ 
   const handleDocumentChange = (index, field, value) => {
     setDocuments((prev) =>
       prev.map((doc, i) => (i === index ? { ...doc, [field]: value } : doc))
     );
   };
-
+ 
   const handleRemoveDocument = (index) => {
     setDocuments((prev) => prev.filter((_, i) => i !== index));
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+ 
+    // Final validation before submit
+    if (company.zipcode.length !== 6) {
+      return setError("Zipcode must be exactly 6 digits.");
+    }
+    if (company.taxRegistrationNumber.length !== 15) {
+      return setError("Tax Registration Number must be exactly 15 digits.");
+    }
+ 
     setLoading(true);
-
+ 
     try {
-      //   console.log("client",client)
-
-      // console.log("company",company)
-
-      console.log("docs", documents);
-
       const merged = Object.assign({}, client, company);
-      console.log(merged);
-
       const formData = new FormData();
-
+ 
       for (const [key, value] of Object.entries(merged)) {
         formData.append(key, value);
       }
-
+ 
       documents.forEach((doc, index) => {
         formData.append(`documents[${index}][file]`, doc.file);
-        formData.append(`documents[${index}][documentType]`, doc.documentType);
+        formData.append(
+          `documents[${index}][documentType]`,
+          doc.documentType
+        );
       });
-
-      console.log([...formData.entries()]);
-
-      // ✅ Send FormData directly
+ 
       const response = await fetch(`${ADMIN_END_POINT}/add-client`, {
         method: "POST",
-        // body: formData,
         body: formData,
-        // headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-
+ 
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || "Failed to add client");
       }
-
-      // const data = await response.json();
-      // console.log("3", data);
+ 
       alert("Client added successfully!");
       navigate("/admin/client-management");
     } catch (err) {
@@ -142,16 +168,16 @@ export default function AddClient() {
       setLoading(false);
     }
   };
-
+ 
   return (
     <div className={classes.addClientContainer}>
       <Sidebar />
-
+ 
       {error && <p className={classes.errorMessage}>{error}</p>}
-
+ 
       <form onSubmit={handleSubmit} className={classes.addClientForm}>
         <h2>Add New Client</h2>
-        {/* Client Info Card */}
+        {/* Client Info */}
         <div className={classes.cardSection}>
           <h3>Client Info</h3>
           <input
@@ -191,7 +217,6 @@ export default function AddClient() {
               </option>
             ))}
           </select>
-
           <input
             type="number"
             name="phone"
@@ -201,8 +226,8 @@ export default function AddClient() {
             required
           />
         </div>
-
-        {/* Company Info Card */}
+ 
+        {/* Company Info */}
         <div className={classes.cardSection}>
           <h3>Company Info</h3>
           <input
@@ -282,7 +307,7 @@ export default function AddClient() {
           >
             <option value="">--Select Country--</option>
             {countries.map((c) => (
-              <option key={`${c.name}`} value={c.name}>
+              <option key={c.name} value={c.name}>
                 {c.name}
               </option>
             ))}
@@ -314,8 +339,8 @@ export default function AddClient() {
             value={company.licenseIssueDate}
             onChange={handleCompanyChange}
             required
+            max={new Date().toISOString().split("T")[0]} // prevent future dates
           />
-
           <select
             name="businessType"
             value={company.businessType}
@@ -329,7 +354,6 @@ export default function AddClient() {
             <option value="LLC">LLC</option>
             <option value="Non-Profit">Non-Profit</option>
           </select>
-
           <label>License Expiry Date :</label>
           <input
             type="date"
@@ -349,18 +373,11 @@ export default function AddClient() {
             placeholder="Tax Registration Number"
             value={company.taxRegistrationNumber}
             onChange={handleCompanyChange}
-            maxLength={15}
-            onInput={(e) => {
-              e.target.value = e.target.value.replace(/\D/g, "");
-              if (e.target.value.length > 15) {
-                e.target.value = e.target.value.trim(0, 15);
-              }
-            }}
             required
           />
         </div>
-
-        {/* Documents Card */}
+ 
+        {/* Documents */}
         <div className={classes.cardSection}>
           <h3>Upload Documents</h3>
           <button
@@ -370,7 +387,6 @@ export default function AddClient() {
           >
             + Add Document
           </button>
-
           {documents.map((doc, index) => (
             <div key={index} className={classes.documentBlock}>
               <select
@@ -387,7 +403,6 @@ export default function AddClient() {
                   </option>
                 ))}
               </select>
-              +{" "}
               <input
                 type="file"
                 accept="application/pdf,.pdf"
@@ -406,14 +421,16 @@ export default function AddClient() {
             </div>
           ))}
         </div>
-
-        {/* Submit button */}
+ 
         <div style={{ width: "100%" }}>
           <button type="submit" disabled={loading}>
-            {loading ? "Adding..." : "Add Client"}
+            {loading ? "Adding..." : "+ Add Client"}
           </button>
         </div>
       </form>
     </div>
   );
 }
+ 
+ 
+ 
