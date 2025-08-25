@@ -17,6 +17,25 @@ class ClientService {
     });
   };
 
+  static totalRegisteredClients = async () => {
+ 
+    const clientCounts  = await Client.find({
+      [TableFields.deleted]: false,
+    }).countDocuments();
+ 
+    return clientCounts;
+  }
+ 
+  static totalActiveClients = async () => {
+ 
+    const clientCounts  = await Client.find({
+      [TableFields.isActive]: true,
+    }).countDocuments();
+ 
+    return clientCounts;
+  }
+ 
+
   static getUserById = (userId) => {
     return new ProjectionBuilder(async function () {
       return await Client.findOne({ [TableFields.ID]: userId }, this);

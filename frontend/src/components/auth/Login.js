@@ -69,7 +69,7 @@ function Login() {
 
         // ✅ redirect to proper page
 
-        navigate(isAdmin ? "/admin/dashboard" : "/client/profile", {
+        navigate(isAdmin ? "/admin/admin-dashboard" : "/client/profile", {
           replace: true,
         });
       } else {

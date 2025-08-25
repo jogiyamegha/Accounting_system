@@ -1,4 +1,6 @@
 import Sidebar from "../Sidebar";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 import {
   BarChart,
@@ -12,26 +14,57 @@ import {
 } from "recharts";
 
 import "../../styles/adminDashboard.css";
-
-// Sample data for chart
+import { ADMIN_END_POINT } from "../../utils/constants";
 
 const uploadData = [
   { day: "Mon", Successful: 25, Pending: 10, Failed: 5 },
-
   { day: "Tue", Successful: 28, Pending: 8, Failed: 4 },
-
   { day: "Wed", Successful: 35, Pending: 5, Failed: 6 },
-
   { day: "Thu", Successful: 30, Pending: 12, Failed: 7 },
-
   { day: "Fri", Successful: 20, Pending: 20, Failed: 10 },
-
   { day: "Sat", Successful: 15, Pending: 10, Failed: 8 },
-
   { day: "Sun", Successful: 18, Pending: 12, Failed: 9 },
 ];
 
 export default function Dashboard() {
+
+  const navigate = useNavigate();
+  const [activeClients, setActiveClients] = useState(0);
+  const [loading, setLoading] = useState(true);
+  // const [search, setSearch] = useState("");
+  const [totalClients, setTotalClients] = useState(0);
+
+  const fetchClients = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `${ADMIN_END_POINT}/admin-dashboard`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }
+        );
+  
+        const data = await response.json();
+        console.log("ghj",data);
+  
+        setTotalClients(data.allClients || 0);
+  
+        setActiveClients(data.allActiveClients || 0);
+
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      fetchClients();
+    }, [totalClients,activeClients]);
+  
+
   return (
     <div className="dashboard-layout">
       <Sidebar />
@@ -41,15 +74,14 @@ export default function Dashboard() {
           <h1>Dashboard</h1>
         </header>
 
-        {/* Stats Cards */}
         <section className="dashboard-cards">
           <div className="card">
             <h3>Total Registered Clients</h3>
-            <p>1,245</p>
+            <p>{totalClients}</p>
           </div>
           <div className="card">
             <h3>Active Clients</h3>
-            <p>980</p>
+            <p>{activeClients}</p>
           </div>
         </section>
 

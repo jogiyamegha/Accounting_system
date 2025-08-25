@@ -51,7 +51,7 @@ export default function Sidebar() {
       <nav className="sidebar-nav">
         <ul>
           <li>
-            <a href="/admin/dashboard">📊 Dashboard</a>
+            <a href="/admin/admin-dashboard">📊 Dashboard</a>
           </li>
           <li>
             <a href="/admin/client-management">👥 Client Management</a>

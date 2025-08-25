@@ -5,6 +5,7 @@ const DocumentController = require('../controllers/admin/DocumentController')
 const ServiceController = require('../controllers/admin/ServiceController');
 const VATController = require('../controllers/admin/VATController');
 const InvoiceController = require('../controllers/admin/InvoiceController');
+const AdminDashboardController = require('../controllers/admin/AdminDashboardController')
 const { TableFields } = require("../utils/constants");
 const PDFHandler = require('../middlewares/pdfHandler');
 
@@ -50,6 +51,17 @@ const router = API.configRoute("/admin")
  
 .addPath('/change-password')
 .asPOST(AuthController.changePassword)
+.build()
+
+/**
+ * 
+ * Admin-Dashboard Routes
+ * 
+ */
+
+.addPath('/admin-dashboard')
+.asGET(AdminDashboardController.getDashboard)
+.useAdminAuth()
 .build()
 
 /**
