@@ -313,9 +313,14 @@ class ClientService {
         };
       }
 
+      let baseQuery = {
+        [TableFields.deleted]: false,
+        ...searchQuery,
+      };
+
       return await Promise.all([
-        needCount ? Client.countDocuments(searchQuery) : undefined,
-        Client.find(searchQuery)
+        needCount ? Client.countDocuments(baseQuery) : undefined,
+        Client.find(baseQuery)
           .limit(parseInt(limit))
           .skip(parseInt(skip))
           .sort({ [sortKey]: parseInt(sortOrder) }),

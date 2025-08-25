@@ -83,6 +83,7 @@ export default function ClientManagement() {
       try {
         await fetch(`${ADMIN_END_POINT}/delete-client/${clientId}`, { method: "DELETE" });
 
+        navigate('/admin/client-management')
         fetchClients(); // refresh list
       } catch (error) {
         console.error("Failed to delete client:", error);
