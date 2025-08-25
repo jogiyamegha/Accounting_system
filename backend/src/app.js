@@ -72,7 +72,6 @@ app.get("/admin/invoice/:filename", auth,  (req, res) => {
 });
 
  
- 
 app.get('/', (req, res) => {
     res.sendStatus(200);
 });

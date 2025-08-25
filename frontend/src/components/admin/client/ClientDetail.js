@@ -179,9 +179,9 @@ export default function ClientDetail() {
 
           {company.address && (
             <p>
-              <strong>Address:</strong> {company.address.addressLine1},{" "}
-              {company.address.addressLine2}, {company.address.street},{" "}
-              {company.address.landmark}, {company.address.city} -{" "}
+              <strong>Address:</strong> {company.address.addressLine1}{" "}
+              {company.address.addressLine2} {company.address.street}{" "}
+              {company.address.landmark} ,{company.address.city} -{" "}
               {company.address.zipcode}, {company.address.state},{" "}
               {company.address.country}
             </p>
@@ -304,7 +304,7 @@ export default function ClientDetail() {
                   <td>
                     <p className="index">{idx + 1 }</p>
                   </td>
-                  <td>File</td>
+                  <td>{doc.invoiceNumber}</td>
                   <td className="buttons">
                     <a
                       href={`${ADMIN_END_POINT}/invoice/${doc.invoice.replace(
