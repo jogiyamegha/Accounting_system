@@ -74,8 +74,9 @@ function Login() {
         });
       } else {
         dispatch(setError(data.message || "Login failed"));
+        // console.log(data.message);
 
-        alert(data.message || "Login failed");
+        alert("Credentials Invalid, Login Failed !!");
       }
     } catch (error) {
       console.error("Login error:", error);

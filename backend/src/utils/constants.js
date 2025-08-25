@@ -161,6 +161,8 @@ const ValidationMsg = (function () {
   ValidationMsg.AmountEmpty = "Amount is Required.";
   ValidationMsg.PositionEmpty = "position required";
   ValidationMsg.CompanyNotExists = "Company Not Exists";
+  ValidationMsg.UserNotFound = "Cannot get the user Token to verify";
+  ValidationMsg.AdminNotFound = "Admin Not Found from Token";
 
   return ValidationMsg;
 })();
