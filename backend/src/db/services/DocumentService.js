@@ -84,6 +84,24 @@ class DocumentService {
     return updated;
   };
 
+  static updateManyDocumentsForClient = async (clientId, documentsArray) => {
+    // documentsArray = [{ documentDetails: {...} }, ...]
+    if (!Array.isArray(documentsArray) || documentsArray.length === 0) {
+      return await Document.findOne({ [TableFields.clientId]: clientId });
+    }
+    const updated = await Document.findOneAndUpdate(
+      { [TableFields.clientId]: clientId },
+      {
+        $set: {
+          [TableFields.documents]: documentsArray ,
+        },
+      },
+      { upsert: true, new: true }
+    );
+    return updated;
+  };
+
+
   static updateDocStatus = async (clientId, documentId, newStatus, comment) => {
     if (typeof newStatus === "string") {
       const statusMap = {
@@ -110,14 +128,56 @@ class DocumentService {
 
     const updatedDoc = await Document.updateOne(
       { [TableFields.clientId]: clientId },
-      { $set: { "documents.$[elem].documentDetails.docStatus": newStatus ,
-        "documents.$[elem].documentDetails.comments": comment
-      } },
+      {
+        $set: {
+          "documents.$[elem].documentDetails.docStatus": newStatus,
+          "documents.$[elem].documentDetails.comments": comment,
+        },
+      },
       { arrayFilters: [{ "elem._id": documentId }] }
     );
 
-
     return updatedDoc;
+  };
+
+  static deleteMyReferences = async (
+    cascadeDeleteMethodReference,
+    tableName,
+    ...referenceId
+  ) => {
+    let records = undefined;
+    // console.log(cascadeDeleteMethodReference, tableName, ...referenceId);
+    switch (tableName) {
+      case TableNames.Document:
+        records = await Document.find({
+          [TableFields.ID]: {
+            $in: referenceId,
+          },
+        });
+        break;
+    }
+    if (records && records.length > 0) {
+      let deleteRecordIds = records.map((a) => a[TableFields.ID]);
+      await Document.updateOne(
+        {
+          [TableFields.ID]: { $in: deleteRecordIds },
+        },
+        {
+          $set: { [TableFields.deleted]: true },
+        }
+      );
+
+      if (tableName != TableNames.Document) {
+        //It means that the above objects are deleted on request from model's references (And not from model itself)
+        cascadeDeleteMethodReference.call(
+          {
+            ignoreSelfCall: true,
+          },
+          TableNames.Document,
+          ...deleteRecordIds
+        ); //So, let's remove references which points to this model
+      }
+    }
   };
 }
 

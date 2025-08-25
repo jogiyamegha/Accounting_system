@@ -81,8 +81,14 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+// .addPath(`/edit-client/:${TableFields.clientId}`)
+// .GET(ClientController.getClientDetails)
+// .useAdminAuth()
+// .build()
+
 .addPath(`/edit-client/:${TableFields.clientId}`)
 .asUPDATE(ClientController.editClient)
+.userMiddlewares(PDFHandler.uploadAnyPDF())
 .useAdminAuth()
 .build()
  

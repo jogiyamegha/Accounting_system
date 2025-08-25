@@ -98,6 +98,8 @@ export default function ClientDetail() {
 
   const { client, company, document, invoice } = data;
 
+  console.log("d",document)
+
   // 🔹 View & Download invoice helpers
 
   const handleViewInvoice = (filename) => {
@@ -154,6 +156,9 @@ export default function ClientDetail() {
           </p>
           <p>
             <strong>Email:</strong> {client.email}
+          </p>
+          <p>
+            <strong>Position:</strong> {client.position}
           </p>
 
           {client.contact && (

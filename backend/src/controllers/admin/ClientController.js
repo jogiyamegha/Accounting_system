@@ -5,6 +5,7 @@ const {
   DocStatus,
   DocumentType,
   docTypeMap,
+  TableNames
 } = require("../../utils/constants");
 const InvoiceService = require('../../db/services/InvoiceService');
 const ValidationError = require("../../utils/ValidationError");
@@ -17,6 +18,11 @@ const {
   removePdfFileById,
   Folders,
 } = require("../../utils/storage");
+const ServiceManager = require('../../db/serviceManager');
+ 
+
+
+
 
 exports.addClient = async (req) => {
   const reqBody = req.body;
@@ -55,20 +61,20 @@ exports.addClient = async (req) => {
     reqBody,
     undefined,
     async (updatedFields) => {
-      let compamnyRecords;
+      let companyRecords;
       if (existingCompany) {
-        compamnyRecords = await CompanyService.updateRecord(
+        companyRecords = await CompanyService.updateRecord(
           existingCompany[TableFields.ID],
           updatedFields
         );
       } else {
-        compamnyRecords = await CompanyService.insertRecord(updatedFields);
+        companyRecords = await CompanyService.insertRecord(updatedFields);
         await ClientService.updateCompanyinProfile(
           clientId,
-          compamnyRecords[TableFields.ID]
+          companyRecords[TableFields.ID]
         );
       }
-      return compamnyRecords;
+      return companyRecords;
     }
   );
 
@@ -95,13 +101,54 @@ exports.addClient = async (req) => {
 
 exports.editClient = async (req) => {
     let reqBody = req.body;
+    // console.log("reqBody",reqBody);
+
+    let files = req.files;
     const clientId = req.params[TableFields.clientId];
  
     const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
     if(!client){
         throw new ValidationError(ValidationMsg.RecordNotFound);
     }
- 
+
+    let records;
+    let data = await parseAndValidateClient(reqBody, async (updatedFields) => {
+      records = await ClientService.updateClient(clientId, updatedFields);
+    })
+
+    
+
+    let existingCompany = await CompanyService.getCompanyById(
+    client[TableFields.companyId]
+    )
+    .withBasicInfo()
+    .execute();
+
+    let company = await parseAndValidateCompany(
+      reqBody,
+      undefined,
+      async (updatedFields) => {
+        // console.log("company",updatedFields)
+        let companyRecords = await CompanyService.updateRecord(
+          existingCompany[TableFields.ID],
+          updatedFields
+        )
+      }
+    )
+
+    const existsWithClientId = await DocumentService.existsWithClient(clientId);
+
+    const result = await parseAndValidateDocuments(
+      reqBody,
+      clientId,
+      files,
+      async function (payload) {
+        return await DocumentService.updateManyDocumentsForClient(
+          clientId,
+          payload.documents
+        )
+      }
+    )
  
 }
  
@@ -114,10 +161,26 @@ exports.deleteClient = async (req) => {
  
     const companyId = client[TableFields.companyId];
     const company = await CompanyService.companyExists(companyId);
+   
     if(!company) {
         throw new ValidationError(ValidationMsg.CompanyNotExists)
     }
+ 
+    const document = await DocumentService.getDocsByClientId(clientId).withBasicInfo().execute();
+    if(document) {
+      const documentId = document[TableFields.ID];
+      await ServiceManager.cascadeDelete(TableNames.Document, documentId)
+    }
+    const invoice = await InvoiceService.getInvoiceByClientId(clientId).withBasicInfo().execute();
+    if(invoice){
+      const invoiceId = invoice[TableFields.ID];
+      await ServiceManager.cascadeDelete(TableNames.Invoice, invoiceId)
+    }
+ 
+    await ServiceManager.cascadeDelete(TableNames.Client, clientId)
+    await ServiceManager.cascadeDelete(TableNames.Company, companyId)
 }
+ 
  
 
 exports.getAllClients = async (req) => {
@@ -197,8 +260,8 @@ async function parseAndValidateCompany(
   }
 
   const response = await onValidationCompleted({
-    [TableFields.name_]: reqBody[TableFields.name_],
-    [TableFields.email]: reqBody[TableFields.email],
+    [TableFields.name_]: reqBody.companyName,
+    [TableFields.email]: reqBody.companyEmail,
     [TableFields.address]: {
       [TableFields.addressLine1]: reqBody[TableFields.addressLine1],
       [TableFields.addressLine2]: reqBody[TableFields.addressLine2],
@@ -279,7 +342,7 @@ async function parseAndValidateDocuments(
         [TableFields.documentDetails]: {
           [TableFields.docStatus]: DocStatus.pending, // default
           [TableFields.documentType]: docType,
-          [TableFields.document]: persistedFileKey, // ✅ store uploaded file key
+          [TableFields.document]: persistedFileKey, 
           [TableFields.uploadedAt]: Date.now(),
         },
       });
@@ -307,6 +370,7 @@ exports.getClientDetails = async (req, res) => {
   const client = await ClientService.getUserById(clientId)
     .withBasicInfo()
     .execute();
+    console.log(client)
   const associatedCompanyId = client[TableFields.companyId];
   const associatedCompany = await CompanyService.getCompanyById(
     associatedCompanyId

@@ -18,23 +18,20 @@ class ClientService {
   };
 
   static totalRegisteredClients = async () => {
- 
-    const clientCounts  = await Client.find({
+    const clientCounts = await Client.find({
       [TableFields.deleted]: false,
     }).countDocuments();
- 
+
     return clientCounts;
-  }
- 
+  };
+
   static totalActiveClients = async () => {
- 
-    const clientCounts  = await Client.find({
+    const clientCounts = await Client.find({
       [TableFields.isActive]: true,
     }).countDocuments();
- 
+
     return clientCounts;
-  }
- 
+  };
 
   static getUserById = (userId) => {
     return new ProjectionBuilder(async function () {
@@ -166,6 +163,25 @@ class ClientService {
       }
       throw error;
     }
+  };
+
+  static updateClient = async (clientId, clientDetails) => {
+    // console.log("2",clientDetails)
+    return await Client.updateOne(
+      {
+        [TableFields.ID]: clientId,
+      },
+      {
+        $set: {
+          [TableFields.name_]: clientDetails[TableFields.name_],
+          [TableFields.position]: clientDetails[TableFields.position],
+          [TableFields.contact]: {
+            [TableFields.phoneCountry]: clientDetails.contact[TableFields.phoneCountry],
+            [TableFields.phone]: clientDetails.contact[TableFields.phone],
+          },
+        },
+      }
+    );
   };
 
   static getResetPasswordToken = async (email) => {
@@ -305,6 +321,49 @@ class ClientService {
           .sort({ [sortKey]: parseInt(sortOrder) }),
       ]).then(([total, records]) => ({ total, records }));
     });
+  };
+
+  static deleteMyReferences = async (
+    cascadeDeleteMethodReference,
+    tableName,
+    ...referenceId
+  ) => {
+    let records = undefined;
+    // console.log(cascadeDeleteMethodReference, tableName, ...referenceId);
+    switch (tableName) {
+      case TableNames.Client:
+        records = await Client.find({
+          [TableFields.ID]: {
+            $in: referenceId,
+          },
+        });
+        break;
+    }
+    if (records && records.length > 0) {
+      let deleteRecordIds = records.map((a) => a[TableFields.ID]);
+      await Client.updateOne(
+        {
+          [TableFields.ID]: { $in: deleteRecordIds },
+        },
+        {
+          $set: { [TableFields.deleted]: true },
+        }
+      );
+
+      // await removeFileById(Folders.CollegeImage, records[0].image);
+      // await removeFileById(Folders.CollegeThumbnail, records[0].thumbnail);
+
+      if (tableName != TableNames.Client) {
+        //It means that the above objects are deleted on request from model's references (And not from model itself)
+        cascadeDeleteMethodReference.call(
+          {
+            ignoreSelfCall: true,
+          },
+          TableNames.Client,
+          ...deleteRecordIds
+        ); //So, let's remove references which points to this model
+      }
+    }
   };
 }
 

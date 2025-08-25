@@ -8,7 +8,7 @@ const {
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
-const { MongoUtil } = require('../../db/mongoose');
+const { MongoUtil } = require("../../db/mongoose");
 
 class CompanyService {
   static findByEmail = (email) => {
@@ -42,9 +42,9 @@ class CompanyService {
 
   static companyExists = async (companyId) => {
     return await Company.exists({
-      [TableFields.companyId] : MongoUtil.toObjectId(companyId),
-    })
-  }
+      [TableFields.companyId]: MongoUtil.toObjectId(companyId),
+    });
+  };
 
   static insertRecord = async (companyFields) => {
     const company = new Company(companyFields);
@@ -65,21 +65,60 @@ class CompanyService {
     }
   };
 
-    static updateRecord = async (companyId, updatedFields) => {
-        if (!companyId) throw new Error("Company ID is required for update");
+  static updateRecord = async (companyId, updatedFields) => {
+    if (!companyId) throw new Error("Company ID is required for update");
 
-        const updatedCompany = await Company.findByIdAndUpdate(
-        companyId,
-        { $set: updatedFields },
-        { new: true } 
-        );
+    const updatedCompany = await Company.findByIdAndUpdate(
+      companyId,
+      { $set: updatedFields },
+      { new: true }
+    );
 
-        if (!updatedCompany) {
-        throw new Error("Company record not found");
+    if (!updatedCompany) {
+      throw new Error("Company record not found");
+    }
+
+    return updatedCompany.toObject();
+  };
+
+  static deleteMyReferences = async (
+    cascadeDeleteMethodReference,
+    tableName,
+    ...referenceId
+  ) => {
+    let records = undefined;
+    switch (tableName) {
+      case TableNames.Company:
+        records = await Company.find({
+          [TableFields.ID]: {
+            $in: referenceId,
+          },
+        });
+        break;
+    }
+    if (records && records.length > 0) {
+      let deleteRecordIds = records.map((a) => a[TableFields.ID]);
+      await Company.updateOne(
+        {
+          [TableFields.ID]: { $in: deleteRecordIds },
+        },
+        {
+          $set: { [TableFields.deleted]: true },
         }
+      );
 
-        return updatedCompany.toObject();
-    };
+      if (tableName != TableNames.Company) {
+        //It means that the above objects are deleted on request from model's references (And not from model itself)
+        cascadeDeleteMethodReference.call(
+          {
+            ignoreSelfCall: true,
+          },
+          TableNames.Company,
+          ...deleteRecordIds
+        ); //So, let's remove references which points to this model
+      }
+    }
+  };
 }
 
 const ProjectionBuilder = class {

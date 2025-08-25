@@ -94,7 +94,6 @@ export default function CompanyProfile() {
     }, []);
     
     
-    
         const submitHandler = async (event) => {
             event.preventDefault();
             setError("");

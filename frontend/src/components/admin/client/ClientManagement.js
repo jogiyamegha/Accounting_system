@@ -49,6 +49,7 @@ export default function ClientManagement() {
       );
 
       const data = await response.json();
+      console.log("2",data)
 
       setClients(data.records || []);
 
@@ -74,7 +75,7 @@ export default function ClientManagement() {
  
 
   const handleEdit = (id) => {
-    navigate(`/admin/client/edit/${id}`);
+    navigate(`/admin/edit-client/${id}`);
   };
 
   const handleDelete = async (clientId) => {

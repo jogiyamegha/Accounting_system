@@ -23,7 +23,8 @@ import Dashboard from "./components/admin/Dashboard";
 import ClientManagement from "./components/admin/client/ClientManagement";
 import ClientDetail from "./components/admin/client/ClientDetail";
 import GenerateInvoice from "./components/admin/client/GenerateInvoice";
- 
+import EditClient from "./components/admin/client/EditClient";
+
  
 
 
@@ -131,6 +132,17 @@ function App() {
               <Layout>
                 <ProtectedRoute>
                   <GenerateInvoice />
+                </ProtectedRoute>
+              </Layout>
+            }
+        />
+
+        <Route
+          path="/admin/edit-client/:clientId"
+            element={
+              <Layout>
+                <ProtectedRoute>
+                  <EditClient />
                 </ProtectedRoute>
               </Layout>
             }
