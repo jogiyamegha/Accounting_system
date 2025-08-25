@@ -1,14 +1,16 @@
 
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { useDispatch } from "react-redux";
 
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
-import { setUser, setError } from "../../redux/features/userSlice"; // ✅ also import setError
+import { setUser, setError } from "../../redux/features/userSlice"; 
 
-import { ADMIN_END_POINT, CLIENT_END_POINT } from "../../utils/constants"; // ✅ use ADMIN_END_POINT
+import { ADMIN_END_POINT, CLIENT_END_POINT } from "../../utils/constants"; 
+
+import { Eye, EyeOff } from 'lucide-react'
 
 import "../../styles/login.css";
 
@@ -23,7 +25,8 @@ function Login() {
 
   const location = useLocation();
 
-  // ✅ Detect whether current route is admin login or client login
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const isAdmin = location.pathname.includes("admin");
 
@@ -96,14 +99,24 @@ function Login() {
           <input type="email" id="email" ref={emailInputRef} required />
         </div>
 
-        <div className="form-group">
+        <div className="form-group password=group">
           <label htmlFor="password">Password</label>
+          <div className="password-input-wrapper">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             id="password"
             ref={passwordInputRef}
             required
           />
+
+          <span
+              className="eye-icon"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </span>
+
+          </div>
         </div>
 
         <button type="submit" className="login-button">
