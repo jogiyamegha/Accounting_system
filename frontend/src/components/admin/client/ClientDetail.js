@@ -13,11 +13,8 @@ function formatDateToDDMMYYYY(dateString) {
   if (!dateString) return ""; // handle null or undefined
 
   const date = new Date(dateString);
-
   const day = ("0" + date.getDate()).slice(-2);
-
   const month = ("0" + (date.getMonth() + 1)).slice(-2);
-
   const year = date.getFullYear();
 
   return `${day}/${month}/${year}`;
@@ -27,12 +24,13 @@ export default function ClientDetail() {
   const { clientId } = useParams();
 
   const [data, setData] = useState(null);
-
   const [invoices, setInvoices] = useState({ invoiceList: [] });
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
+
+  // 🔹 New states for document filtering
+  const [searchType, setSearchType] = useState("");
+  const [searchDate, setSearchDate] = useState("");
 
   const navigate = useNavigate();
 
@@ -43,22 +41,15 @@ export default function ClientDetail() {
   useEffect(() => {
     const fetchClientDetails = async () => {
       try {
-        const res = await fetch(
-          `${ADMIN_END_POINT}/client-detail/${clientId}`,
-
-          {
-            method: "GET",
-
-            credentials: "include",
-
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        const res = await fetch(`${ADMIN_END_POINT}/client-detail/${clientId}`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        });
 
         if (!res.ok) throw new Error("Failed to fetch client details");
 
         const result = await res.json();
-
         setData(result);
       } catch (err) {
         setError(err.message);
@@ -71,13 +62,11 @@ export default function ClientDetail() {
       try {
         const res = await fetch(
           `${ADMIN_END_POINT}/clients/${clientId}/invoices`,
-
           { credentials: "include" }
         );
 
         if (res.ok) {
           const result = await res.json();
-
           setInvoices(result);
         }
       } catch (err) {
@@ -86,68 +75,48 @@ export default function ClientDetail() {
     };
 
     fetchClientDetails();
-
     fetchInvoices();
   }, [clientId]);
 
   if (loading) return <p className="loading-text">Loading client details...</p>;
-
   if (error) return <p className="error-text">{error}</p>;
-
   if (!data) return <p className="empty-text">No client details found</p>;
 
   const { client, company, document, invoice } = data;
 
-  console.log("d",document)
+  // 🔹 Filtered Documents
+  const filteredDocuments =
+    document?.documents?.filter((doc) => {
+      // Get the readable type name from DocumentType
+      const docTypeName = Object.entries(DocumentType).find(
+        ([, typeValue]) => typeValue === doc.documentDetails.documentType
+      )?.[0];
 
-  // 🔹 View & Download invoice helpers
+      const docDate = formatDateToDDMMYYYY(doc.documentDetails.uploadedAt);
 
-  const handleViewInvoice = (filename) => {
-    window.open(`${ADMIN_END_POINT}/invoices/${filename}`, "_blank");
-  };
+      const matchesType = searchType
+        ? docTypeName === searchType
+        : true;
 
-  const handleDownloadInvoice = async (filename) => {
-    try {
-      const res = await fetch(`${ADMIN_END_POINT}/invoices/${filename}`, {
-        credentials: "include",
-      });
+      const matchesDate = searchDate ? docDate === searchDate : true;
 
-      const blob = await res.blob();
-
-      const url = window.URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-
-      a.href = url;
-
-      a.download = filename;
-
-      document.body.appendChild(a);
-
-      a.click();
-
-      a.remove();
-
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Error downloading invoice:", err);
-    }
-  };
+      return matchesType && matchesDate;
+    }) || [];
 
   return (
     <div className="client-detail-page">
       <Sidebar />
       <div className="adjustment">
-
         <h2 className="page-title">Client Details</h2>
-        <button className="gtBtn" onClick={() => handleGenerateInvoice(client._id)}>
+        <button
+          className="gtBtn"
+          onClick={() => handleGenerateInvoice(client._id)}
+        >
           Generate Invoice
         </button>
       </div>
 
-
       {/* Client Info */}
-
       {client && (
         <div className="clientCard">
           <h3 className="clientCard-title">👤 Client Information</h3>
@@ -171,7 +140,6 @@ export default function ClientDetail() {
       )}
 
       {/* Company Info */}
-
       {company && (
         <div className="clientCard">
           <h3 className="clientCard-title">🏢 Company Information</h3>
@@ -243,13 +211,47 @@ export default function ClientDetail() {
       <div className="clientCard">
         <h3 className="clientCard-title">📃 Documents</h3>
 
-        {document && document.documents && document.documents.length > 0 ? (
+        {/* 🔍 Filters */}
+        <div className="filter-bar">
+          <select
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value)}
+            className="filter-input"
+          >
+            <option value="">All Types</option>
+            {Object.entries(DocumentType).map(([typeName, typeValue]) => (
+              <option key={typeValue} value={typeName}>
+                {typeName}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="date"
+            value={
+              searchDate
+                ? (() => {
+                    const [dd, mm, yyyy] = searchDate.split("/");
+                    return `${yyyy}-${mm}-${dd}`;
+                  })()
+                : ""
+            }
+            onChange={(e) => {
+              if (!e.target.value) return setSearchDate("");
+              const [yyyy, mm, dd] = e.target.value.split("-");
+              setSearchDate(`${dd}/${mm}/${yyyy}`);
+            }}
+            className="filter-input"
+          />
+        </div>
+
+        {filteredDocuments.length > 0 ? (
           <ul className="document-list">
-            {document.documents.map((doc, index) => (
+            {filteredDocuments.map((doc, index) => (
               <li className="document-item" key={doc._id || index}>
                 <p>
                   {Object.entries(DocumentType).map(([typeName, typeValue]) =>
-                    typeValue === doc.documentDetails.docStatus ? (
+                    typeValue === doc.documentDetails.documentType ? (
                       <span key={typeValue}>
                         <strong>Document Type:</strong> {typeName}
                       </span>
@@ -273,7 +275,6 @@ export default function ClientDetail() {
                   <a
                     href={`${ADMIN_END_POINT}/files/${doc.documentDetails.document.replace(
                       "uploads/document/",
-
                       ""
                     )}`}
                     target="_blank"
@@ -287,27 +288,26 @@ export default function ClientDetail() {
             ))}
           </ul>
         ) : (
-          <p className="empty-text">No documents uploaded</p>
+          <p className="empty-text">No documents found</p>
         )}
       </div>
 
+      {/* Invoices */}
       <div className="clientCard">
         <h3 className="text-xl font-semibold mb-2">📑Invoices</h3>
 
         {invoice?.invoiceList?.length > 0 ? (
           <table className="invoice-item">
-            {/* <thead> */}
-              <tr className="">
-                <th className="">Index</th>
-                <th className="">Name</th>
-                <th className="">Actions</th>
-              </tr>
-            {/* </thead> */}
+            <tr>
+              <th>Index</th>
+              <th>Name</th>
+              <th>Actions</th>
+            </tr>
             <tbody>
               {invoice.invoiceList.map((doc, idx) => (
                 <tr key={idx} className="invoice-row">
                   <td>
-                    <p className="index">{idx + 1 }</p>
+                    <p className="index">{idx + 1}</p>
                   </td>
                   <td>{doc.invoiceNumber}</td>
                   <td className="buttons">

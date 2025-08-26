@@ -165,6 +165,7 @@ input::placeholder{
 }
 
 .removeButton {
+  margin-top: 1.3rem;
   background-color: #ef4444; /* red-500 */
 }
 .removeButton:hover:not(:disabled) {

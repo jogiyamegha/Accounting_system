@@ -314,7 +314,7 @@ const InvoiceForm = ({ onSubmit }) => {
                   onClick={() => removeItem(index)}
                   className={`${styles.button} ${styles.removeButton}`}
                 >
-                  Remove
+                  X
                 </button>
               </div>
             </div>

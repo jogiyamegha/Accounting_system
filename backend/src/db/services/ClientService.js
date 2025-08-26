@@ -28,6 +28,7 @@ class ClientService {
   static totalActiveClients = async () => {
     const clientCounts = await Client.find({
       [TableFields.isActive]: true,
+      [TableFields.deleted]: false
     }).countDocuments();
 
     return clientCounts;

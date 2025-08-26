@@ -9,15 +9,14 @@
   transition: all 0.3s ease;
 }
 
-.client-detail-page .adjustment{
+.client-detail-page .adjustment {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.gtBtn{
+.gtBtn {
   height: 70%;
-  /* padding: 0; */
 }
 
 /* Page Title */
@@ -51,6 +50,33 @@
   color: #1f2937;
 }
 
+/* 🔍 Filter Bar */
+.filter-bar {
+  width: 100%;
+  display: flex;
+
+  gap: 12px;
+  margin-bottom: 1.2rem;
+  /* flex-wrap: wrap; */
+}
+
+.filter-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  font-size: 14px;
+  color: #374151;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  background-color: #ffffff;
+}
+
 /* Document List */
 .document-list {
   list-style: none;
@@ -65,6 +91,7 @@
   border-bottom: 1px solid #e5e7eb;
   padding: 0.8rem 0;
   transition: background 0.2s ease;
+  flex-wrap: wrap; /* better responsiveness */
 }
 
 .document-item:hover {
@@ -72,12 +99,9 @@
   border-radius: 8px;
 }
 
+/* Invoices Table */
 .invoice-item {
   width: 100%;
-  /* display: flex;
-  flex-direction: column; */
-  /* justify-content: space-between; */
-  /* align-items: center; */
   border-bottom: 1px solid #e5e7eb;
   border-collapse: collapse;
   padding: 0.8rem 0;
@@ -90,14 +114,14 @@
   border-radius: 8px;
 }
 
-.invoice-item tr, th, td {
+.invoice-item tr,
+th,
+td {
   border: 0.5px solid #333;
 }
 
-.invoice-item td{
+.invoice-item td {
   text-align: center;
-  /* vertical-align: center; */
-
 }
 
 .index {
@@ -105,11 +129,11 @@
   padding-right: 1rem;
 }
 
-.invoice-row{
-  width: 100%
+.invoice-row {
+  width: 100%;
 }
 
-.buttons{
+.buttons {
   margin-top: 0.9rem;
   display: flex;
   justify-content: space-evenly;
@@ -117,29 +141,27 @@
   align-items: center;
 }
 
-.view{
+.view {
   height: 70%;
   width: 30%;
   background: #2563eb;
   color: #fff;
   text-decoration: none;
   border-radius: 10px;
-  padding: 4px 0 ;
+  padding: 4px 0;
+  text-align: center;
 }
 
-.download{
+.download {
   height: 70%;
   width: 30%;
   color: #fff;
   background: #4caf50;
   text-decoration: none;
   border-radius: 10px;
-  padding: 4px 0 ;
-
+  padding: 4px 0;
+  text-align: center;
 }
-/* .document-item:last-child {
-  border-bottom: none;
-} */
 
 /* Links */
 .view-link {
@@ -202,6 +224,19 @@
   .clientCard-title {
     font-size: 1.1rem;
   }
+
+  .filter-bar {
+    flex-direction: column;
+  }
+
+  .filter-input {
+    width: 100%;
+  }
+
+  .document-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* Smooth transition for all elements inside clientCards */
@@ -209,21 +244,14 @@
   transition: all 0.3s ease;
 }
 
-
-
+/* Buttons */
 .add-client-btn {
   padding: 8px 16px;
-
   background-color: #4caf50;
-
   color: #fff;
-
   border: none;
-
   border-radius: 6px;
-
   cursor: pointer;
-
   transition: background 0.3s;
 }
 
