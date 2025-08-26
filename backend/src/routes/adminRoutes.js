@@ -143,7 +143,7 @@ const router = API.configRoute("/admin")
 
 .addPath('/document-management')
 .asGET(DocumentController.getAllDocuments)
-// .useAdminAuth()
+.useAdminAuth()
 .build()
 
 

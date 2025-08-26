@@ -145,20 +145,40 @@ class DocumentService {
       let sortKey = filter.sortKey || TableFields._createdAt;
       let sortOrder = filter.sortOrder || 1;
       let needCount = Util.parseBoolean(filter.needCount);
-      let searchQuery = {};
+      // mapping between names and numbers
+      const docTypeMap = {
+        1: "Financial Statements",
+        2: "VAT Returns & Invoices",
+        3: "Payroll & WPS Reports",
+        4: "Bank Statements",
+        5: "Expense Receipts",
+        6: "Audit Reports",
+      };
 
+      let searchQuery = {};
       let searchTerm = filter.searchTerm;
+
       if (searchTerm) {
-        searchQuery = {
-          $or: [
-            {
-              [TableFields.documentType]: {
-                $regex: Util.wrapWithRegexQry(searchTerm),
-                $options: "i",
-              },
+        // find matching docType keys
+        const matchingTypes = Object.entries(docTypeMap)
+          .filter(([key, value]) =>
+            value.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map(([key]) => parseInt(key));
+
+        if (matchingTypes.length > 0) {
+          searchQuery = {
+            "documents.documentDetails.documentType": { $in: matchingTypes },
+          };
+        } else {
+          // fallback: search by comments or other string fields
+          searchQuery = {
+            "documents.documentDetails.comments": {
+              $regex: Util.wrapWithRegexQry(searchTerm),
+              $options: "i",
             },
-          ],
-        };
+          };
+        }
       }
 
       let baseQuery = {

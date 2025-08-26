@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   ADMIN_END_POINT,
   DocStatus,
@@ -20,6 +20,7 @@ function formatDateToDDMMYYYY(dateString) {
 
 export default function ClientDetail() {
   const { clientId } = useParams();
+  const location = useLocation();
 
   const [data, setData] = useState(null);
   const [invoices, setInvoices] = useState({ invoiceList: [] });
@@ -41,11 +42,14 @@ export default function ClientDetail() {
   useEffect(() => {
     const fetchClientDetails = async () => {
       try {
-        const res = await fetch(`${ADMIN_END_POINT}/client-detail/${clientId}`, {
-          method: "GET",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-        });
+        const res = await fetch(
+          `${ADMIN_END_POINT}/client-detail/${clientId}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
 
         if (!res.ok) throw new Error("Failed to fetch client details");
 
@@ -92,9 +96,18 @@ export default function ClientDetail() {
         docId: doc._id,
       };
     });
-    console.log("initialEdited",initialEdited)
+    console.log("initialEdited", initialEdited);
     setEditedDocs(initialEdited);
   }, [documents]);
+
+  useEffect(() => {
+    if (!loading && location.state?.scrollToDocuments ) {
+      const el = document.getElementById("documents");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [loading, location.state]);
 
   if (loading) return <p className="loading-text">Loading client details...</p>;
   if (error) return <p className="error-text">{error}</p>;
@@ -133,7 +146,7 @@ export default function ClientDetail() {
       if (!clientId) return;
       setError("");
 
-      const { status, comments} = editedDocs[docId];
+      const { status, comments } = editedDocs[docId];
       // console.log("editedDocs",editedDocs)
 
       const response = await fetch(
@@ -146,7 +159,7 @@ export default function ClientDetail() {
         }
       );
 
-      console.log(response)
+      console.log(response);
 
       if (!response.ok) {
         const errData = await response.json();
@@ -180,7 +193,10 @@ export default function ClientDetail() {
       <Sidebar />
       <div className="adjustment">
         <h2 className="page-title">Client Details</h2>
-        <button className="gtBtn" onClick={() => handleGenerateInvoice(client._id)}>
+        <button
+          className="gtBtn"
+          onClick={() => handleGenerateInvoice(client._id)}
+        >
           Generate Invoice
         </button>
       </div>
@@ -189,12 +205,19 @@ export default function ClientDetail() {
       {client && (
         <div className="clientCard">
           <h3 className="clientCard-title">👤 Client Information</h3>
-          <p><strong>Name:</strong> {client.name}</p>
-          <p><strong>Email:</strong> {client.email}</p>
-          <p><strong>Position:</strong> {client.position}</p>
+          <p>
+            <strong>Name:</strong> {client.name}
+          </p>
+          <p>
+            <strong>Email:</strong> {client.email}
+          </p>
+          <p>
+            <strong>Position:</strong> {client.position}
+          </p>
           {client.contact && (
             <p>
-              <strong>Contact:</strong> {client.contact.phoneCountry} {client.contact.phone}
+              <strong>Contact:</strong> {client.contact.phoneCountry}{" "}
+              {client.contact.phone}
             </p>
           )}
         </div>
@@ -269,7 +292,7 @@ export default function ClientDetail() {
       )}
 
       {/* Documents */}
-      <div className="clientCard">
+      <div className="clientCard" id="documents">
         <h3 className="clientCard-title">📃 Documents</h3>
 
         {/* Filters */}
@@ -312,15 +335,19 @@ export default function ClientDetail() {
               <li className="document-item" key={doc._id || index}>
                 <p>
                   <strong>Type:</strong>{" "}
-                  {Object.entries(DocumentType).find(
-                    ([, v]) => v === doc.documentDetails.documentType
-                  )?.[0]}
+                  {
+                    Object.entries(DocumentType).find(
+                      ([, v]) => v === doc.documentDetails.documentType
+                    )?.[0]
+                  }
                 </p>
                 <p>
                   <strong>Status:</strong>{" "}
-                  {Object.entries(DocStatus).find(
-                    ([, v]) => v === doc.documentDetails.docStatus
-                  )?.[0]}
+                  {
+                    Object.entries(DocStatus).find(
+                      ([, v]) => v === doc.documentDetails.docStatus
+                    )?.[0]
+                  }
                 </p>
                 <p>
                   <strong>Uploaded:</strong>{" "}
@@ -339,7 +366,6 @@ export default function ClientDetail() {
                     View Document
                   </a>
                 </p>
-                
 
                 <div className="doc-action">
                   <label className="doc-label">Comments:</label>
@@ -355,7 +381,9 @@ export default function ClientDetail() {
                 </div>
 
                 <div className="doc-action">
-                  <label className="doc-label">Status: {editedDocs[doc._id]?.status}</label>
+                  <label className="doc-label">
+                    Status: {editedDocs[doc._id]?.status}
+                  </label>
                   <select
                     className="doc-select"
                     value={editedDocs[doc._id]?.status || ""}

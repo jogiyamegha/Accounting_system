@@ -25,6 +25,7 @@ import ClientDetail from "./components/admin/client/ClientDetail";
 import GenerateInvoice from "./components/admin/client/GenerateInvoice";
 import EditClient from "./components/admin/client/EditClient";
 import ServiceManagement from "./components/admin/service/ServiceManagement";
+import DocumentManagement from "./components/admin/document/DocumentManagement";
 
  
 
@@ -171,6 +172,18 @@ function App() {
             </Layout>
           }
         />
+
+        {/* -------- Admin Document Routes ---------- */}
+
+        <Route
+          path="/admin/document-management"
+          element={
+            <Layout>
+              <DocumentManagement />
+            </Layout>
+          }
+        />
+
 
 
 
