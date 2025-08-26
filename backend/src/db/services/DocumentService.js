@@ -138,77 +138,63 @@ class DocumentService {
     return updatedDoc;
   };
 
- static listDocuments = (filter = {}) => {
-  return new ProjectionBuilder(async function () {
-    let limit = filter.limit || 0;
-    let skip = filter.skip || 0;
-    let sortKey = filter.sortKey || TableFields._createdAt;
-    let sortOrder = filter.sortOrder || 1;
-    let needCount = Util.parseBoolean(filter.needCount);
+  static listDocuments = (filter = {}) => {
+    return new ProjectionBuilder(async function () {
+      let limit = filter.limit || 0;
+      let skip = filter.skip || 0;
+      let sortKey = filter.sortKey || TableFields._createdAt;
+      let sortOrder = filter.sortOrder || 1;
+      let needCount = Util.parseBoolean(filter.needCount);
+      // mapping between names and numbers
+      const docTypeMap = {
+        1: "Financial Statements",
+        2: "VAT Returns & Invoices",
+        3: "Payroll & WPS Reports",
+        4: "Bank Statements",
+        5: "Expense Receipts",
+        6: "Audit Reports",
+      };
 
-    // mapping between names and numbers
-    const docTypeMap = {
-      1: "Financial Statements",
-      2: "VAT Returns & Invoices",
-      3: "Payroll & WPS Reports",
-      4: "Bank Statements",
-      5: "Expense Receipts",
-      6: "Audit Reports",
-    };
+      let searchQuery = {};
+      let searchTerm = filter.searchTerm;
 
-    let searchQueryInside = {}; // to be merged inside $elemMatch
-    let searchTerm = filter.searchTerm;
+      if (searchTerm) {
+        // find matching docType keys
+        const matchingTypes = Object.entries(docTypeMap)
+          .filter(([key, value]) =>
+            value.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map(([key]) => parseInt(key));
 
-    if (searchTerm) {
-      // find matching docType keys
-      const matchingTypes = Object.entries(docTypeMap)
-        .filter(([key, value]) =>
-          value.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        .map(([key]) => parseInt(key));
-
-      if (matchingTypes.length > 0) {
-        searchQueryInside = {
-          "documentDetails.documentType": { $in: matchingTypes },
-        };
-      } else {
-        // fallback: search by comments or other string fields
-        searchQueryInside = {
-          "documentDetails.comments": {
-            $regex: Util.wrapWithRegexQry(searchTerm),
-            $options: "i",
-          },
-        };
-      }
-    }
-
-    let baseQuery = {
-      [TableFields.deleted]: false,
-      documents: {
-        $elemMatch: {
-          $and: [
-            {
-              $or: [
-                { "documentDetails.deleteDoc": false },
-                { "documentDetails.deleteDoc": { $exists: false } },
-              ],
+        if (matchingTypes.length > 0) {
+          searchQuery = {
+            "documents.documentDetails.documentType": { $in: matchingTypes },
+          };
+        } else {
+          // fallback: search by comments or other string fields
+          searchQuery = {
+            "documents.documentDetails.comments": {
+              $regex: Util.wrapWithRegexQry(searchTerm),
+              $options: "i",
             },
-            searchQueryInside,
-          ],
-        },
-      },
-    };
+          };
+        }
+      }
 
-    return await Promise.all([
-      needCount ? Document.countDocuments(baseQuery) : undefined,
-      Document.find(baseQuery)
-        .limit(parseInt(limit))
-        .skip(parseInt(skip))
-        .sort({ [sortKey]: parseInt(sortOrder) }),
-    ]).then(([total, records]) => ({ total, records }));
-  });
-};
+      let baseQuery = {
+        [TableFields.deleted]: false,
+        ...searchQuery,
+      };
 
+      return await Promise.all([
+        needCount ? Document.countDocuments(baseQuery) : undefined,
+        Document.find(baseQuery)
+          .limit(parseInt(limit))
+          .skip(parseInt(skip))
+          .sort({ [sortKey]: parseInt(sortOrder) }),
+      ]).then(([total, records]) => ({ total, records }));
+    });
+  };
 
   static deleteDocFromArray = async (clientId, documentId, docArray) => {
     const matchedDoc = docArray.find(
