@@ -235,6 +235,7 @@ const TableFields = (function () {
   TableFields.document = "document";
   TableFields.comments = "comments";
   TableFields.uploadedAt = "uploadedAt";
+  TableFields.deleteDoc = "deleteDoc";
   TableFields.address = "address";
   TableFields.addressLine1 = "addressLine1";
   TableFields.addressLine2 = "addressLine2";

@@ -146,6 +146,11 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath('/delete-document')
+.asDELETE(DocumentController.deleteDocument)
+.useAdminAuth()
+.build()
+
 
 .getRouter()
 module.exports = router;

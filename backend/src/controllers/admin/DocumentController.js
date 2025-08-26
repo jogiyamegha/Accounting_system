@@ -1,8 +1,9 @@
 const ClientService = require("../../db/services/ClientService");
 const DocumentService = require("../../db/services/DocumentService");
-const { TableFields, ValidationMsg } = require("../../utils/constants");
+const { TableFields, ValidationMsg, TableNames } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const Email = require("../../emails/email");
+const ServiceManager = require('../../db/serviceManager')
 
 exports.getDocumentsForAdmin = async (req) => {
   const email = req.body.email;
@@ -105,4 +106,19 @@ exports.getAllDocuments = async (req) => {
     total: result.total,
     records: enrichedRecords,
   };
+};
+
+exports.deleteDocument = async (req) => {
+    let clientId = req.body.clientId;
+    let documentId =  req.body.docId;
+    console.log(req.body);
+  const document = await DocumentService.getDocsByClientId(clientId)
+    .withBasicInfo()
+    .execute();
+    // console.log("kjghj",document)
+
+  if (document) {
+    
+    await DocumentService.deleteDocFromArray(clientId, documentId, document[TableFields.documents])
+  }
 };

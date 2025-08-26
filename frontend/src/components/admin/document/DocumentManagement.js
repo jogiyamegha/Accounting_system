@@ -46,6 +46,34 @@ export default function DocumentManagement() {
     }
   };
 
+  const handleDelete = async (clientId, docId) => {
+    if (!window.confirm("Are you sure you want to delete this document?"))
+      return;
+
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/delete-document`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ clientId, docId }),
+      });
+
+    //   const data = await res.json();
+
+      if (res.ok) {
+        alert("Document deleted successfully");
+        fetchDocuments(); // refresh list
+      } else {
+        alert("Failed to delete document");
+      }
+    } catch (err) {
+      console.error("Error deleting document", err);
+      alert("Something went wrong while deleting.");
+    }
+  };
+
   // Group documents by client and category
   const categorizedDocs = documents.map((client) => {
     let categories = {};
@@ -61,7 +89,7 @@ export default function DocumentManagement() {
 
     return { ...client, categories };
   });
-//   console.log("gbhnj", categorizedDocs);
+  //   console.log("gbhnj", categorizedDocs);
 
   return (
     <div className="doc-management-container">
@@ -119,6 +147,12 @@ export default function DocumentManagement() {
                             )?.[0]
                           }
                         </span>
+                        <button
+                          className="doc-delete-btn"
+                          onClick={() => handleDelete(client.clientId, doc._id)}
+                        >
+                          ❌ Delete
+                        </button>
                       </li>
                     ))}
                   </ul>

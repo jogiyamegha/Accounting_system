@@ -26,6 +26,8 @@ import GenerateInvoice from "./components/admin/client/GenerateInvoice";
 import EditClient from "./components/admin/client/EditClient";
 import ServiceManagement from "./components/admin/service/ServiceManagement";
 import DocumentManagement from "./components/admin/document/DocumentManagement";
+import VATservice from "./components/admin/service/VATservice";
+import VATRegistrationForm from "./components/admin/service/VATRegistrationForm";
 
  
 
@@ -172,6 +174,35 @@ function App() {
             </Layout>
           }
         />
+
+        <Route
+          path="/admin/service-management"
+          element={
+            <Layout>
+              <ServiceManagement />
+            </Layout>
+          }
+        />
+ 
+        <Route
+          path="/admin/VAT-service"
+          element={
+            <Layout>
+              <VATservice />
+            </Layout>
+          }
+        />
+ 
+        <Route
+          path="/admin/VAT-registration"
+          element={
+            <Layout>
+              <VATRegistrationForm />
+            </Layout>
+          }
+        />
+ 
+ 
 
         {/* -------- Admin Document Routes ---------- */}
 

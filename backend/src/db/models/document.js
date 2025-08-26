@@ -30,6 +30,10 @@ const documentSChema = new Schema(
                     [TableFields.uploadedAt]: {
                         type: Date,
                     },
+                    [TableFields.deleteDoc]: {
+                        type: Boolean,
+                        default: false
+                    }
                 },
             },
         ],
