@@ -47,7 +47,7 @@ export default function Dashboard() {
         );
   
         const data = await response.json();
-        console.log("ghj",data);
+        // console.log("ghj",data);
   
         setTotalClients(data.allClients || 0);
   

@@ -33,17 +33,24 @@ export default function AddClient() {
     licenseExpiry: "",
     taxRegistrationNumber: "",
     businessType: "",
+    startDate: "",
+    endDate: "",
   });
  
   const documentTypes = [
     "VATcertificate",
     "CorporateTaxDocument",
     "BankStatement",
-    "DrivingLicense",
+    // "DrivingLicense",
     "Invoice",
     "auditFiles",
     "TradeLicense",
     "passport",
+    "FinancialStatements",
+    "BalanceSheet",
+    "Payroll",
+    "WPSReport",
+    "ExpenseReciept",
     "Other",
   ];
  
@@ -101,6 +108,15 @@ export default function AddClient() {
           return prev;
         }
       }
+
+      if (
+        name === "endDate" &&
+        updated.startDate &&
+        value < updated.startDate
+      ) {
+        alert("Financial End date cannot be earlier than start date!");
+        return prev;
+      }
  
       return updated;
     });
@@ -142,6 +158,7 @@ export default function AddClient() {
       }
  
       documents.forEach((doc, index) => {
+        // console.log(doc)
         formData.append(`documents[${index}][file]`, doc.file);
         formData.append(
           `documents[${index}][documentType]`,
@@ -383,6 +400,33 @@ export default function AddClient() {
             onChange={handleCompanyChange}
             required
           />
+
+            <>
+            </>
+          <label>Financial Year Start Date :</label>
+          <input
+            type="date"
+            name="startDate"
+            value={company.startDate}
+            onChange={handleCompanyChange}
+            required
+            max={new Date().toISOString().split("T")[0]} // prevent future dates
+          />
+
+          <label>Financial Year End Date :</label>
+          <input
+            type="date"
+            name="endDate"
+            value={company.endDate}
+            onChange={handleCompanyChange}
+            required
+            min={
+              company.startDate
+                ? company.startDate
+                : new Date().toISOString().split("T")[0]
+            }
+          />
+
         </div>
  
         {/* Documents */}

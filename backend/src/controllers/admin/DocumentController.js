@@ -60,3 +60,10 @@ exports.addClientDocument = async (req) => {
     );
     return result;
 }
+
+
+exports.getAllDocuments = async (req) => {
+    return await DocumentService.listDocuments({
+        ...req.query,
+    }).withBasicInfo().execute()
+}

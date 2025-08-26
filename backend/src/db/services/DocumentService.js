@@ -93,14 +93,13 @@ class DocumentService {
       { [TableFields.clientId]: clientId },
       {
         $set: {
-          [TableFields.documents]: documentsArray ,
+          [TableFields.documents]: documentsArray,
         },
       },
       { upsert: true, new: true }
     );
     return updated;
   };
-
 
   static updateDocStatus = async (clientId, documentId, newStatus, comment) => {
     // console.log("jebhj",documentId)
@@ -113,14 +112,13 @@ class DocumentService {
       newStatus = statusMap[newStatus.toLowerCase()];
     }
 
-    
     let records = await Document.findOne({
       [TableFields.clientId]: MongoUtil.toObjectId(clientId),
     });
 
     let documents = records[TableFields.documents];
 
-    console.log("3.",documents)
+    // console.log("3.", documents);
 
     const matchedDoc = documents.find(
       (doc) => doc._id.toString() === documentId
@@ -138,6 +136,44 @@ class DocumentService {
     );
 
     return updatedDoc;
+  };
+
+  static listDocuments = (filter = {}) => {
+    return new ProjectionBuilder(async function () {
+      let limit = filter.limit || 0;
+      let skip = filter.skip || 0;
+      let sortKey = filter.sortKey || TableFields._createdAt;
+      let sortOrder = filter.sortOrder || 1;
+      let needCount = Util.parseBoolean(filter.needCount);
+      let searchQuery = {};
+
+      let searchTerm = filter.searchTerm;
+      if (searchTerm) {
+        searchQuery = {
+          $or: [
+            {
+              [TableFields.documentType]: {
+                $regex: Util.wrapWithRegexQry(searchTerm),
+                $options: "i",
+              },
+            },
+          ],
+        };
+      }
+
+      let baseQuery = {
+        [TableFields.deleted]: false,
+        ...searchQuery,
+      };
+
+      return await Promise.all([
+        needCount ? Document.countDocuments(baseQuery) : undefined,
+        Document.find(baseQuery)
+          .limit(parseInt(limit))
+          .skip(parseInt(skip))
+          .sort({ [sortKey]: parseInt(sortOrder) }),
+      ]).then(([total, records]) => ({ total, records }));
+    });
   };
 
   static deleteMyReferences = async (

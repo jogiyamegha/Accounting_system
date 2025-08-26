@@ -60,7 +60,7 @@ export default function Sidebar() {
             <a href="/calendar">📅 Calendar Management</a>
           </li>
           <li>
-            <a href="/documents">📂 Document Management</a>
+            <a href="/admin/document-management">📂 Document Management</a>
           </li>
           <li>
             <a href="/admin/service-management">🛠 Service Management</a>

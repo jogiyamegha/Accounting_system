@@ -10,7 +10,12 @@ export const DocumentType = (function () {
   DocumentType.auditFiles = 5;
   DocumentType.TradeLicense = 6;
   DocumentType.passport = 7;
-  DocumentType.Other = 8;
+  DocumentType.FinancialStatements = 8;
+  DocumentType.BalanceSheet = 9;
+  DocumentType.Payroll = 10;
+  DocumentType.WPSReport = 11;
+  DocumentType.ExpenseReciept = 12;
+  DocumentType.Other = 13;
   return DocumentType;
 })();
 
@@ -38,7 +43,12 @@ export const docTypeMap = {
   5: "auditFiles",
   6: "TradeLicense",
   7: "passport",
-  8: "Other"
+  8: "FinancialStatements",
+  9: "BalanceSheet",
+  10: "Payroll",
+  11: "WPSReport",
+  12: "ExpenseReciept",
+  13: "Other"
 }
 
 export function formDataToJSON(formData) {

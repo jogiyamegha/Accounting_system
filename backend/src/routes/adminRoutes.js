@@ -141,6 +141,11 @@ const router = API.configRoute("/admin")
 // .build()
 
 
+.addPath('/document-management')
+.asGET(DocumentController.getAllDocuments)
+// .useAdminAuth()
+.build()
+
 
 .getRouter()
 module.exports = router;

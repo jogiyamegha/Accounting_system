@@ -5,16 +5,14 @@ import { countries } from "../../../utils/countries";
 import classes from "../../../styles/addClient.module.css";
 import Sidebar from "../../Sidebar";
 
-
 function formatForDateInput(isoString) {
   if (!isoString) return "";
   const d = new Date(isoString);
   const month = (d.getMonth() + 1).toString().padStart(2, "0");
   const day = d.getDate().toString().padStart(2, "0");
   const year = d.getFullYear();
-  return `${year}-${month}-${day}`; 
+  return `${year}-${month}-${day}`;
 }
-
 
 export default function EditClient() {
   const navigate = useNavigate();
@@ -45,6 +43,8 @@ export default function EditClient() {
     licenseExpiry: "",
     taxRegistrationNumber: "",
     businessType: "",
+    startDate: "",
+    endDate: "",
   });
 
   const [documents, setDocuments] = useState([]);
@@ -55,11 +55,16 @@ export default function EditClient() {
     "VATcertificate",
     "CorporateTaxDocument",
     "BankStatement",
-    "DrivingLicense",
+    // "DrivingLicense",
     "Invoice",
     "auditFiles",
     "TradeLicense",
     "passport",
+    "FinancialStatements",
+    "BalanceSheet",
+    "Payroll",
+    "WPSReport",
+    "ExpenseReciept",
     "Other",
   ];
 
@@ -99,18 +104,31 @@ export default function EditClient() {
           country: data.company.address?.country || "",
           licenseType: data.company.licenseDetails?.licenseType || "",
           licenseNumber: data.company.licenseDetails?.licenseNumber || "",
-          licenseIssueDate: formatForDateInput(data.company.licenseDetails?.licenseIssueDate) || "",
-          licenseExpiry: formatForDateInput(data.company.licenseDetails?.licenseExpiry) || "",
+          licenseIssueDate:
+            formatForDateInput(data.company.licenseDetails?.licenseIssueDate) ||
+            "",
+          licenseExpiry:
+            formatForDateInput(data.company.licenseDetails?.licenseExpiry) ||
+            "",
           taxRegistrationNumber: data.company?.taxRegistrationNumber || "",
           businessType: data.company?.businessType || "",
+          startDate:
+            formatForDateInput(data.company?.financialYear.startDate) || "",
+          endDate:
+            formatForDateInput(data.company?.financialYear.endDate) || "",
         });
 
         setDocuments(
-          data.document.documents?.map((doc) => ({
-            documentType: docTypeMap[doc.documentDetails.documentType],
-            file: null, // user can re-upload
-            existingFileUrl: doc.documentDetails.document, // to display link
-          })) || []
+          data.document.documents?.map((doc) => {
+            const fileName = doc.documentDetails.document?.split("/").pop(); // extract just the filename
+            return {
+              documentType: docTypeMap[doc.documentDetails.documentType],
+              file: null, // user can re-upload
+              existingFileUrl: fileName
+                ? `http://localhost:8000/admin/files/${fileName}`
+                : null,
+            };
+          }) || []
         );
       } catch (err) {
         setError(err.message);
@@ -153,6 +171,16 @@ export default function EditClient() {
           return prev;
         }
       }
+
+      if (
+        name === "endDate" &&
+        updated.startDate &&
+        value < updated.startDate
+      ) {
+        alert("License expiry cannot be earlier than issue date");
+        return prev;
+      }
+
       return updated;
     });
   };
@@ -432,6 +460,29 @@ export default function EditClient() {
             onChange={handleCompanyChange}
             required
           />
+          <label>Financial Year Star Date :</label>
+          <input
+            type="date"
+            name="startDate"
+            value={company.startDate}
+            onChange={handleCompanyChange}
+            required
+            max={new Date().toISOString().split("T")[0]}
+          />
+
+          <label>Financial Year End Date :</label>
+          <input
+            type="date"
+            name="endDate"
+            value={company.endDate}
+            onChange={handleCompanyChange}
+            required
+            min={
+              company.startDate
+                ? company.startDate
+                : new Date().toISOString().split("T")[0]
+            }
+          />
         </div>
 
         {/* Documents */}
@@ -472,6 +523,7 @@ export default function EditClient() {
                   href={doc.existingFileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className={classes.viewLink}
                 >
                   View Existing
                 </a>

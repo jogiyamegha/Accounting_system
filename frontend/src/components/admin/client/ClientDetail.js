@@ -232,11 +232,11 @@ export default function ClientDetail() {
                 {company.licenseDetails.licenseNumber}
               </p>
               <p>
-                <strong>Issue Date:</strong>{" "}
+                <strong>License Issue Date:</strong>{" "}
                 {formatDateToDDMMYYYY(company.licenseDetails.licenseIssueDate)}
               </p>
               <p>
-                <strong>Expiry Date:</strong>{" "}
+                <strong>License Expiry Date:</strong>{" "}
                 {formatDateToDDMMYYYY(company.licenseDetails.licenseExpiry)}
               </p>
             </>
@@ -245,8 +245,8 @@ export default function ClientDetail() {
           {company.financialYear && (
             <p>
               <strong>Financial Year:</strong>{" "}
-              {new Date(company.financialYear.startDate).toLocaleDateString()} -{" "}
-              {new Date(company.financialYear.endDate).toLocaleDateString()}
+              {formatDateToDDMMYYYY(company.financialYear.startDate)} -{" "}
+              {formatDateToDDMMYYYY(company.financialYear.endDate)}
             </p>
           )}
 

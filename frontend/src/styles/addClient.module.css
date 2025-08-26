@@ -209,6 +209,20 @@
   margin-bottom: 10px;
 }
 
+
+.viewLink {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.viewLink:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+  transform: translateX(2px);
+}
+
 /* Responsive: below 1024px - 2 fields per row */
 
 @media (max-width: 1024px) {

@@ -251,6 +251,12 @@ async function parseAndValidateCompany(
   if (isFieldEmpty(reqBody[TableFields.licenseExpiry])) {
     throw new ValidationError(ValidationMsg.LicenseExpiryEmpty);
   }
+  if (isFieldEmpty(reqBody[TableFields.startDate])) {
+    throw new ValidationError(ValidationMsg.StartDateEmpty);
+  }
+  if (isFieldEmpty(reqBody[TableFields.endDate])) {
+    throw new ValidationError(ValidationMsg.EndDateEmpty);
+  }
 
   if (isFieldEmpty(reqBody[TableFields.taxRegistrationNumber])) {
     throw new ValidationError(ValidationMsg.TaxRegistrationNumberEmpty);
@@ -278,7 +284,10 @@ async function parseAndValidateCompany(
       [TableFields.licenseIssueDate]: reqBody[TableFields.licenseIssueDate],
       [TableFields.licenseExpiry]: reqBody[TableFields.licenseExpiry],
     },
-
+    [TableFields.financialYear]: {
+      [TableFields.startDate]: reqBody[TableFields.startDate],
+      [TableFields.endDate]: reqBody[TableFields.endDate]
+    },
     [TableFields.taxRegistrationNumber]:
       reqBody[TableFields.taxRegistrationNumber],
     [TableFields.businessType]: reqBody[TableFields.businessType],
@@ -293,6 +302,8 @@ async function parseAndValidateDocuments(
   files,
   onValidationCompleted = async () => {}
 ) {
+
+  // console.log("reqBody",reqBody)
   if (!clientId) {
     throw new ValidationError(ValidationMsg.ClientIdEmpty);
   }
@@ -308,6 +319,7 @@ async function parseAndValidateDocuments(
 
       // ✅ Get documentType from reqBody, not files
       const documentType = reqBody.documents?.[index]?.documentType || null;
+      // console.log(documentType)
 
       let docType = null;
       if (typeof documentType === "string") {
@@ -315,14 +327,22 @@ async function parseAndValidateDocuments(
           VATcertificate: DocumentType.VATcertificate,
           CorporateTaxDocument: DocumentType.CorporateTaxDocument,
           BankStatement: DocumentType.BankStatement,
+          // DrivingLicense: DocumentType.DrivingLicense,
           Invoice: DocumentType.Invoice,
           auditFiles: DocumentType.auditFiles,
           TradeLicense: DocumentType.TradeLicense,
           passport: DocumentType.passport,
+          FinancialStatements: DocumentType.FinancialStatements,
+          BalanceSheet: DocumentType.BalanceSheet,
+          Payroll: DocumentType.Payroll,
+          WPSReport: DocumentType.WPSReport,
+          ExpenseReciept: DocumentType.ExpenseReciept,
           Other: DocumentType.Other,
         };
         docType = docTypeMap[documentType];
       }
+
+      // console.log(docType)
 
       // ✅ Upload file via addPdfFile instead of using file.path
       let persistedFileKey = null;
@@ -370,7 +390,7 @@ exports.getClientDetails = async (req, res) => {
   const client = await ClientService.getUserById(clientId)
     .withBasicInfo()
     .execute();
-    console.log(client)
+    // console.log(client)
   const associatedCompanyId = client[TableFields.companyId];
   const associatedCompany = await CompanyService.getCompanyById(
     associatedCompanyId
