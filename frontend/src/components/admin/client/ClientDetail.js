@@ -10,13 +10,11 @@ import "../../../styles/clientDetail.css";
 import Sidebar from "../../Sidebar";
 
 function formatDateToDDMMYYYY(dateString) {
-  if (!dateString) return ""; // handle null or undefined
-
+  if (!dateString) return "";
   const date = new Date(dateString);
   const day = ("0" + date.getDate()).slice(-2);
   const month = ("0" + (date.getMonth() + 1)).slice(-2);
   const year = date.getFullYear();
-
   return `${day}/${month}/${year}`;
 }
 
@@ -25,16 +23,18 @@ export default function ClientDetail() {
 
   const [data, setData] = useState(null);
   const [invoices, setInvoices] = useState({ invoiceList: [] });
+  const [documents, setDocuments] = useState([]); // ✅ keep documents in state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔹 New states for document filtering
+  // 🔹 New states for filtering
   const [searchType, setSearchType] = useState("");
   const [searchDate, setSearchDate] = useState("");
+  const [editedDocs, setEditedDocs] = useState({});
 
   const navigate = useNavigate();
 
-  const handleGenerateInvoice = async (clientId) => {
+  const handleGenerateInvoice = (clientId) => {
     navigate(`/admin/generate-invoice/${clientId}`);
   };
 
@@ -51,6 +51,7 @@ export default function ClientDetail() {
 
         const result = await res.json();
         setData(result);
+        setDocuments(result.document?.documents || []); // ✅ set docs in state
       } catch (err) {
         setError(err.message);
       } finally {
@@ -78,40 +79,108 @@ export default function ClientDetail() {
     fetchInvoices();
   }, [clientId]);
 
+  // ✅ initialize editedDocs only when documents change
+  useEffect(() => {
+    let initialEdited = {};
+    (documents || []).forEach((doc) => {
+      const currentStatusKey = Object.keys(DocStatus).find(
+        (key) => DocStatus[key] === doc.documentDetails.docStatus
+      );
+      initialEdited[doc._id] = {
+        comments: doc.documentDetails.comments || "",
+        status: currentStatusKey || "",
+        docId: doc._id,
+      };
+    });
+    console.log("initialEdited",initialEdited)
+    setEditedDocs(initialEdited);
+  }, [documents]);
+
   if (loading) return <p className="loading-text">Loading client details...</p>;
   if (error) return <p className="error-text">{error}</p>;
   if (!data) return <p className="empty-text">No client details found</p>;
 
-  const { client, company, document, invoice } = data;
+  const { client, company } = data;
 
   // 🔹 Filtered Documents
   const filteredDocuments =
-    document?.documents?.filter((doc) => {
-      // Get the readable type name from DocumentType
+    documents.filter((doc) => {
       const docTypeName = Object.entries(DocumentType).find(
         ([, typeValue]) => typeValue === doc.documentDetails.documentType
       )?.[0];
 
       const docDate = formatDateToDDMMYYYY(doc.documentDetails.uploadedAt);
 
-      const matchesType = searchType
-        ? docTypeName === searchType
-        : true;
-
+      const matchesType = searchType ? docTypeName === searchType : true;
       const matchesDate = searchDate ? docDate === searchDate : true;
 
       return matchesType && matchesDate;
     }) || [];
+
+  const handleFieldChange = (docId, field, value) => {
+    setEditedDocs((prev) => ({
+      ...prev,
+      [docId]: {
+        ...prev[docId],
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleUpdate = async (docId) => {
+    // console.log("1",editedDocs)
+    try {
+      if (!clientId) return;
+      setError("");
+
+      const { status, comments} = editedDocs[docId];
+      // console.log("editedDocs",editedDocs)
+
+      const response = await fetch(
+        `${ADMIN_END_POINT}/update-doc-status/${clientId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status, comments, docId }),
+          credentials: "include",
+        }
+      );
+
+      console.log(response)
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || "Failed to update document status");
+      }
+
+      setDocuments((prevDocs) =>
+        prevDocs.map((doc) =>
+          doc._id === docId
+            ? {
+                ...doc,
+                documentDetails: {
+                  ...doc.documentDetails,
+                  docStatus: DocStatus[status],
+                  comments,
+                },
+              }
+            : doc
+        )
+      );
+
+      alert("Status Submitted & client is notified.");
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    }
+  };
 
   return (
     <div className="client-detail-page">
       <Sidebar />
       <div className="adjustment">
         <h2 className="page-title">Client Details</h2>
-        <button
-          className="gtBtn"
-          onClick={() => handleGenerateInvoice(client._id)}
-        >
+        <button className="gtBtn" onClick={() => handleGenerateInvoice(client._id)}>
           Generate Invoice
         </button>
       </div>
@@ -120,20 +189,12 @@ export default function ClientDetail() {
       {client && (
         <div className="clientCard">
           <h3 className="clientCard-title">👤 Client Information</h3>
-          <p>
-            <strong>Name:</strong> {client.name}
-          </p>
-          <p>
-            <strong>Email:</strong> {client.email}
-          </p>
-          <p>
-            <strong>Position:</strong> {client.position}
-          </p>
-
+          <p><strong>Name:</strong> {client.name}</p>
+          <p><strong>Email:</strong> {client.email}</p>
+          <p><strong>Position:</strong> {client.position}</p>
           {client.contact && (
             <p>
-              <strong>Contact:</strong> {client.contact.phoneCountry}{" "}
-              {client.contact.phone}
+              <strong>Contact:</strong> {client.contact.phoneCountry} {client.contact.phone}
             </p>
           )}
         </div>
@@ -211,7 +272,7 @@ export default function ClientDetail() {
       <div className="clientCard">
         <h3 className="clientCard-title">📃 Documents</h3>
 
-        {/* 🔍 Filters */}
+        {/* Filters */}
         <div className="filter-bar">
           <select
             value={searchType}
@@ -250,22 +311,16 @@ export default function ClientDetail() {
             {filteredDocuments.map((doc, index) => (
               <li className="document-item" key={doc._id || index}>
                 <p>
-                  {Object.entries(DocumentType).map(([typeName, typeValue]) =>
-                    typeValue === doc.documentDetails.documentType ? (
-                      <span key={typeValue}>
-                        <strong>Document Type:</strong> {typeName}
-                      </span>
-                    ) : null
-                  )}
+                  <strong>Type:</strong>{" "}
+                  {Object.entries(DocumentType).find(
+                    ([, v]) => v === doc.documentDetails.documentType
+                  )?.[0]}
                 </p>
                 <p>
-                  {Object.entries(DocStatus).map(([statusName, statusValue]) =>
-                    statusValue === doc.documentDetails.docStatus ? (
-                      <span key={statusValue}>
-                        <strong>Status:</strong> {statusName}
-                      </span>
-                    ) : null
-                  )}
+                  <strong>Status:</strong>{" "}
+                  {Object.entries(DocStatus).find(
+                    ([, v]) => v === doc.documentDetails.docStatus
+                  )?.[0]}
                 </p>
                 <p>
                   <strong>Uploaded:</strong>{" "}
@@ -284,6 +339,46 @@ export default function ClientDetail() {
                     View Document
                   </a>
                 </p>
+                
+
+                <div className="doc-action">
+                  <label className="doc-label">Comments:</label>
+                  <input
+                    type="text"
+                    className="doc-input"
+                    value={editedDocs[doc._id]?.comments || ""}
+                    onChange={(e) =>
+                      handleFieldChange(doc._id, "comments", e.target.value)
+                    }
+                    placeholder="Add comment..."
+                  />
+                </div>
+
+                <div className="doc-action">
+                  <label className="doc-label">Status: {editedDocs[doc._id]?.status}</label>
+                  <select
+                    className="doc-select"
+                    value={editedDocs[doc._id]?.status || ""}
+                    onChange={(e) =>
+                      handleFieldChange(doc._id, "status", e.target.value)
+                    }
+                  >
+                    {Object.keys(DocStatus).map((key) => (
+                      <option key={key} value={key}>
+                        {key}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="doc-action">
+                  <button
+                    className="doc-update-btn"
+                    onClick={() => handleUpdate(doc._id)}
+                  >
+                    Update
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -296,19 +391,19 @@ export default function ClientDetail() {
       <div className="clientCard">
         <h3 className="text-xl font-semibold mb-2">📑Invoices</h3>
 
-        {invoice?.invoiceList?.length > 0 ? (
+        {invoices?.invoiceList?.length > 0 ? (
           <table className="invoice-item">
-            <tr>
-              <th>Index</th>
-              <th>Name</th>
-              <th>Actions</th>
-            </tr>
+            <thead>
+              <tr>
+                <th>Index</th>
+                <th>Name</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
             <tbody>
-              {invoice.invoiceList.map((doc, idx) => (
+              {invoices.invoiceList.map((doc, idx) => (
                 <tr key={idx} className="invoice-row">
-                  <td>
-                    <p className="index">{idx + 1}</p>
-                  </td>
+                  <td>{idx + 1}</td>
                   <td>{doc.invoiceNumber}</td>
                   <td className="buttons">
                     <a
@@ -322,7 +417,6 @@ export default function ClientDetail() {
                     >
                       View
                     </a>
-
                     <a
                       href={`${ADMIN_END_POINT}/invoice/${doc.invoice.replace(
                         "uploads/invoice/",

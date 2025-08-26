@@ -24,6 +24,7 @@ import ClientManagement from "./components/admin/client/ClientManagement";
 import ClientDetail from "./components/admin/client/ClientDetail";
 import GenerateInvoice from "./components/admin/client/GenerateInvoice";
 import EditClient from "./components/admin/client/EditClient";
+import ServiceManagement from "./components/admin/service/ServiceManagement";
 
  
 
@@ -159,6 +160,19 @@ function App() {
               </Layout>
           }
         />
+
+        {/* -------- Admin Service Routes ---------- */}
+
+        <Route
+          path="/admin/service-management"
+          element={
+            <Layout>
+              <ServiceManagement />
+            </Layout>
+          }
+        />
+
+
 
 
         <Route

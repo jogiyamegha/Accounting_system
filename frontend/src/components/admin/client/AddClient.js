@@ -360,6 +360,7 @@ export default function AddClient() {
             <option value="Corporation">Corporation</option>
             <option value="LLC">LLC</option>
             <option value="Non-Profit">Non-Profit</option>
+            <option value="Private Limited">Private Limited</option>
           </select>
           <label>License Expiry Date :</label>
           <input

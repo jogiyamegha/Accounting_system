@@ -103,6 +103,7 @@ class DocumentService {
 
 
   static updateDocStatus = async (clientId, documentId, newStatus, comment) => {
+    // console.log("jebhj",documentId)
     if (typeof newStatus === "string") {
       const statusMap = {
         pending: DocStatus.pending,
@@ -112,18 +113,17 @@ class DocumentService {
       newStatus = statusMap[newStatus.toLowerCase()];
     }
 
-    if (!Object.values(DocStatus).includes(newStatus)) {
-      throw new ValidationError("Invalid Document Status.");
-    }
-
+    
     let records = await Document.findOne({
       [TableFields.clientId]: MongoUtil.toObjectId(clientId),
     });
 
     let documents = records[TableFields.documents];
 
+    console.log("3.",documents)
+
     const matchedDoc = documents.find(
-      (doc) => doc._id.toString() === documentId.toString()
+      (doc) => doc._id.toString() === documentId
     );
 
     const updatedDoc = await Document.updateOne(

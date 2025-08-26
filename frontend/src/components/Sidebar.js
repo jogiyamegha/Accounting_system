@@ -63,7 +63,7 @@ export default function Sidebar() {
             <a href="/documents">📂 Document Management</a>
           </li>
           <li>
-            <a href="/services">🛠 Service Management</a>
+            <a href="/admin/service-management">🛠 Service Management</a>
           </li>
           <li>
             <a href="/reports">📈 Reports & Insights</a>

@@ -128,7 +128,6 @@ exports.sendDocStatusMail = async (name, emailId, status, comments) => {
     email: emailId,
   };
 
-  // console.log("1",data);
   const template = Handlebars.compile(invitationTemplate);
   try {
     await sendEmail(emailId, GeneralMessages.DocStatus, template(data));
