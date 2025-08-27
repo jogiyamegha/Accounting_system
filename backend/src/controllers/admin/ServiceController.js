@@ -49,6 +49,8 @@ exports.assignService = async (req) => {
     throw new ValidationError(ValidationMsg.ClientNotExists);
   }
 
+  console.log(reqBody);
+
   const existsService = await ServiceService.serviceExistsWithClient(clientEmail);
   console.log(existsService);
 
@@ -150,10 +152,9 @@ async function parseAndValidate (
   if (isFieldEmpty(reqBody[TableFields.serviceType],existingField[TableFields.serviceType])) {
     throw new ValidationError(ValidationMsg.ServiceTypeEmpty);
   }
-
-  if(isFieldEmpty(reqBody[TableFields.serviceStartDate], existingField[TableFields.serviceStartDate])) {
-    throw new ValidationError(ValidationMsg.ServiceStartDateEmpty)
-  }
+  const response = await onValidationCompleted({
+    [TableFields.clientEmail] : reqBody[TableFields.clientEmail]
+  })
 }
 
 function isFieldEmpty(providedData, existingField) {
