@@ -1,41 +1,28 @@
 const mongoose = require("mongoose");
 const {ValidationMsg, TableFields, TableNames , ServiceType} = require('../../utils/constants');
 const Schema = mongoose.Schema;
-const validator = require("validator");
 
 const serviceSchema = new Schema(
     {
-        [TableFields.serviceType]: {
-            type: Number,
-            enum: Object.values(ServiceType),
-            required: [true, ValidationMsg.ServiceTypeEmpty],
-        },
-        [TableFields.targetCompletionDurationInYears]: {
-            type: Number,
-            default: 1,
-            required: [true, ValidationMsg.TargetCompletionDateEmpty],
-        },
-        [TableFields.description]: {
+        [TableFields.clientEmail]: {
             type: String,
+            trim: true
         },
-        [TableFields.assignedStaff]: {
-            [TableFields.accountantName]: {
-                type: String,
-                trim: true,
-                required: [true, ValidationMsg.AccountantNameEmpty],
-            },
-            [TableFields.email]: {
-                type: String,
-                trim: true,
-                required: [true, ValidationMsg.EmailEmpty],
-                lowercase: true,
-                validate(value) {
-                    if (!validator.isEmail(value)) {
-                        throw new ValidationError(ValidationMsg.EmailInvalid);
-                    }
+        [TableFields.services] : [
+            {
+                [TableFields.serviceType] : {
+                    type: Number,
+                    enum: Object.values(ServiceType),
+                    required: [true, ValidationMsg.ServiceTypeEmpty],
                 },
-            },
-        },
+                [TableFields.serviceStartDate] : {
+                    type : Date
+                },
+                [TableFields.serviceEndDate] : {
+                    type : Date
+                }
+            }
+        ]
     },
     {
         timeStamps: true,

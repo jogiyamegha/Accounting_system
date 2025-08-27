@@ -20,6 +20,23 @@ class ServiceService {
     });
   };
 
+  static findByEmail = (email) => {
+    return new ProjectionBuilder(async function() {
+      return await Service.findOne(
+        {
+          [TableFields.clientEmail] : email
+        },
+        this
+      )
+    })
+  }
+
+  static serviceExistsWithClient = async (clientEmail) => {
+    return await Service.exists({
+      [TableFields.clientEmail] : clientEmail
+    })
+  }
+
   static findByServiceType = async(serviceType) => {
     if (typeof serviceType === "string") {
       const serviceTypeMap = {
@@ -83,6 +100,23 @@ class ServiceService {
     }
   };
 
+  static updateServiceDetails = async (id, reqBody) => {
+    return await Service.findByIdAndUpdate(
+      {
+        [TableFields.ID] : id
+      },
+      {
+        $push: {
+          [TableFields.services] : {
+            [TableFields.serviceType] : reqBody[TableFields.serviceType],
+            [TableFields.serviceStartDate] : reqBody[TableFields.startDate],
+            [TableFields.serviceEndDate] : reqBody[TableFields.endDate]
+          }
+        }
+      }
+    )
+  }
+
   static updateRecord = async (serviceId, updatedFields) => {
     if (!serviceId) throw new Error("Service ID is required for update");
 
@@ -98,6 +132,8 @@ class ServiceService {
 
     return updatedService.toObject();
   };
+
+
 }
 
 const ProjectionBuilder = class {

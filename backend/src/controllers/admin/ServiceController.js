@@ -1,3 +1,4 @@
+const ClientService = require("../../db/services/ClientService");
 const ServiceService = require("../../db/services/ServiceService");
 const {
   TableFields,
@@ -9,7 +10,6 @@ const ValidationError = require("../../utils/ValidationError");
 
 exports.addService = async (req) => {
   const reqBody = req.body;
-
 
   const type = reqBody[TableFields.serviceType];
 
@@ -39,6 +39,35 @@ exports.addService = async (req) => {
     return data;
   }
 };
+
+exports.assignService = async (req) => {
+  const reqBody = req.body;
+  const clientEmail = reqBody[TableFields.clientEmail];
+
+  const clientExists = await ClientService.existsWithEmail(clientEmail);
+  if(!clientExists) { 
+    throw new ValidationError(ValidationMsg.ClientNotExists);
+  }
+
+  const existsService = await ServiceService.serviceExistsWithClient(clientEmail);
+  console.log(existsService);
+
+  let data;
+
+  if(!existsService) {
+    data = await parseAndValidate(
+      reqBody,
+      undefined,
+      async (updatedFields) => {
+        let records = await ServiceService.insertRecord(updatedFields)
+      }
+    ) 
+  } else {
+    console.log("here update");
+    const service = await ServiceService.findByEmail(clientEmail).withBasicInfo().execute();
+    await ServiceService.updateServiceDetails(service[TableFields.ID], reqBody)
+  }
+}
 
 async function parseAndValidateService(
   reqBody,
@@ -100,8 +129,9 @@ async function parseAndValidateService(
   }
 
   const response = await onValidationCompleted({
+    [TableFields.clientEmail] : reqBody[TableFields.email],
     [TableFields.serviceType]: serviceType,
-    [TableFields.targetCompletionDurationInYears]: reqBody.duration,
+    [TableFields.serviceEndDate]: reqBody.duration,
     [TableFields.description]: reqBody[TableFields.description],
     [TableFields.assignedStaff]: {
       [TableFields.accountantName]: reqBody[TableFields.accountantName],
@@ -110,6 +140,20 @@ async function parseAndValidateService(
   });
 
   return response;
+}
+
+async function parseAndValidate (
+  reqBody, 
+  existingField = {},
+  onValidationCompleted = async (updatedFields) => {}
+){
+  if (isFieldEmpty(reqBody[TableFields.serviceType],existingField[TableFields.serviceType])) {
+    throw new ValidationError(ValidationMsg.ServiceTypeEmpty);
+  }
+
+  if(isFieldEmpty(reqBody[TableFields.serviceStartDate], existingField[TableFields.serviceStartDate])) {
+    throw new ValidationError(ValidationMsg.ServiceStartDateEmpty)
+  }
 }
 
 function isFieldEmpty(providedData, existingField) {

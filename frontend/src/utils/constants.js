@@ -27,6 +27,16 @@ export const DocStatus = (function () {
   return DocStatus;
 })();
 
+export const BusinessType = (function (){
+  function BusinessType() {};
+  BusinessType.soleProprietorship = 1;
+  BusinessType.Partnership = 2;
+  BusinessType.LLC = 3;
+  BusinessType.Corporation = 4;
+  BusinessType.Cooperative = 5;
+  return BusinessType;
+})
+
 
 export const statusMap = {
   1: "Pending",

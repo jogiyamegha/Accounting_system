@@ -131,9 +131,18 @@ const router = API.configRoute("/admin")
 .build()
 
 
-.addPath('/add-service')
-.asPOST(ServiceController.addService)
-.useAdminAuth()
+// .addPath('/add-service')
+// .asPOST(ServiceController.addService)
+// .useAdminAuth()
+// .build()
+
+/** 
+ * Assign service to client
+ */
+
+.addPath('/assign-service')
+.asPOST(ServiceController.assignService) 
+// .useAdminAuth()
 .build()
 
 // .addPath('/approve-vat-request')

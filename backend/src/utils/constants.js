@@ -123,6 +123,7 @@ const ValidationMsg = (function () {
   ValidationMsg.LicenseExpiryEmpty = "LicenseExpiry required!";
   ValidationMsg.ZipcodeEmpty = "zipCode required!";
   ValidationMsg.ServiceTypeEmpty = "ServiceType required";
+  ValidationMsg.ServiceStartDateEmpty = 'Service Start Date required!';
   ValidationMsg.DurationTypeEmpty = "DurationType required";
   ValidationMsg.ReceiverIdEmpty = "ReceiverId required";
   ValidationMsg.MessageEmpty = "message required!";
@@ -300,8 +301,11 @@ const TableFields = (function () {
   TableFields.deleted = 'deleted';
   TableFields.invoiceList = 'invoiceList';
   TableFields.invoice = 'invoice';
-    TableFields.invoiceNumber = 'invoiceNumber';
-
+  TableFields.invoiceNumber = 'invoiceNumber';
+  TableFields.services = 'services';
+  TableFields.clientEmail = 'clientEmail';
+  TableFields.startDate = 'startDate';
+  TableFields.endDate = 'endDate';
 
   return TableFields;
 })();
