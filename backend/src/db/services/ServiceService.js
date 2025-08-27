@@ -21,23 +21,23 @@ class ServiceService {
   };
 
   static findByEmail = (email) => {
-    return new ProjectionBuilder(async function() {
+    return new ProjectionBuilder(async function () {
       return await Service.findOne(
         {
-          [TableFields.clientEmail] : email
+          [TableFields.clientEmail]: email,
         },
         this
-      )
-    })
-  }
+      );
+    });
+  };
 
   static serviceExistsWithClient = async (clientEmail) => {
     return await Service.exists({
-      [TableFields.clientEmail] : clientEmail
-    })
-  }
+      [TableFields.clientEmail]: clientEmail,
+    });
+  };
 
-  static findByServiceType = async(serviceType) => {
+  static findByServiceType = async (serviceType) => {
     if (typeof serviceType === "string") {
       const serviceTypeMap = {
         VATServices: ServiceType.VATServices,
@@ -54,8 +54,8 @@ class ServiceService {
     }
 
     return await Service.findOne({
-        [TableFields.serviceType]: serviceType
-    })
+      [TableFields.serviceType]: serviceType,
+    });
   };
 
   static existsWithType = async (type, exceptionId) => {
@@ -101,21 +101,37 @@ class ServiceService {
   };
 
   static updateServiceDetails = async (id, reqBody) => {
+    let serviceType =  reqBody[TableFields.serviceType];
+
+    if (typeof serviceType === "string") {
+        const serviceTypeMap = {
+          "VAT Filing": ServiceType.VATFiling,
+          "Corporate Tax": ServiceType.CorporateTaxServices,
+          "Payroll": ServiceType.Payroll,
+          "Audit": ServiceType.AuditAndCompliance,
+        };
+    
+        serviceType = serviceTypeMap[serviceType];
+      }
+
     return await Service.findByIdAndUpdate(
-      {
-        [TableFields.ID] : id
-      },
+      id,
       {
         $push: {
-          [TableFields.services] : {
-            [TableFields.serviceType] : reqBody[TableFields.serviceType],
-            [TableFields.serviceStartDate] : reqBody[TableFields.startDate],
-            [TableFields.serviceEndDate] : reqBody[TableFields.endDate]
-          }
-        }
-      }
-    )
-  }
+          [TableFields.services]: {
+            [TableFields.serviceType]: serviceType,
+            [TableFields.serviceStartDate]: new Date(
+              reqBody[TableFields.startDate]
+            ),
+            [TableFields.serviceEndDate]: new Date(
+              reqBody[TableFields.endDate]
+            ),
+          },
+        },
+      },
+      { new: true, runValidators: true }
+    );
+  };
 
   static updateRecord = async (serviceId, updatedFields) => {
     if (!serviceId) throw new Error("Service ID is required for update");
@@ -132,8 +148,6 @@ class ServiceService {
 
     return updatedService.toObject();
   };
-
-
 }
 
 const ProjectionBuilder = class {

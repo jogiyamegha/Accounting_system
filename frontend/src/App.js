@@ -1,5 +1,5 @@
 import "./App.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Routes, Route } from "react-router-dom";
 import AddClient from "./components/admin/client/AddClient";
 import HomePage from "./components/layout/HomePage";
@@ -28,10 +28,7 @@ import ServiceManagement from "./components/admin/service/ServiceManagement";
 import DocumentManagement from "./components/admin/document/DocumentManagement";
 import VATservice from "./components/admin/service/VATservice";
 import VATRegistrationForm from "./components/admin/service/VATRegistrationForm";
-
- 
-
-
+import CalendarManagment from "./components/admin/calendar/CalendarManagement";
 
 function App() {
   return (
@@ -89,78 +86,77 @@ function App() {
         <Route
           path="/admin/admin-dashboard"
           element={
-              <Layout>
-                <ProtectedRoute>
-                    <Dashboard />
-                </ProtectedRoute>
-              </Layout>
+            <Layout>
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            </Layout>
           }
         />
 
         <Route
           path="/admin/add-client"
           element={
-              <Layout>
-                <ProtectedRoute>
-                    <AddClient />
-                </ProtectedRoute>
-              </Layout>
+            <Layout>
+              <ProtectedRoute>
+                <AddClient />
+              </ProtectedRoute>
+            </Layout>
           }
         />
 
         <Route
           path="/admin/client-management"
           element={
-              <Layout>
-                <ProtectedRoute>
-                    <ClientManagement />
-                </ProtectedRoute>
-              </Layout>
+            <Layout>
+              <ProtectedRoute>
+                <ClientManagement />
+              </ProtectedRoute>
+            </Layout>
           }
         />
 
         <Route
           path="/admin/client-detail/:clientId"
-            element={
-              <Layout>
-                <ProtectedRoute>
-                  <ClientDetail />
-                </ProtectedRoute>
-              </Layout>
-            }
+          element={
+            <Layout>
+              <ProtectedRoute>
+                <ClientDetail />
+              </ProtectedRoute>
+            </Layout>
+          }
         />
 
         <Route
           path="/admin/generate-invoice/:clientId"
-            element={
-              <Layout>
-                <ProtectedRoute>
-                  <GenerateInvoice />
-                </ProtectedRoute>
-              </Layout>
-            }
+          element={
+            <Layout>
+              <ProtectedRoute>
+                <GenerateInvoice />
+              </ProtectedRoute>
+            </Layout>
+          }
         />
 
         <Route
           path="/admin/edit-client/:clientId"
-            element={
-              <Layout>
-                <ProtectedRoute>
-                  <EditClient />
-                </ProtectedRoute>
-              </Layout>
-            }
+          element={
+            <Layout>
+              <ProtectedRoute>
+                <EditClient />
+              </ProtectedRoute>
+            </Layout>
+          }
         />
-
 
         <Route
           path="/admin/document"
           element={
-              <Layout>
-                <ProtectedRoute>
-                    <DocStatusChange />
-                </ProtectedRoute>
-              </Layout>
+            <Layout>
+              <ProtectedRoute>
+                <DocStatusChange />
+              </ProtectedRoute>
+            </Layout>
           }
         />
 
@@ -183,7 +179,7 @@ function App() {
             </Layout>
           }
         />
- 
+
         <Route
           path="/admin/VAT-service"
           element={
@@ -192,7 +188,7 @@ function App() {
             </Layout>
           }
         />
- 
+
         <Route
           path="/admin/VAT-registration"
           element={
@@ -201,8 +197,17 @@ function App() {
             </Layout>
           }
         />
- 
- 
+
+        {/* -------- Admin Calendar Routes ---------- */}
+
+        <Route
+          path="/admin/calendar-management"
+          element={
+            <Layout>
+              <CalendarManagment />
+            </Layout>
+          }
+        />
 
         {/* -------- Admin Document Routes ---------- */}
 
@@ -214,10 +219,6 @@ function App() {
             </Layout>
           }
         />
-
-
-
-
 
         <Route
           path="/admin/forgot-password"
@@ -281,7 +282,7 @@ function App() {
           path="/client/profile"
           element={
             <Layout>
-              <ProtectedRoute >
+              <ProtectedRoute>
                 <ClientProfilePage />
               </ProtectedRoute>
             </Layout>
@@ -302,7 +303,6 @@ function App() {
           element={
             <Layout>
               <ProtectedRoute>
-
                 <CompanyProfile />
               </ProtectedRoute>
             </Layout>
@@ -312,10 +312,8 @@ function App() {
           path="/client/document"
           element={
             <Layout>
-
               <ProtectedRoute>
-
-              <DocumentPage />
+                <DocumentPage />
               </ProtectedRoute>
             </Layout>
           }

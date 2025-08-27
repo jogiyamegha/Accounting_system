@@ -136,6 +136,26 @@ exports.sendDocStatusMail = async (name, emailId, status, comments) => {
   }
 };
 
+exports.sendDocStatusMail = async (name, emailId, serviceType) => {
+  const invitationTemplate = fs
+    .readFileSync(
+      path.join(customerViewDirPath, "client", "service-assign.hbs")
+    )
+    .toString();
+  let data = {
+    name: name,
+    serviceType: serviceType,
+    email: emailId,
+  };
+
+  const template = Handlebars.compile(invitationTemplate);
+  try {
+    await sendEmail(emailId, GeneralMessages.DocStatus, template(data));
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 async function sendEmail(
   receiverEMail,
   subject,

@@ -5,6 +5,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../redux/features/userSlice";
 import { ADMIN_END_POINT, CLIENT_END_POINT } from "../utils/constants";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChartLine,
+  faUsers,
+  faCalendarAlt,
+  faFolderOpen,
+  faTools,
+  faChartBar,
+  faBell,
+  faPenSquare,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
+
 export default function Sidebar() {
   const { role } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -51,31 +64,49 @@ export default function Sidebar() {
       <nav className="sidebar-nav">
         <ul>
           <li>
-            <a href="/admin/admin-dashboard">📊 Dashboard</a>
+            <a href="/admin/admin-dashboard">
+              <FontAwesomeIcon icon={faChartLine} /> Dashboard
+            </a>
           </li>
           <li>
-            <a href="/admin/client-management">👥 Client Management</a>
+            <a href="/admin/client-management">
+              <FontAwesomeIcon icon={faUsers} /> Client Management
+            </a>
           </li>
           <li>
-            <a href="/calendar">📅 Calendar Management</a>
+            <a href="/admin/calendar-management">
+              <FontAwesomeIcon icon={faCalendarAlt} /> Calendar Management
+            </a>
           </li>
           <li>
-            <a href="/admin/document-management">📂 Document Management</a>
+            <a href="/admin/document-management">
+              <FontAwesomeIcon icon={faFolderOpen} /> Document Management
+            </a>
           </li>
           <li>
-            <a href="/admin/service-management">🛠 Service Management</a>
+            <a href="/admin/service-management">
+              <FontAwesomeIcon icon={faTools} /> Service Management
+            </a>
           </li>
           <li>
-            <a href="/reports">📈 Reports & Insights</a>
+            <a href="/reports">
+              <FontAwesomeIcon icon={faChartBar} /> Reports & Insights
+            </a>
           </li>
           <li>
-            <a href="/notifications">🔔 Notifications Management</a>
+            <a href="/notifications">
+              <FontAwesomeIcon icon={faBell} /> Notifications Management
+            </a>
           </li>
           <li>
-            <a href="/cms">📝 CMS Management</a>
+            <a href="/cms">
+              <FontAwesomeIcon icon={faPenSquare} /> CMS Management
+            </a>
           </li>
           <li className="logout">
-            <button onClick={handleLogout}>Logout</button>
+            <button onClick={handleLogout}>
+              <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+            </button>
           </li>
         </ul>
       </nav>

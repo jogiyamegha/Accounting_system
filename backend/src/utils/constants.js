@@ -67,9 +67,9 @@ const DurationType = (function () {
 
 const ServiceType = (function () {
   function ServiceType() {}
-  ServiceType.VATServices = 1;
+  ServiceType.VATFiling = 1;
   ServiceType.CorporateTaxServices = 2;
-  ServiceType.AccountingServices = 3;
+  ServiceType.Payroll = 3;
   ServiceType.AuditAndCompliance = 4;
   return ServiceType;
 })();

@@ -8,7 +8,7 @@ const SERVICE_TYPES = ["VAT Filing", "Corporate Tax", "Payroll", "Audit"];
 
 export default function ServiceManagement() {
   const navigate = useNavigate();
-  const [services, setServices] = useState([]);
+  //   const [services, setServices] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState("");
   const [formData, setFormData] = useState({
@@ -19,12 +19,12 @@ export default function ServiceManagement() {
   });
 
   // Fetch existing services
-//   useEffect(() => {
-//     fetch(`${ADMIN_END_POINT}/service-management`)
-//       .then((res) => res.json())
-//       .then((data) => setServices(data))
-//       .catch((err) => console.error(err));
-//   }, []);
+  //   useEffect(() => {
+  //     fetch(`${ADMIN_END_POINT}/service-management`)
+  //       .then((res) => res.json())
+  //       .then((data) => setServices(data))
+  //       .catch((err) => console.error(err));
+  //   }, []);
 
   const handleAssignClick = (type) => {
     setSelectedServiceType(type);
@@ -52,20 +52,20 @@ export default function ServiceManagement() {
         credentials: "include",
       });
 
-      console.log("res",res)
+      //   console.log("res",res)
 
       if (!res.ok) throw new Error("Failed to assign service");
 
-      const newService = await res.json();
+      //   const newService = await res.json();
       alert("Service assigned successfully!");
       setShowForm(false);
-      setServices((prev) => [...prev, newService]);
+      //   setServices((prev) => [...prev, newService]);
 
       const serviceRouteMap = {
         "VAT Filing": "/admin/VAT-service",
         "Corporate Tax": "/admin/corporate-tax-service",
-        "Payroll": "/admin/payroll-service",
-        "Audit": "/admin/audit-service",
+        Payroll: "/admin/payroll-service",
+        Audit: "/admin/audit-service",
       };
 
       const route = serviceRouteMap[selectedServiceType] || "/admin/services";
@@ -77,7 +77,7 @@ export default function ServiceManagement() {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#f5f5f5 " }}>
       {/* Sidebar */}
       <Sidebar />
 
@@ -190,11 +190,23 @@ export default function ServiceManagement() {
                     type="date"
                     name="startDate"
                     value={formData.startDate}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const startDate = new Date(value);
+                      const endDate = new Date(startDate);
+                      endDate.setMonth(endDate.getMonth() + 1);
+
+                      setFormData((prev) => ({
+                        ...prev,
+                        startDate: value,
+                        endDate: endDate.toISOString().split("T")[0],
+                      }));
+                    }}
                     required
                     style={{ width: "100%", padding: "8px", marginTop: "5px" }}
                   />
                 </div>
+
                 <div>
                   <label>End Date:</label>
                   <input
@@ -204,7 +216,9 @@ export default function ServiceManagement() {
                     onChange={handleChange}
                     required
                     min={
-                        formData.startDate ? formData.startDate : new Date().toISOString().split("T")[0]
+                      formData.startDate
+                        ? formData.startDate
+                        : new Date().toISOString().split("T")[0]
                     }
                     style={{ width: "100%", padding: "8px", marginTop: "5px" }}
                   />
