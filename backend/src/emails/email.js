@@ -136,7 +136,7 @@ exports.sendDocStatusMail = async (name, emailId, status, comments) => {
   }
 };
 
-exports.sendDocStatusMail = async (name, emailId, serviceType) => {
+exports.sendServiceAssignMail = async (name, emailId, serviceType) => {
   const invitationTemplate = fs
     .readFileSync(
       path.join(customerViewDirPath, "client", "service-assign.hbs")

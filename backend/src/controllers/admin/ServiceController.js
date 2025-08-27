@@ -7,6 +7,7 @@ const {
 } = require("../../utils/constants");
 const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
+const Email = require('../../emails/email')
 
 // exports.addService = async (req) => {
 //   const reqBody = req.body;
@@ -49,7 +50,7 @@ exports.assignService = async (req) => {
     throw new ValidationError(ValidationMsg.ClientNotExists);
   }
 
-  // console.log(reqBody);
+  let client = await ClientService.findByEmail(clientEmail).withBasicInfo().execute()
 
   const existsService = await ServiceService.serviceExistsWithClient(clientEmail);
   console.log(existsService);
@@ -63,12 +64,16 @@ exports.assignService = async (req) => {
       async (updatedFields) => {
         let records = await ServiceService.insertRecord(updatedFields)
       await ServiceService.updateServiceDetails(service[TableFields.ID], reqBody)
+      
+      Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
 
       }
     ) 
   } else {
     const service = await ServiceService.findByEmail(clientEmail).withBasicInfo().execute();
     await ServiceService.updateServiceDetails(service[TableFields.ID], reqBody)
+    Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
+
   }
 }
 
