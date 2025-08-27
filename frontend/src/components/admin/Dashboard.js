@@ -13,7 +13,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import "../../styles/adminDashboard.css";
+import styles from "../../styles/adminDashboard.module.css";  // ✅ Import module CSS
 import { ADMIN_END_POINT } from "../../utils/constants";
 
 const uploadData = [
@@ -27,68 +27,59 @@ const uploadData = [
 ];
 
 export default function Dashboard() {
-
   const navigate = useNavigate();
   const [activeClients, setActiveClients] = useState(0);
   const [loading, setLoading] = useState(true);
-  // const [search, setSearch] = useState("");
   const [totalClients, setTotalClients] = useState(0);
 
   const fetchClients = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `${ADMIN_END_POINT}/admin-dashboard`,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-          }
-        );
-  
-        const data = await response.json();
-        // console.log("ghj",data);
-  
-        setTotalClients(data.allClients || 0);
-  
-        setActiveClients(data.allActiveClients || 0);
+    try {
+      setLoading(true);
+      const response = await fetch(`${ADMIN_END_POINT}/admin-dashboard`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
 
-      } catch (error) {
-        console.error("Error fetching clients:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    useEffect(() => {
-      fetchClients();
-    }, [totalClients,activeClients]);
-  
+      const data = await response.json();
+
+      setTotalClients(data.allClients || 0);
+      setActiveClients(data.allActiveClients || 0);
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchClients();
+  }, [totalClients, activeClients]);
 
   return (
-    <div className="dashboard-layout">
+    <div className={styles.dashboardLayout}>
       <Sidebar />
 
-      <main className="dashboard-content">
-        <header className="dashboard-header">
+      <main className={styles.dashboardContent}>
+        <header className={styles.dashboardHeader}>
           <h1>Dashboard</h1>
         </header>
 
-        <section className="dashboard-cards">
-          <div className="card">
+        <section className={styles.dashboardCards}>
+          <div className={styles.card}>
             <h3>Total Registered Clients</h3>
             <p>{totalClients}</p>
           </div>
-          <div className="card">
+          <div className={styles.card}>
             <h3>Active Clients</h3>
             <p>{activeClients}</p>
           </div>
         </section>
 
         {/* Charts and Tables */}
-        <div className="dashboard-grid">
+        <div className={styles.dashboardGrid}>
           {/* Document Upload Chart */}
-          <div className="dashboard-chart card">
+          <div className={`${styles.dashboardChart} ${styles.card}`}>
             <h2>Document Upload Status (Last 7 Days)</h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={uploadData}>
@@ -105,7 +96,7 @@ export default function Dashboard() {
           </div>
 
           {/* VAT Return Deadlines */}
-          <div className="dashboard-table card">
+          <div className={`${styles.dashboardTable} ${styles.card}`}>
             <h2>VAT Return Deadlines</h2>
             <table>
               <thead>
@@ -133,7 +124,7 @@ export default function Dashboard() {
         </div>
 
         {/* Notifications */}
-        <section className="dashboard-notifications card">
+        <section className={`${styles.dashboardNotifications} ${styles.card}`}>
           <h2>Notifications and Alerts</h2>
           <ul>
             <li>📄 New document uploaded by Client A</li>

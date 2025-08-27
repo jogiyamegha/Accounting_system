@@ -1,0 +1,138 @@
+/* Container */
+.signupContainer {
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 30px 35px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.12);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Title */
+.signupContainer h2 {
+  text-align: center;
+  color: #2d2d2d;
+  margin-bottom: 25px;
+  font-size: 1.9rem;
+  font-weight: 600;
+}
+
+/* Form */
+.signupForm {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form groups */
+.formGroup {
+  margin-bottom: 18px;
+}
+
+.formGroup input {
+  width: 93%;
+  padding: 12px 14px;
+  border: 1px solid #959494;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.formGroup input:focus {
+  border-color: #04438b;
+  outline: none;
+  box-shadow: 0px 0px 6px rgba(9, 2, 141, 0.3);
+  background: #fff;
+}
+
+/* Password input wrapper */
+.passwordInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordInputWrapper input {
+  width: 100%;
+  padding-right: 45px;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  color: #777;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.eyeIcon:hover {
+  color: #333;
+}
+
+/* Error message */
+.errorMessage {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Signup button */
+.signupButton {
+  padding: 12px;
+  background: linear-gradient(135deg, #04438b, #033b7c);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.signupButton:hover {
+  background: linear-gradient(135deg, #013066, #062f5f);
+  transform: translateY(-2px);
+}
+
+/* Links */
+.loginLink,
+.clientLink {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  color: #04438b;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.loginLink:hover,
+.clientLink:hover {
+  color: #013066;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .signupContainer {
+    margin: 30px 15px;
+    padding: 22px;
+  }
+}

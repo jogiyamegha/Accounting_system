@@ -1,8 +1,8 @@
-/* profile-update.css */
+profile-update.css */
 
 /* Root variables for easy customization */
 :root {
-  --primary-color: #6eacef;
+  /* --primary-color: #6eacef; */
   --primary-hover: #0056b3;
   --bg-color: #ffffff;
   --border-color: #ddd;
@@ -116,4 +116,4 @@ select:focus-visible {
     padding: 2rem;
     gap: 1.2rem;
   }
-} */
+}

@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CLIENT_END_POINT } from "../../../utils/constants";
 import { countries } from "../../../utils/countries";
-import '../../../styles/profileUpdate.css';
+// import '../../../styles/profileUpdate.css';
 import { useSelector } from "react-redux";
 
 export default function ProfileUpdate() {
