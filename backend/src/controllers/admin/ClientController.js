@@ -5,9 +5,9 @@ const {
   DocStatus,
   DocumentType,
   docTypeMap,
-  TableNames
+  TableNames,
 } = require("../../utils/constants");
-const InvoiceService = require('../../db/services/InvoiceService');
+const InvoiceService = require("../../db/services/InvoiceService");
 const ValidationError = require("../../utils/ValidationError");
 const { sendClientInvitationEmail } = require("../../emails/email");
 const Util = require("../../utils/util");
@@ -18,11 +18,7 @@ const {
   removePdfFileById,
   Folders,
 } = require("../../utils/storage");
-const ServiceManager = require('../../db/serviceManager');
- 
-
-
-
+const ServiceManager = require("../../db/serviceManager");
 
 exports.addClient = async (req) => {
   const reqBody = req.body;
@@ -98,90 +94,92 @@ exports.addClient = async (req) => {
   );
 };
 
-
 exports.editClient = async (req) => {
-    let reqBody = req.body;
-    // console.log("reqBody",reqBody);
+  let reqBody = req.body;
+  // console.log("reqBody",reqBody);
 
-    let files = req.files;
-    const clientId = req.params[TableFields.clientId];
- 
-    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
-    if(!client){
-        throw new ValidationError(ValidationMsg.RecordNotFound);
-    }
+  let files = req.files;
+  const clientId = req.params[TableFields.clientId];
 
-    let records;
-    let data = await parseAndValidateClient(reqBody, async (updatedFields) => {
-      records = await ClientService.updateClient(clientId, updatedFields);
-    })
+  const client = await ClientService.getUserById(clientId)
+    .withBasicInfo()
+    .execute();
+  if (!client) {
+    throw new ValidationError(ValidationMsg.RecordNotFound);
+  }
 
-    
+  let records;
+  let data = await parseAndValidateClient(reqBody, async (updatedFields) => {
+    records = await ClientService.updateClient(clientId, updatedFields);
+  });
 
-    let existingCompany = await CompanyService.getCompanyById(
+  let existingCompany = await CompanyService.getCompanyById(
     client[TableFields.companyId]
-    )
+  )
     .withBasicInfo()
     .execute();
 
-    let company = await parseAndValidateCompany(
-      reqBody,
-      undefined,
-      async (updatedFields) => {
-        // console.log("company",updatedFields)
-        let companyRecords = await CompanyService.updateRecord(
-          existingCompany[TableFields.ID],
-          updatedFields
-        )
-      }
-    )
+  let company = await parseAndValidateCompany(
+    reqBody,
+    undefined,
+    async (updatedFields) => {
+      // console.log("company",updatedFields)
+      let companyRecords = await CompanyService.updateRecord(
+        existingCompany[TableFields.ID],
+        updatedFields
+      );
+    }
+  );
 
-    const existsWithClientId = await DocumentService.existsWithClient(clientId);
+  const existsWithClientId = await DocumentService.existsWithClient(clientId);
 
-    const result = await parseAndValidateDocuments(
-      reqBody,
-      clientId,
-      files,
-      async function (payload) {
-        return await DocumentService.updateManyDocumentsForClient(
-          clientId,
-          payload.documents
-        )
-      }
-    )
- 
-}
- 
+  const result = await parseAndValidateEditDocuments(
+    reqBody,
+    clientId,
+    files,
+    async function (payload) {
+      return await DocumentService.updateManyDocumentsForClient(
+        clientId,
+        payload.documents
+      );
+    }
+  );
+};
+
 exports.deleteClient = async (req) => {
-    const clientId = req.params[TableFields.clientId];
-    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
-    if(!client) {
-        throw new ValidationError(ValidationMsg.ClientNotExists);
-    }
- 
-    const companyId = client[TableFields.companyId];
-    const company = await CompanyService.companyExists(companyId);
-   
-    if(!company) {
-        throw new ValidationError(ValidationMsg.CompanyNotExists)
-    }
- 
-    const document = await DocumentService.getDocsByClientId(clientId).withBasicInfo().execute();
-    if(document) {
-      const documentId = document[TableFields.ID];
-      await ServiceManager.cascadeDelete(TableNames.Document, documentId)
-    }
-    const invoice = await InvoiceService.getInvoiceByClientId(clientId).withBasicInfo().execute();
-    if(invoice){
-      const invoiceId = invoice[TableFields.ID];
-      await ServiceManager.cascadeDelete(TableNames.Invoice, invoiceId)
-    }
- 
-    await ServiceManager.cascadeDelete(TableNames.Client, clientId)
-    await ServiceManager.cascadeDelete(TableNames.Company, companyId)
-}
- 
- 
+  const clientId = req.params[TableFields.clientId];
+  const client = await ClientService.getUserById(clientId)
+    .withBasicInfo()
+    .execute();
+  if (!client) {
+    throw new ValidationError(ValidationMsg.ClientNotExists);
+  }
+
+  const companyId = client[TableFields.companyId];
+  const company = await CompanyService.companyExists(companyId);
+
+  if (!company) {
+    throw new ValidationError(ValidationMsg.CompanyNotExists);
+  }
+
+  const document = await DocumentService.getDocsByClientId(clientId)
+    .withBasicInfo()
+    .execute();
+  if (document) {
+    const documentId = document[TableFields.ID];
+    await ServiceManager.cascadeDelete(TableNames.Document, documentId);
+  }
+  const invoice = await InvoiceService.getInvoiceByClientId(clientId)
+    .withBasicInfo()
+    .execute();
+  if (invoice) {
+    const invoiceId = invoice[TableFields.ID];
+    await ServiceManager.cascadeDelete(TableNames.Invoice, invoiceId);
+  }
+
+  await ServiceManager.cascadeDelete(TableNames.Client, clientId);
+  await ServiceManager.cascadeDelete(TableNames.Company, companyId);
+};
 
 exports.getAllClients = async (req) => {
   // nalytics code here
@@ -286,7 +284,7 @@ async function parseAndValidateCompany(
     },
     [TableFields.financialYear]: {
       [TableFields.startDate]: reqBody[TableFields.startDate],
-      [TableFields.endDate]: reqBody[TableFields.endDate]
+      [TableFields.endDate]: reqBody[TableFields.endDate],
     },
     [TableFields.taxRegistrationNumber]:
       reqBody[TableFields.taxRegistrationNumber],
@@ -302,7 +300,6 @@ async function parseAndValidateDocuments(
   files,
   onValidationCompleted = async () => {}
 ) {
-
   // console.log("reqBody",reqBody)
   if (!clientId) {
     throw new ValidationError(ValidationMsg.ClientIdEmpty);
@@ -362,10 +359,92 @@ async function parseAndValidateDocuments(
         [TableFields.documentDetails]: {
           [TableFields.docStatus]: DocStatus.pending, // default
           [TableFields.documentType]: docType,
-          [TableFields.document]: persistedFileKey, 
+          [TableFields.document]: persistedFileKey,
           [TableFields.uploadedAt]: Date.now(),
         },
       });
+    }
+  }
+
+  const payload = {
+    [TableFields.clientId]: clientId,
+    [TableFields.documents]: docs,
+  };
+
+  return await onValidationCompleted(payload);
+}
+
+async function parseAndValidateEditDocuments(
+  reqBody,
+  clientId,
+  files,
+  onValidationCompleted = async () => {}
+) {
+  if (!clientId) {
+    throw new ValidationError(ValidationMsg.ClientIdEmpty);
+  }
+
+  // 1️⃣ Get existing documents from DB
+  const existingDocRecord = await DocumentService.getDocsByClientId(clientId).withBasicInfo().execute();
+  let existingDocs = existingDocRecord
+    ? existingDocRecord[TableFields.documents] || []
+    : [];
+
+  let docs = [...existingDocs]; // start with old docs
+
+  for (const file of files) {
+    const match = file.fieldname.match(/documents\[(\d+)\]\[file\]/);
+
+    if (match) {
+      const index = match[1];
+      const documentType = reqBody.documents?.[index]?.documentType || null;
+
+      let docType = null;
+      if (typeof documentType === "string") {
+        const docTypeMap = {
+          VATcertificate: DocumentType.VATcertificate,
+          CorporateTaxDocument: DocumentType.CorporateTaxDocument,
+          BankStatement: DocumentType.BankStatement,
+          Invoice: DocumentType.Invoice,
+          auditFiles: DocumentType.auditFiles,
+          TradeLicense: DocumentType.TradeLicense,
+          passport: DocumentType.passport,
+          FinancialStatements: DocumentType.FinancialStatements,
+          BalanceSheet: DocumentType.BalanceSheet,
+          Payroll: DocumentType.Payroll,
+          WPSReport: DocumentType.WPSReport,
+          ExpenseReciept: DocumentType.ExpenseReciept,
+          Other: DocumentType.Other,
+        };
+        docType = docTypeMap[documentType];
+      }
+
+      // upload new file
+      let persistedFileKey = await addPdfFile(
+        Folders.ClientDocument,
+        file.originalname,
+        file.buffer
+      );
+
+      const existingIndex = docs.findIndex(
+        (d) =>
+          d[TableFields.documentDetails]?.[TableFields.documentType] === docType
+      );
+
+      const newDoc = {
+        [TableFields.documentDetails]: {
+          [TableFields.docStatus]: DocStatus.pending,
+          [TableFields.documentType]: docType,
+          [TableFields.document]: persistedFileKey,
+          [TableFields.uploadedAt]: Date.now(),
+        },
+      };
+
+      if (existingIndex >= 0) {
+        docs[existingIndex] = newDoc; 
+      } else {
+        docs.push(newDoc); 
+      }
     }
   }
 
@@ -390,7 +469,7 @@ exports.getClientDetails = async (req, res) => {
   const client = await ClientService.getUserById(clientId)
     .withBasicInfo()
     .execute();
-    // console.log(client)
+  // console.log(client)
   const associatedCompanyId = client[TableFields.companyId];
   const associatedCompany = await CompanyService.getCompanyById(
     associatedCompanyId
@@ -404,16 +483,11 @@ exports.getClientDetails = async (req, res) => {
   const invoice = await InvoiceService.getInvoiceByClientId(clientId)
     .withBasicInfo()
     .execute();
-  
+
   return res.json({
     client,
     company: associatedCompany,
     document,
-    invoice
+    invoice,
   });
-
-
 };
-
-
-

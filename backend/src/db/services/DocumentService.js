@@ -85,19 +85,45 @@ class DocumentService {
   };
 
   static updateManyDocumentsForClient = async (clientId, documentsArray) => {
-    // documentsArray = [{ documentDetails: {...} }, ...]
-    if (!Array.isArray(documentsArray) || documentsArray.length === 0) {
-      return await Document.findOne({ [TableFields.clientId]: clientId });
+    if (!Array.isArray(documentsArray)) {
+      throw new Error("documentsArray must be an array");
     }
+
+    const existingDocRecord = await Document.findOne({
+      [TableFields.clientId]: clientId,
+    });
+    let existingDocs = existingDocRecord
+      ? existingDocRecord[TableFields.documents] || []
+      : [];
+
+    for (const newDoc of documentsArray) {
+      const newType =
+        newDoc[TableFields.documentDetails]?.[TableFields.documentType];
+
+      if (!newType) continue;
+
+      const existingIndex = existingDocs.findIndex(
+        (d) =>
+          d[TableFields.documentDetails]?.[TableFields.documentType] === newType
+      );
+
+      if (existingIndex >= 0) {
+        // Replace existing document of same type
+        existingDocs[existingIndex] = newDoc;
+      } else {
+        // Append as new document
+        existingDocs.push(newDoc);
+      }
+    }
+
     const updated = await Document.findOneAndUpdate(
       { [TableFields.clientId]: clientId },
       {
-        $set: {
-          [TableFields.documents]: documentsArray,
-        },
+        $set: { [TableFields.documents]: existingDocs },
       },
       { upsert: true, new: true }
     );
+
     return updated;
   };
 
@@ -183,6 +209,7 @@ class DocumentService {
 
       let baseQuery = {
         [TableFields.deleted]: false,
+        // [TableFields.documentDetails + "." + TableFields.deleteDoc]: false,
         ...searchQuery,
       };
 

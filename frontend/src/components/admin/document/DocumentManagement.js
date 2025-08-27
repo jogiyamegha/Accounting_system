@@ -60,7 +60,7 @@ export default function DocumentManagement() {
         body: JSON.stringify({ clientId, docId }),
       });
 
-    //   const data = await res.json();
+      //   const data = await res.json();
 
       if (res.ok) {
         alert("Document deleted successfully");
@@ -109,6 +109,8 @@ export default function DocumentManagement() {
 
       {loading ? (
         <p className="doc-loading">Loading documents...</p>
+      ) : documents.length === 0 ? (
+        <p className="doc-empty">No document uploaded</p>
       ) : (
         <div className="doc-client-list">
           {categorizedDocs.map((client) => (
@@ -128,8 +130,10 @@ export default function DocumentManagement() {
               {Object.keys(client.categories).map((category) => (
                 <div key={category} className="doc-category">
                   <h4 className="doc-category-title">{category}</h4>
+                  
                   <ul className="doc-list">
                     {client.categories[category].map((doc) => (
+                      
                       <li key={doc._id} className="doc-item">
                         <a
                           href={`http://localhost:8000/${doc.documentDetails.document}`}
@@ -147,15 +151,18 @@ export default function DocumentManagement() {
                             )?.[0]
                           }
                         </span>
-                        <button
+                        {/* <button
                           className="doc-delete-btn"
                           onClick={() => handleDelete(client.clientId, doc._id)}
                         >
                           ❌ Delete
-                        </button>
+                        </button> */}
                       </li>
+
+
                     ))}
                   </ul>
+
                 </div>
               ))}
             </div>
