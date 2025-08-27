@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {ValidationMsg, TableFields, TableNames , ServiceType} = require('../../utils/constants');
+const {ValidationMsg, TableFields, TableNames , ServiceType, ServiceStatus} = require('../../utils/constants');
 const Schema = mongoose.Schema;
 
 const serviceSchema = new Schema(
@@ -20,6 +20,11 @@ const serviceSchema = new Schema(
                 },
                 [TableFields.serviceEndDate] : {
                     type : Date
+                },
+                [TableFields.serviceStatus] : {
+                    type: Number,
+                    enum : Object.values(ServiceStatus),
+                    default : 1
                 }
             }
         ]

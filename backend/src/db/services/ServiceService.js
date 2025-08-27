@@ -100,7 +100,7 @@ class ServiceService {
     }
   };
 
-  static updateServiceDetails = async (id, reqBody) => {
+  static updateServiceDetails = async (service, id, reqBody, res) => {
     let serviceType =  reqBody[TableFields.serviceType];
 
     if (typeof serviceType === "string") {
@@ -113,6 +113,13 @@ class ServiceService {
     
         serviceType = serviceTypeMap[serviceType];
       }
+    
+    const services = service[TableFields.services];
+    for(let s of services) {
+      if(s[TableFields.serviceType] === serviceType && s[TableFields.serviceStatus] === 2){
+        return res.status(400).json({ message: "This service is running! please wait until completion.." });
+      }
+    }
 
     return await Service.findByIdAndUpdate(
       id,
@@ -126,6 +133,7 @@ class ServiceService {
             [TableFields.serviceEndDate]: new Date(
               reqBody[TableFields.endDate]
             ),
+            [TableFields.serviceStatus] : 2
           },
         },
       },
@@ -155,11 +163,8 @@ const ProjectionBuilder = class {
     const projection = {};
     this.withBasicInfo = () => {
       projection[TableFields.ID] = 1;
-      projection[TableFields.serviceType] = 1;
-      projection[TableFields.targetCompletionDate] = 1;
-      projection[TableFields.description] = 1;
-      projection[TableFields.assignedStaff] = 1;
-
+      projection[TableFields.clientEmail] = 1;
+      projection[TableFields.services] = 1;
       return this;
     };
 
@@ -167,15 +172,6 @@ const ProjectionBuilder = class {
       projection[TableFields.ID] = 1;
       return this;
     };
-    this.withCompletionDate = () => {
-      projection[TableFields.targetCompletionDate] = 1;
-      return this;
-    };
-    this.withAssignedStaff = () => {
-      projection[TableFields.assignedStaff] = 1;
-      return this;
-    };
-
     this.execute = async () => {
       return await methodToExecute.call(projection);
     };

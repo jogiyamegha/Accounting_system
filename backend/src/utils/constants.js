@@ -32,6 +32,15 @@ const Status = (function () {
   return Status;
 })();
 
+const ServiceStatus = (function () {
+  function ServiceStatus() {};
+  ServiceStatus.notStarted = 1;
+  ServiceStatus.inProgress = 2;
+  ServiceStatus.completed = 3;
+
+  return ServiceStatus;
+})();
+
 const DocumentType = (function () {
   function DocumentType() {}
   DocumentType.VATcertificate = 1;
@@ -169,6 +178,7 @@ const ValidationMsg = (function () {
   ValidationMsg.CompanyNotExists = "Company Not Exists";
   ValidationMsg.UserNotFound = "Cannot get the user Token to verify";
   ValidationMsg.AdminNotFound = "Admin Not Found from Token";
+  ValidationMsg.ServiceNotEnded = "Opps, can not assign service as past service is running!"
 
   return ValidationMsg;
 })();
@@ -289,6 +299,7 @@ const TableFields = (function () {
   TableFields.serviceId = "serviceId";
   TableFields.serviceStartDate = "serviceStartDate";
   TableFields.serviceEndDate = "serviceEndDate";
+  TableFields.serviceStatus = 'serviceStatus';
   TableFields.clients = "clients";
   TableFields.durationType = "durationType";
   TableFields.startingAmount = "startingAmount";
@@ -306,6 +317,7 @@ const TableFields = (function () {
   TableFields.clientEmail = 'clientEmail';
   TableFields.startDate = 'startDate';
   TableFields.endDate = 'endDate';
+  TableFields.serviceType = "serviceType";
 
   return TableFields;
 })();
@@ -367,6 +379,7 @@ module.exports = {
   InterfaceType,
   DeadlineCategory,
   Status,
+  ServiceStatus,
   DocumentType,
   DocStatus,
   ServiceType,

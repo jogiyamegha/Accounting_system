@@ -41,7 +41,7 @@ const Email = require('../../emails/email')
 //   }
 // };
 
-exports.assignService = async (req) => {
+exports.assignService = async (req, res) => {
   const reqBody = req.body;
   const clientEmail = reqBody[TableFields.clientEmail];
 
@@ -53,7 +53,6 @@ exports.assignService = async (req) => {
   let client = await ClientService.findByEmail(clientEmail).withBasicInfo().execute()
 
   const existsService = await ServiceService.serviceExistsWithClient(clientEmail);
-  console.log(existsService);
 
   let data;
 
@@ -63,15 +62,15 @@ exports.assignService = async (req) => {
       undefined,
       async (updatedFields) => {
         let records = await ServiceService.insertRecord(updatedFields)
-      await ServiceService.updateServiceDetails(service[TableFields.ID], reqBody)
+        await ServiceService.updateServiceDetails(records ,records[TableFields.ID], reqBody, res)
       
-      Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
+        Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
 
       }
     ) 
   } else {
     const service = await ServiceService.findByEmail(clientEmail).withBasicInfo().execute();
-    await ServiceService.updateServiceDetails(service[TableFields.ID], reqBody)
+    await ServiceService.updateServiceDetails(service, service[TableFields.ID], reqBody, res)
     Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
 
   }

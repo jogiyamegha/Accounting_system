@@ -8,7 +8,6 @@ const SERVICE_TYPES = ["VAT Filing", "Corporate Tax", "Payroll", "Audit"];
 
 export default function ServiceManagement() {
   const navigate = useNavigate();
-  //   const [services, setServices] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState("");
   const [formData, setFormData] = useState({
@@ -17,14 +16,6 @@ export default function ServiceManagement() {
     startDate: "",
     endDate: "",
   });
-
-  // Fetch existing services
-  //   useEffect(() => {
-  //     fetch(`${ADMIN_END_POINT}/service-management`)
-  //       .then((res) => res.json())
-  //       .then((data) => setServices(data))
-  //       .catch((err) => console.error(err));
-  //   }, []);
 
   const handleAssignClick = (type) => {
     setSelectedServiceType(type);
@@ -52,14 +43,20 @@ export default function ServiceManagement() {
         credentials: "include",
       });
 
-      //   console.log("res",res)
+      let data = {};
+      try {
+        const text = await res.text(); 
+        data = text ? JSON.parse(text) : {};
+      } catch (parseErr) {
+        console.warn("Response is not valid JSON:", parseErr);
+      }
 
-      if (!res.ok) throw new Error("Failed to assign service");
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to assign service");
+      }
 
-      //   const newService = await res.json();
-      alert("Service assigned successfully!");
+      alert(data.message || "Service assigned successfully!");
       setShowForm(false);
-      //   setServices((prev) => [...prev, newService]);
 
       const serviceRouteMap = {
         "VAT Filing": "/admin/VAT-service",
@@ -72,20 +69,19 @@ export default function ServiceManagement() {
       navigate(route);
     } catch (err) {
       console.error(err);
-      alert("Error assigning service");
+      alert(err.message);
     }
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#f5f5f5 " }}>
-      {/* Sidebar */}
+    <div
+      style={{ display: "flex", minHeight: "100vh", background: "#f5f5f5 " }}
+    >
       <Sidebar />
 
-      {/* Main content */}
       <div style={{ flex: 1, padding: "20px", marginLeft: "240px" }}>
         <h1>Service Management</h1>
 
-        {/* Cards for each service type */}
         <div
           style={{
             display: "flex",
