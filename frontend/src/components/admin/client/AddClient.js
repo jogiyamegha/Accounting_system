@@ -90,15 +90,15 @@ export default function AddClient() {
         if (!/^\d{0,15}$/.test(value)) return prev;
       }
  
-      // License expiry should not be earlier than issue date
-      if (
-        name === "licenseExpiry" &&
-        updated.licenseIssueDate &&
-        value < updated.licenseIssueDate
-      ) {
-        alert("License expiry date cannot be earlier than issue date!");
-        return prev;
-      }
+      // // License expiry should not be earlier than issue date
+      // if (
+      //   name === "licenseExpiry" &&
+      //   updated.licenseIssueDate &&
+      //   value < updated.licenseIssueDate
+      // ) {
+      //   alert("License expiry date cannot be earlier than issue date!");
+      //   return prev;
+      // }
  
       // License issue date should not be in future
       if (name === "licenseIssueDate") {
@@ -109,14 +109,14 @@ export default function AddClient() {
         }
       }
 
-      if (
-        name === "endDate" &&
-        updated.startDate &&
-        value < updated.startDate
-      ) {
-        alert("Financial End date cannot be earlier than start date!");
-        return prev;
-      }
+      // if (
+      //   name === "endDate" &&
+      //   updated.startDate &&
+      //   value < updated.startDate
+      // ) {
+      //   alert("Financial End date cannot be earlier than start date!");
+      //   return prev;
+      // }
  
       return updated;
     });

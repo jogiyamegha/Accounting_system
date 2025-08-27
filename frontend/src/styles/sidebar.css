@@ -19,7 +19,7 @@
 }
 
 .sidebar-header1 {
-  padding: 10px;
+  padding: 20px;
 
   background-color: #ebebeb; /* darker shade */
 
@@ -27,7 +27,7 @@
 }
 
 .sidebar-header {
-  padding: 10px;
+  padding: 6px;
 
   background-color: #192646; /* darker shade */
 
@@ -109,13 +109,10 @@
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
-
 .logo-svg {
-
   height: 40px;
 
   width: auto;
 
   cursor: pointer;
-
 }

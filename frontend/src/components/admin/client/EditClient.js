@@ -156,14 +156,14 @@ export default function EditClient() {
       if (name === "zipcode" && !/^\d{0,6}$/.test(value)) return prev;
       if (name === "taxRegistrationNumber" && !/^\d{0,15}$/.test(value))
         return prev;
-      if (
-        name === "licenseExpiry" &&
-        updated.licenseIssueDate &&
-        value < updated.licenseIssueDate
-      ) {
-        alert("License expiry cannot be earlier than issue date");
-        return prev;
-      }
+      // if (
+      //   name === "licenseExpiry" &&
+      //   updated.licenseIssueDate &&
+      //   value < updated.licenseIssueDate
+      // ) {
+      //   alert("License expiry cannot be earlier than issue date");
+      //   return prev;
+      // }
       if (name === "licenseIssueDate") {
         const today = new Date().toISOString().split("T")[0];
         if (value > today) {
@@ -172,14 +172,14 @@ export default function EditClient() {
         }
       }
 
-      if (
-        name === "endDate" &&
-        updated.startDate &&
-        value < updated.startDate
-      ) {
-        alert("License expiry cannot be earlier than issue date");
-        return prev;
-      }
+      // if (
+      //   name === "endDate" &&
+      //   updated.startDate &&
+      //   value < updated.startDate
+      // ) {
+      //   alert("License expiry cannot be earlier than issue date");
+      //   return prev;
+      // }
 
       return updated;
     });
