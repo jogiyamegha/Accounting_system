@@ -73,7 +73,7 @@ export default function ServiceManagement() {
       navigate(serviceRouteMap[selectedServiceType] || "/admin/services");
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
