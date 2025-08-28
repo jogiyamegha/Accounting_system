@@ -132,7 +132,7 @@ export default function Sidebar() {
               </a>
             </li>
             <li>
-              <a href="/notifications">
+              <a href="/admin/notification-management">
                 <FontAwesomeIcon icon={faBell} /> Notifications Management
               </a>
             </li>

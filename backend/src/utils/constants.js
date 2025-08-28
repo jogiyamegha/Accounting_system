@@ -102,6 +102,8 @@ const NotificationTypes = (function () {
   NotificationTypes.documentStatus = 4;
   NotificationTypes.clientActiveStatus = 5;
   NotificationTypes.systemUpdate = 6;
+  NotificationTypes.payrollReminder = 7;
+
   return NotificationTypes;
 })();
 
@@ -284,6 +286,8 @@ const TableFields = (function () {
   TableFields.receiverId = "receiverId";
   TableFields.message = "message";
   TableFields.notificationType = "notificationType";
+  TableFields.isRead = 'isRead';
+  TableFields.expiresAt = 'expiresAt';
   TableFields.serviceType = "serviceType";
   TableFields.targetCompletionDate = "targetCompletionDate";
   TableFields.targetCompletionDurationInYears =

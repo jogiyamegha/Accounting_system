@@ -1,0 +1,115 @@
+.addClientContainer {
+  display: flex;
+  min-height: 100vh;
+  background: #f9f9f9;
+}
+
+.addClientForm {
+  flex: 1;
+  padding: 2rem;
+}
+
+.addClientForm h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* Notifications List */
+.notificationList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+}
+
+.notificationItem {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.notificationItem:hover {
+  transform: translateY(-2px);
+}
+
+.notificationItem strong {
+  color: #1976d2;
+}
+
+.notificationItem small {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* Button */
+.addBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.addBtn:hover {
+  background: #155a9c;
+}
+
+/* Manual Notification Form */
+.notificationForm {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.notificationForm input,
+.notificationForm select,
+.notificationForm textarea {
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.notificationForm input:focus,
+.notificationForm select:focus,
+.notificationForm textarea:focus {
+  border-color: #1976d2;
+}
+
+.notificationForm textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.notifyBtn {
+  background: #43a047;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.3s ease;
+}
+
+.notifyBtn:hover {
+  background: #2e7d32;
+}

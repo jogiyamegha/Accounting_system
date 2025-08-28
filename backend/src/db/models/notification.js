@@ -8,7 +8,6 @@ const notificationSchema = new Schema(
         [TableFields.receiverId]: {
             type: mongoose.Schema.Types.ObjectId,
             ref: TableNames.Client,
-            required: [true, ValidationMsg.ReceiverIdEmpty],
         },
         [TableFields.message]: {
             type: String,
@@ -19,6 +18,17 @@ const notificationSchema = new Schema(
             type: Number,
             enum: Object.values(NotificationTypes),
         },
+        [TableFields.isRead] : {
+            type : Boolean,
+            default : false
+        },
+        [TableFields.expiresAt] : {
+            type : Date
+        },
+        [TableFields.deleted] : {
+            type : Boolean,
+            default : false
+        }
     },
     {
         timeStamps: true,

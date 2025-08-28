@@ -29,6 +29,7 @@ import DocumentManagement from "./components/admin/document/DocumentManagement";
 import VATservice from "./components/admin/service/VATservice";
 import VATRegistrationForm from "./components/admin/service/VATRegistrationForm";
 import CalendarManagment from "./components/admin/calendar/CalendarManagement";
+import NotificationManagement from "./components/admin/notification/NotificationManagement";
 
 function App() {
   return (
@@ -166,7 +167,10 @@ function App() {
           path="/admin/service-management"
           element={
             <Layout>
+              <ProtectedRoute >
+
               <ServiceManagement />
+              </ProtectedRoute>
             </Layout>
           }
         />
@@ -175,7 +179,10 @@ function App() {
           path="/admin/service-management"
           element={
             <Layout>
+              <ProtectedRoute>
+
               <ServiceManagement />
+              </ProtectedRoute>
             </Layout>
           }
         />
@@ -184,7 +191,11 @@ function App() {
           path="/admin/VAT-service"
           element={
             <Layout>
-              <VATservice />
+              <ProtectedRoute >
+
+               <VATservice />
+              </ ProtectedRoute >
+
             </Layout>
           }
         />
@@ -193,7 +204,10 @@ function App() {
           path="/admin/VAT-registration"
           element={
             <Layout>
-              <VATRegistrationForm />
+              <ProtectedRoute >
+                <VATRegistrationForm />
+              </ ProtectedRoute >
+
             </Layout>
           }
         />
@@ -204,7 +218,10 @@ function App() {
           path="/admin/calendar-management"
           element={
             <Layout>
-              <CalendarManagment />
+              <ProtectedRoute >
+                <CalendarManagment />
+              </ ProtectedRoute >
+
             </Layout>
           }
         />
@@ -215,11 +232,28 @@ function App() {
           path="/admin/document-management"
           element={
             <Layout>
-              <DocumentManagement />
+              <ProtectedRoute >
+                <DocumentManagement />
+              </ProtectedRoute >
+
             </Layout>
           }
         />
 
+        {/* -------- Admin Notification Routes ---------- */}
+
+        <Route 
+          path='/admin/notification-management'
+          element={
+            <Layout>
+              <ProtectedRoute>
+                <NotificationManagement />
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+
+        {/* -------- Admin Auth Routes ---------- */}
         <Route
           path="/admin/forgot-password"
           element={

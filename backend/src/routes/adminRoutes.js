@@ -4,6 +4,7 @@ const ClientController = require('../controllers/admin/ClientController');
 const DocumentController = require('../controllers/admin/DocumentController')
 const ServiceController = require('../controllers/admin/ServiceController');
 const VATController = require('../controllers/admin/VATController');
+const NotificationController = require('../controllers/admin/NotificationController');
 const InvoiceController = require('../controllers/admin/InvoiceController');
 const AdminDashboardController = require('../controllers/admin/AdminDashboardController')
 const { TableFields } = require("../utils/constants");
@@ -160,6 +161,20 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+/**
+ * Notification Routes
+ */
+
+.addPath('/notification-management')
+.asGET(NotificationController.getAllNotifications  
+)
+.useAdminAuth()
+.build()
+
+.addPath('/notification-management')
+.asPOST(NotificationController.addNotification)
+.useAdminAuth()
+.build()
 
 .getRouter()
 module.exports = router;
