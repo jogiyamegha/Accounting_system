@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CLIENT_END_POINT } from "../../../utils/constants";
 import '../../../styles/verifyOtp.css';
+import { toast } from "react-toastify";
 export default function ClientVerifyOtp() {
     const otpInputRef = useRef();
     
@@ -36,15 +37,15 @@ export default function ClientVerifyOtp() {
         
 
             if (!response.ok) {
+                toast.error("Invalid OTP")
                 throw new Error( "Invalid OTP");
             }
         
-                alert("OTP is Verified Successfully..");
+                toast.success("OTP is Verified Successfully, Now you can change your password");
                 navigate("/client/change-password", {state : {email }});
             } catch (error) {
-
+                toast.error("something went wrong, please try again.")
             setError(error.message);
-            //   alert("OTP is not Correct..");
         } finally {
         setLoading(false);
         }

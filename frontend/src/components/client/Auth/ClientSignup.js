@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CLIENT_END_POINT } from "../../../utils/constants";
 import '../../../styles/signup.css';
+import { toast } from "react-toastify";
  
 export default function ClientSignup() {
     const [formData, setFormData] = useState({
@@ -24,41 +25,39 @@ export default function ClientSignup() {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     
         if (!passwordRegex.test(formData.password)) {
-        alert(
-                "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&)."
-            );
+            toast.warn("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&).");
             return;
         }
     
         if (formData.password !== formData.confirmPassword) {
-            alert("Passwords do not match.");
+            toast.warn("Passwords do not match.");
             return;
         }
     
         try {
         const response = await fetch(`${CLIENT_END_POINT}/signup`, {
-            method: "POST",
-            body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-            }),
-            headers: {
-            "Content-Type": "application/json",
-            },
-        });
-    
-        if (!response.ok) {
-            const errorData = await response.json();
-            alert(errorData.message || "Signup failed");
-            return;
-        }
-    
-        alert("Signup Successful!");
-        navigate("/client/login");
+                    method: "POST",
+                    body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        
+            if (!response.ok) {
+                const errorData = await response.json();
+                toast.error(errorData.message || "Signup failed");
+                return;
+            }
+        
+            toast.success("Signup Successful!");
+            navigate("/client/login");
         } catch (error) {
             console.error("Error during signup:", error);
-            alert("Something went wrong! Please try again.");
+            toast.error("Something went wrong! Please try again.");
         }
     };
     

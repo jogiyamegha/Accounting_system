@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { setUser } from "../../../redux/features/userSlice";
 import { CLIENT_END_POINT } from "../../../utils/constants";
 import '../../../styles/login.css';
+import { toast } from "react-toastify";
  
  
 function ClientLogin() {
@@ -39,14 +40,15 @@ function ClientLogin() {
         if (res.ok) {
    
             dispatch(setUser(data.user));
-   
+            toast.success("Login Successfully!")
             navigate("/client/profile");
             } else {
-                alert( "Login failed");
+                toast.error( "Login failed");
+                throw error;
             }
         } catch (error) {
             console.error("Login error:", error);
-            alert("Something went wrong. Please try again.");
+            toast.error("Something went wrong. Please try again.");
         }
     }
        

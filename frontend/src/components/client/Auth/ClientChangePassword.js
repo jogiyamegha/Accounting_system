@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CLIENT_END_POINT } from "../../../utils/constants";
+import { toast } from 'react-toastify';
 import '../../../styles/changePassword.css';
  
 export default function ClientChangePassword() {
@@ -20,6 +21,7 @@ export default function ClientChangePassword() {
         const enteredConfirmPassword = confirmPasswordInputRef.current.value;
     
         if (enteredNewPassword !== enteredConfirmPassword) {
+            toast.error('password do not match');
             setError("Passwords do not match!");
             return;
         }
@@ -42,12 +44,14 @@ export default function ClientChangePassword() {
             const result = await response.json();
         
             if (!response.ok) {
+                toast.error("Opps, failed to set password")
                 throw new Error(result.message || "Failed to set password");
             }
         
-            alert("Your New Password is set Successfully..");
+            toast.success("Your New Password is set Successfully..");
             navigate("/client/login");
         } catch (error) {
+            toast.error("something went wrong");
             console.error(error);
             setError(error.message);
         }

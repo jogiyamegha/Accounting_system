@@ -4,6 +4,7 @@ import { ADMIN_END_POINT } from "../../../utils/constants";
 import { countries } from "../../../utils/countries";
 import classes from "../../../styles/addClient.module.css";
 import Sidebar from "../../Sidebar";
+import { toast } from "react-toastify";
 
 export default function AddClient() {
   const navigate = useNavigate();
@@ -55,7 +56,6 @@ export default function AddClient() {
 
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleClientChange = (e) => {
     const { name, value } = e.target;
@@ -67,6 +67,7 @@ export default function AddClient() {
     const { name, value } = e.target;
     setCompany((prev) => {
       let updated = { ...prev, [name]: value };
+
       if ((name === "companyName" || name === "landmark") && /\d/.test(value)) {
         return prev;
       }
@@ -76,7 +77,7 @@ export default function AddClient() {
       if (name === "licenseIssueDate") {
         const today = new Date().toISOString().split("T")[0];
         if (value > today) {
-          alert("License issue date cannot be in the future!");
+          toast.error("🚫 License issue date cannot be in the future!");
           return prev;
         }
       }
@@ -99,13 +100,12 @@ export default function AddClient() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     if (company.zipcode.length !== 6) {
-      return setError("Zipcode must be exactly 6 digits.");
+      return toast.warn("⚠️ Zipcode must be exactly 6 digits.");
     }
     if (company.taxRegistrationNumber.length !== 15) {
-      return setError("Tax Registration Number must be exactly 15 digits.");
+      return toast.warn("⚠️ Tax Registration Number must be exactly 15 digits.");
     }
 
     setLoading(true);
@@ -131,10 +131,10 @@ export default function AddClient() {
         throw new Error(errorText || "Failed to add client");
       }
 
-      alert("Client added successfully!");
+      toast.success(" Client added successfully!");
       navigate("/admin/client-management");
     } catch (err) {
-      setError(err.message);
+      toast.error(`❌ ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -143,12 +143,6 @@ export default function AddClient() {
   return (
     <div className={classes.addClientContainer}>
       <Sidebar />
-
-      {error && (
-        <div className={classes.alertBox}>
-          <strong>Error:</strong> {error}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className={classes.addClientForm}>
         <h2>Add New Client</h2>

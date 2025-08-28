@@ -4,6 +4,7 @@ import { ADMIN_END_POINT, CLIENT_END_POINT } from "../../utils/constants";
 import { Eye, EyeOff } from "lucide-react";
 
 import styles from "../../styles/signup.module.css"; 
+import { toast } from "react-toastify";
 
 export default function Signup() {
   const { role } = useParams(); // 🔹 dynamic role (admin/client)
@@ -32,10 +33,12 @@ export default function Signup() {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
       if (!passwordRegex.test(formData.password)) {
+        toast.warn("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.")
         return "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.";
       }
 
       if (formData.password !== formData.confirmPassword) {
+        toast.error("Passwords do not match.")
         return "Passwords do not match.";
       }
     }
@@ -80,12 +83,14 @@ export default function Signup() {
 
       if (!response.ok) {
         setError("Signup failed");
+        toast.error("SignUp failed!")
         return;
       }
 
-      alert("Signup Successful!");
+      toast.success("Signup Successful!");
       navigate(`/${role}/login`);
     } catch (error) {
+      toast.error("Error during signup");
       console.error("Error during signup:", error);
       setError("Something went wrong! Please try again.");
     } finally {

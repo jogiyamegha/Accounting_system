@@ -6,6 +6,7 @@ import { ADMIN_END_POINT, CLIENT_END_POINT } from "../../utils/constants";
 import { Eye, EyeOff } from "lucide-react";
 
 import styles from "../../styles/login.module.css"; 
+import { toast } from "react-toastify";
 
 function Login() {
   const emailInputRef = useRef();
@@ -48,17 +49,18 @@ function Login() {
           })
         );
 
+        toast.success("Login Successfully!")
         navigate(isAdmin ? "/admin/admin-dashboard" : "/client/profile", {
           replace: true,
         });
       } else {
         dispatch(setError( "Login failed"));
-        alert("Credentials Invalid, Login Failed !!");
+        toast.error("Credentials Invalid, Login Failed !!");
       }
     } catch (error) {
       console.error("Login error:", error);
       dispatch(setError("Something went wrong. Please try again."));
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
   }
 

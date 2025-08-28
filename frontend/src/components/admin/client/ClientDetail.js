@@ -5,9 +5,11 @@ import {
   DocStatus,
   DocumentType,
 } from "../../../utils/constants";
-import "../../../styles/clientDetail.css";
-
+import styles from "../../../styles/clientDetail.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload, faEye } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "../../Sidebar";
+import { toast } from 'react-toastify';
 
 function formatDateToDDMMYYYY(dateString) {
   if (!dateString) return "";
@@ -24,11 +26,10 @@ export default function ClientDetail() {
 
   const [data, setData] = useState(null);
   const [invoices, setInvoices] = useState({ invoiceList: [] });
-  const [documents, setDocuments] = useState([]); // ✅ keep documents in state
+  const [documents, setDocuments] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔹 New states for filtering
   const [searchType, setSearchType] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [editedDocs, setEditedDocs] = useState({});
@@ -51,11 +52,14 @@ export default function ClientDetail() {
           }
         );
 
-        if (!res.ok) throw new Error("Failed to fetch client details");
+        if (!res.ok){
+          toast.error("Failed to fetch client details")
+          throw new Error("Failed to fetch client details");
+        } 
 
         const result = await res.json();
         setData(result);
-        setDocuments(result.document?.documents || []); // ✅ set docs in state
+        setDocuments(result.document?.documents || []); 
       } catch (err) {
         setError(err.message);
       } finally {
@@ -66,15 +70,16 @@ export default function ClientDetail() {
     const fetchInvoices = async () => {
       try {
         const res = await fetch(
-          `${ADMIN_END_POINT}/clients/${clientId}/invoices`,
+          `${ADMIN_END_POINT}/generate-invoice/${clientId}`,
           { credentials: "include" }
         );
 
         if (res.ok) {
           const result = await res.json();
-          setInvoices(result);
+          setInvoices(result.invoice);
         }
       } catch (err) {
+        toast.error("Error fetching invoices")
         console.error("Error fetching invoices:", err);
       }
     };
@@ -83,7 +88,6 @@ export default function ClientDetail() {
     fetchInvoices();
   }, [clientId]);
 
-  // ✅ initialize editedDocs only when documents change
   useEffect(() => {
     let initialEdited = {};
     (documents || []).forEach((doc) => {
@@ -96,7 +100,6 @@ export default function ClientDetail() {
         docId: doc._id,
       };
     });
-    console.log("initialEdited", initialEdited);
     setEditedDocs(initialEdited);
   }, [documents]);
 
@@ -115,7 +118,6 @@ export default function ClientDetail() {
 
   const { client, company } = data;
 
-  // 🔹 Filtered Documents
   const filteredDocuments =
     documents.filter((doc) => {
       const docTypeName = Object.entries(DocumentType).find(
@@ -147,7 +149,6 @@ export default function ClientDetail() {
       setError("");
 
       const { status, comments } = editedDocs[docId];
-      // console.log("editedDocs",editedDocs)
 
       const response = await fetch(
         `${ADMIN_END_POINT}/update-doc-status/${clientId}`,
@@ -158,8 +159,6 @@ export default function ClientDetail() {
           credentials: "include",
         }
       );
-
-      console.log(response);
 
       if (!response.ok) {
         const errData = await response.json();
@@ -180,8 +179,7 @@ export default function ClientDetail() {
             : doc
         )
       );
-
-      alert("Status Submitted & client is notified.");
+      toast.success("Status Submitted & client is notified.")
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -189,118 +187,150 @@ export default function ClientDetail() {
   };
 
   return (
-    <div className="client-detail-page">
+    <div className={styles.clientDetailPage}>
       <Sidebar />
-      <div className="adjustment">
-        <h2 className="page-title">Client Details</h2>
+ 
+      <div className={styles.adjustment}>
+        <h2 className={styles.pageTitle}>Client Details</h2>
         <button
-          className="gtBtn"
+          className={styles.gtBtn}
           onClick={() => handleGenerateInvoice(client._id)}
         >
           Generate Invoice
         </button>
       </div>
-
+ 
       {/* Client Info */}
       {client && (
-        <div className="clientCard">
-          <h3 className="clientCard-title">👤 Client Information</h3>
-          <p>
-            <strong>Name:</strong> {client.name}
-          </p>
-          <p>
-            <strong>Email:</strong> {client.email}
-          </p>
-          <p>
-            <strong>Position:</strong> {client.position}
-          </p>
-          {client.contact && (
-            <p>
-              <strong>Contact:</strong> {client.contact.phoneCountry}{" "}
-              {client.contact.phone}
-            </p>
-          )}
+        <div className={styles.clientCard}>
+          <h3 className={styles.clientCardTitle}>👤 Client Information</h3>
+          <div className={styles.infoGrid}>
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Name:</span>
+              <span className={styles.infoValue}>{client.name}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Email:</span>
+              <span className={styles.infoValue}>{client.email}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Position:</span>
+              <span className={styles.infoValue}>{client.position}</span>
+            </div>
+            {client.contact && (
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Contact:</span>
+                <span className={styles.infoValue}>
+                  {client.contact.phoneCountry} {client.contact.phone}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       )}
-
+ 
       {/* Company Info */}
       {company && (
-        <div className="clientCard">
-          <h3 className="clientCard-title">🏢 Company Information</h3>
-          <p>
-            <strong>Name:</strong> {company.name}
-          </p>
-          <p>
-            <strong>Email:</strong> {company.email}
-          </p>
-
-          {company.address && (
-            <p>
-              <strong>Address:</strong> {company.address.addressLine1}{" "}
-              {company.address.addressLine2} {company.address.street}{" "}
-              {company.address.landmark} ,{company.address.city} -{" "}
-              {company.address.zipcode}, {company.address.state},{" "}
-              {company.address.country}
-            </p>
-          )}
-
-          {company.licenseDetails && (
-            <>
-              <p>
-                <strong>License Type:</strong>{" "}
-                {company.licenseDetails.licenseType}
-              </p>
-              <p>
-                <strong>License Number:</strong>{" "}
-                {company.licenseDetails.licenseNumber}
-              </p>
-              <p>
-                <strong>License Issue Date:</strong>{" "}
-                {formatDateToDDMMYYYY(company.licenseDetails.licenseIssueDate)}
-              </p>
-              <p>
-                <strong>License Expiry Date:</strong>{" "}
-                {formatDateToDDMMYYYY(company.licenseDetails.licenseExpiry)}
-              </p>
-            </>
-          )}
-
-          {company.financialYear && (
-            <p>
-              <strong>Financial Year:</strong>{" "}
-              {formatDateToDDMMYYYY(company.financialYear.startDate)} -{" "}
-              {formatDateToDDMMYYYY(company.financialYear.endDate)}
-            </p>
-          )}
-
-          {company.contactPerson && (
-            <p>
-              <strong>Contact Person:</strong> {company.contactPerson.name} (
-              {company.contactPerson.contact.phoneCountry}{" "}
-              {company.contactPerson.contact.phone})
-            </p>
-          )}
-
-          <p>
-            <strong>Tax Registration Number:</strong>{" "}
-            {company.taxRegistrationNumber}
-          </p>
-          <p>
-            <strong>Business Type:</strong> {company.businessType}
-          </p>
+        <div className={styles.clientCard}>
+          <h3 className={styles.clientCardTitle}>🏢 Company Information</h3>
+          <div className={styles.infoGrid}>
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Name:</span>
+              <span className={styles.infoValue}>{company.name}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Email:</span>
+              <span className={styles.infoValue}>{company.email}</span>
+            </div>
+ 
+            {company.address && (
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Address:</span>
+                <span className={styles.infoValue}>
+                  {company.address.addressLine1} {company.address.addressLine2}{" "}
+                  {company.address.street} {company.address.landmark},{" "}
+                  {company.address.city} - {company.address.zipcode},{" "}
+                  {company.address.state}, {company.address.country}
+                </span>
+              </div>
+            )}
+ 
+            {company.licenseDetails && (
+              <>
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>License Type:</span>
+                  <span className={styles.infoValue}>
+                    {company.licenseDetails.licenseType}
+                  </span>
+                </div>
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>License Number:</span>
+                  <span className={styles.infoValue}>
+                    {company.licenseDetails.licenseNumber}
+                  </span>
+                </div>
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>License Issue Date:</span>
+                  <span className={styles.infoValue}>
+                    {formatDateToDDMMYYYY(
+                      company.licenseDetails.licenseIssueDate
+                    )}
+                  </span>
+                </div>
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>License Expiry Date:</span>
+                  <span className={styles.infoValue}>
+                    {formatDateToDDMMYYYY(company.licenseDetails.licenseExpiry)}
+                  </span>
+                </div>
+              </>
+            )}
+ 
+            {company.financialYear && (
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Financial Year:</span>
+                <span className={styles.infoValue}>
+                  {formatDateToDDMMYYYY(company.financialYear.startDate)} -{" "}
+                  {formatDateToDDMMYYYY(company.financialYear.endDate)}
+                </span>
+              </div>
+            )}
+ 
+            {company.contactPerson && (
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Contact Person:</span>
+                <span className={styles.infoValue}>
+                  {company.contactPerson.name} (
+                  {company.contactPerson.contact.phoneCountry}{" "}
+                  {company.contactPerson.contact.phone})
+                </span>
+              </div>
+            )}
+ 
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Tax Registration Number:</span>
+              <span className={styles.infoValue}>
+                {company.taxRegistrationNumber}
+              </span>
+            </div>
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Business Type:</span>
+              <span className={styles.infoValue}>{company.businessType}</span>
+            </div>
+          </div>
         </div>
       )}
-
+ 
       {/* Documents */}
-      <div className="clientCard" id="documents">
-        <h3 className="clientCard-title">📃 Documents</h3>
-
+      <div className={styles.clientCard} id="documents">
+        <h3 className={styles.clientCardTitle}>📃 Documents</h3>
+ 
         {/* Filters */}
-        <div className="filter-bar">
+        <div className={styles.filterBar}>
           <select
             value={searchType}
             onChange={(e) => setSearchType(e.target.value)}
-            className="filter-input"
+            className={styles.filterInput}
           >
             <option value="">All Types</option>
             {Object.entries(DocumentType).map(([typeName, typeValue]) => (
@@ -309,7 +339,7 @@ export default function ClientDetail() {
               </option>
             ))}
           </select>
-
+ 
           <input
             type="date"
             value={
@@ -325,14 +355,14 @@ export default function ClientDetail() {
               const [yyyy, mm, dd] = e.target.value.split("-");
               setSearchDate(`${dd}/${mm}/${yyyy}`);
             }}
-            className="filter-input"
+            className={styles.filterInput}
           />
         </div>
-
+ 
         {filteredDocuments.length > 0 ? (
-          <ul className="document-list">
-            {filteredDocuments.map((doc, index) => (
-              <li className="document-item" key={doc._id || index}>
+          <ul className={styles.documentList}>
+            {filteredDocuments.map((doc) => (
+              <li className={styles.documentItem} key={doc._id}>
                 <p>
                   <strong>Type:</strong>{" "}
                   {
@@ -361,17 +391,17 @@ export default function ClientDetail() {
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="view-link"
+                    className={styles.viewLink}
                   >
                     View Document
                   </a>
                 </p>
-
-                <div className="doc-action">
-                  <label className="doc-label">Comments:</label>
+ 
+                <div className={styles.docAction}>
+                  <label className={styles.docLabel}>Comments:</label>
                   <input
                     type="text"
-                    className="doc-input"
+                    className={styles.docInput}
                     value={editedDocs[doc._id]?.comments || ""}
                     onChange={(e) =>
                       handleFieldChange(doc._id, "comments", e.target.value)
@@ -379,13 +409,13 @@ export default function ClientDetail() {
                     placeholder="Add comment..."
                   />
                 </div>
-
-                <div className="doc-action">
-                  <label className="doc-label">
+ 
+                <div className={styles.docAction}>
+                  <label className={styles.docLabel}>
                     Status: {editedDocs[doc._id]?.status}
                   </label>
                   <select
-                    className="doc-select"
+                    className={styles.docSelect}
                     value={editedDocs[doc._id]?.status || ""}
                     onChange={(e) =>
                       handleFieldChange(doc._id, "status", e.target.value)
@@ -398,10 +428,10 @@ export default function ClientDetail() {
                     ))}
                   </select>
                 </div>
-
-                <div className="doc-action">
+ 
+                <div className={styles.docAction}>
                   <button
-                    className="doc-update-btn"
+                    className={styles.docUpdateBtn}
                     onClick={() => handleUpdate(doc._id)}
                   >
                     Update
@@ -411,56 +441,60 @@ export default function ClientDetail() {
             ))}
           </ul>
         ) : (
-          <p className="empty-text">No documents found</p>
+          <p className={styles.emptyText}>No documents found</p>
         )}
       </div>
-
+ 
       {/* Invoices */}
-      <div className="clientCard">
-        <h3 className="text-xl font-semibold mb-2">📑Invoices</h3>
-
+      <div className={styles.clientCard}>
+        <h3 className={styles.clientCardTitle}>📑 Invoices</h3>
+ 
         {invoices?.invoiceList?.length > 0 ? (
-          <table className="invoice-item">
+          <table className={styles.invoiceTable}>
             <thead>
               <tr>
                 <th>Index</th>
-                <th>Name</th>
+                <th>Invoice Number</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {invoices.invoiceList.map((doc, idx) => (
-                <tr key={idx} className="invoice-row">
+                <tr key={idx} className={styles.invoiceRow}>
                   <td>{idx + 1}</td>
                   <td>{doc.invoiceNumber}</td>
-                  <td className="buttons">
-                    <a
-                      href={`${ADMIN_END_POINT}/invoice/${doc.invoice.replace(
-                        "uploads/invoice/",
-                        ""
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="view"
-                    >
-                      View
-                    </a>
-                    <a
-                      href={`${ADMIN_END_POINT}/invoice/${doc.invoice.replace(
-                        "uploads/invoice/",
-                        ""
-                      )}?download=true`}
-                      className="download"
-                    >
-                      Download
-                    </a>
+                  <td>
+                    <div className={styles.invoiceButtons}>
+                      <a
+                        href={`${ADMIN_END_POINT}/invoice/${doc.invoice.replace(
+                          "uploads/invoice/",
+                          ""
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`${styles.invoiceLink} ${styles.view}`}
+                      > <FontAwesomeIcon icon={faEye} />  
+                          View
+                      </a>
+                      <a
+                        href={`${ADMIN_END_POINT}/invoice/${doc.invoice.replace(
+                          "uploads/invoice/",
+                          ""
+                        )}?download=true`}
+                        className={`${styles.invoiceLink} ${styles.download}`}
+                      >
+                        {" "}
+                        <FontAwesomeIcon icon={faDownload} />
+                        Download
+                      </a>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         ) : (
-          <p>No invoices available</p>
+          <p className={styles.emptyText}>No invoices available</p>
         )}
       </div>
     </div>

@@ -1,5 +1,4 @@
 import Sidebar from "../Sidebar";
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import {
@@ -18,6 +17,7 @@ import { faBell, faFile, faChartLine } from "@fortawesome/free-solid-svg-icons";
 
 import styles from "../../styles/adminDashboard.module.css";
 import { ADMIN_END_POINT } from "../../utils/constants";
+import { toast } from "react-toastify";
 
 const uploadData = [
   { day: "Mon", Successful: 25, Pending: 10, Failed: 5 },
@@ -30,7 +30,6 @@ const uploadData = [
 ];
 
 export default function Dashboard() {
-  const navigate = useNavigate();
   const [activeClients, setActiveClients] = useState(0);
   const [loading, setLoading] = useState(true);
   const [totalClients, setTotalClients] = useState(0);
@@ -49,6 +48,7 @@ export default function Dashboard() {
       setTotalClients(data.allClients || 0);
       setActiveClients(data.allActiveClients || 0);
     } catch (error) {
+      toast.error("Error fetching clients:")
       console.error("Error fetching clients:", error);
     } finally {
       setLoading(false);

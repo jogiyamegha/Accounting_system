@@ -12,12 +12,12 @@ import {
   faUsers,
   faCalendarAlt,
   faFolderOpen,
-  faTools,
   faChartBar,
   faBell,
   faPenSquare,
   faSignOutAlt,
   faBars,
+  faTasks,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -123,7 +123,7 @@ export default function Sidebar() {
             </li>
             <li>
               <a href="/admin/service-management">
-                <FontAwesomeIcon icon={faTools} /> Service Management
+                <FontAwesomeIcon icon={faTasks} /> Service Management
               </a>
             </li>
             <li>

@@ -4,8 +4,8 @@ import { ADMIN_END_POINT, DocStatus } from "../../../utils/constants";
 import Sidebar from "../../Sidebar";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
-
+import { faFolderOpen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 const API_URL = `${ADMIN_END_POINT}/document-management`;
 
 const docTypeMap = {
@@ -37,6 +37,7 @@ export default function DocumentManagement() {
       const data = await res.json();
       setDocuments(data.records || []);
     } catch (err) {
+      toast.error("Ooops, error in fetching documents...")
       console.error("Error fetching documents", err);
     } finally {
       setLoading(false);
@@ -53,12 +54,12 @@ export default function DocumentManagement() {
         body: JSON.stringify({ clientId, docId }),
       });
       if (res.ok) {
-        alert("Document deleted successfully");
+        toast.success("Document deleted successfully");
         fetchDocuments();
-      } else alert("Failed to delete document");
+      } else toast.error("Failed to delete document");
     } catch (err) {
       console.error("Error deleting document", err);
-      alert("Something went wrong while deleting.");
+      toast.error("Something went wrong while deleting.");
     }
   };
 
@@ -137,7 +138,7 @@ export default function DocumentManagement() {
                             handleDelete(client.clientId, doc._id)
                           }
                         >
-                          ❌ Delete
+                          <FontAwesomeIcon icon={faTrash} /> Delete
                         </button>
                       </li>
                     ))}

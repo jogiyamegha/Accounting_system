@@ -6,6 +6,7 @@ import styles from "../../../styles/serviceManagement.module.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTools } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 const SERVICE_TYPES = ["VAT Filing", "Corporate Tax", "Payroll", "Audit"];
 
@@ -51,14 +52,15 @@ export default function ServiceManagement() {
         const text = await res.text();
         data = text ? JSON.parse(text) : {};
       } catch (parseErr) {
-        console.warn("Response is not valid JSON:", parseErr);
+        toast.warn("Response is not valid JSON:", parseErr);
       }
 
       if (!res.ok) {
+        toast.error("Failed to assign service")
         throw new Error(data.message || "Failed to assign service");
       }
 
-      alert(data.message || "Service assigned successfully!");
+      toast.success(data.message || "Service assigned successfully!");
       setShowForm(false);
 
       const serviceRouteMap = {

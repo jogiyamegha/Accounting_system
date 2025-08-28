@@ -4,6 +4,8 @@ import { ADMIN_END_POINT, docTypeMap } from "../../../utils/constants";
 import { countries } from "../../../utils/countries";
 import classes from "../../../styles/addClient.module.css";
 import Sidebar from "../../Sidebar";
+import classes from "../../../styles/editClient.module.css";
+import { toast } from "react-toastify";
 
 function formatForDateInput(isoString) {
   if (!isoString) return "";
@@ -77,12 +79,12 @@ export default function EditClient() {
           `${ADMIN_END_POINT}/client-detail/${clientId}`,
           { credentials: "include" }
         );
-        if (!response.ok) throw new Error("Failed to fetch client details");
-
+        if (!response.ok) {
+          toast.error("Failed to fetch client details");
+          throw new Error("Failed to fetch client details");
+        }
         const data = await response.json();
-        // console.log("data",data)
 
-        // assuming API response shape { client, company, documents }
         setClient({
           name: data.client?.name || "",
           email: data.client?.email || "",
@@ -156,14 +158,7 @@ export default function EditClient() {
       if (name === "zipcode" && !/^\d{0,6}$/.test(value)) return prev;
       if (name === "taxRegistrationNumber" && !/^\d{0,15}$/.test(value))
         return prev;
-      // if (
-      //   name === "licenseExpiry" &&
-      //   updated.licenseIssueDate &&
-      //   value < updated.licenseIssueDate
-      // ) {
-      //   alert("License expiry cannot be earlier than issue date");
-      //   return prev;
-      // }
+      
       if (name === "licenseIssueDate") {
         const today = new Date().toISOString().split("T")[0];
         if (value > today) {
@@ -171,16 +166,6 @@ export default function EditClient() {
           return prev;
         }
       }
-
-      // if (
-      //   name === "endDate" &&
-      //   updated.startDate &&
-      //   value < updated.startDate
-      // ) {
-      //   alert("License expiry cannot be earlier than issue date");
-      //   return prev;
-      // }
-
       return updated;
     });
   };
@@ -197,16 +182,9 @@ export default function EditClient() {
   const handleRemoveDocument = (index) =>
     setDocuments((prev) => prev.filter((_, i) => i !== index));
 
-  /** Submit updated client **/
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-    // if (company.zipcode.length !== 6)
-    //   return setError("Zipcode must be exactly 6 digits.");
-    // if (company.taxRegistrationNumber.length !== 15)
-    //   return setError("Tax Registration Number must be exactly 15 digits.");
-
     setLoading(true);
     try {
       const merged = Object.assign({}, client, company);
@@ -233,10 +211,12 @@ export default function EditClient() {
 
       if (!response.ok) {
         const errorText = await response.text();
+        toast.error('failed to edit client')
         throw new Error(errorText || "Failed to edit client");
       }
 
-      alert("Client updated successfully!");
+
+      toast.success("Client updated successfully!");
       navigate("/admin/client-management");
     } catch (err) {
       setError(err.message);
@@ -439,6 +419,14 @@ export default function EditClient() {
             <option value="LLC">LLC</option>
             <option value="Non-Profit">Non-Profit</option>
           </select>
+          <input
+            type="text"
+            name="taxRegistrationNumber"
+            placeholder="Tax Registration Number"
+            value={company.taxRegistrationNumber}
+            onChange={handleCompanyChange}
+            required
+          />
           <label>License Expiry Date :</label>
           <input
             type="date"
@@ -452,14 +440,7 @@ export default function EditClient() {
                 : new Date().toISOString().split("T")[0]
             }
           />
-          <input
-            type="text"
-            name="taxRegistrationNumber"
-            placeholder="Tax Registration Number"
-            value={company.taxRegistrationNumber}
-            onChange={handleCompanyChange}
-            required
-          />
+          
           <label>Financial Year Star Date :</label>
           <input
             type="date"
@@ -539,8 +520,10 @@ export default function EditClient() {
           ))}
         </div>
 
-        <div style={{ width: "100%" }}>
-          <button type="submit" disabled={loading}>
+         
+        <div style={{ width: "100%" }} className={classes.buttonContainer} >
+          <button type="submit" disabled={loading} className={classes.submitBtn}>
+ 
             {loading ? "Updating..." : "Update Client"}
           </button>
         </div>

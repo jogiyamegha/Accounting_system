@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CLIENT_END_POINT } from "../../../utils/constants";
 import "../../../styles/forgotPassword.css";
+import { toast } from "react-toastify";
  
 export default function ClientForgotPassword() {
     const emailInputRef = useRef();
@@ -26,16 +27,18 @@ export default function ClientForgotPassword() {
         
             if (!response.ok) {
                 const errorData = await response.json();
+                toast.error("Failed to send OTP")
                 throw new Error(errorData.message || "Failed to send OTP");
             }
-    
+            
+            toast.success("OTP sent to your email, please enter that OTP and verify..")
             navigate("/client/verify-otp", {state : {email: enteredEmail}});
             } catch (err) {
+                toast.error("error in sending OTP")
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
-
     } 
     return (
         <div className="forgot-container">
