@@ -102,7 +102,7 @@
   margin-bottom: 2rem;
 }
 .heroCta {
-  background: #ff7043;
+  background: #1457a4;
   color: #fff;
   padding: 1rem 2.5rem;
   border-radius: 8px;
@@ -110,7 +110,7 @@
   text-decoration: none;
   transition: background 0.3s;
 }
-.heroCta:hover { background: #ff5722; }
+.heroCta:hover { background: #003673; }
 
 /* Sections */
 .servicesOverview,
@@ -164,15 +164,15 @@
 }
 .ctaSubheadline { margin-bottom: 2rem; opacity: 0.9; }
 .ctaButton {
-  background: #ff7043;
+  background: #fff;
   padding: 1rem 3rem;
   border-radius: 8px;
   font-weight: bold;
-  color: #fff;
+  color: #033c7c;
   text-decoration: none;
   transition: background 0.3s;
 }
-.ctaButton:hover { background: #ff5722; }
+.ctaButton:hover { background: #c6c5c5; }
 
 /* Footer */
 .footer {

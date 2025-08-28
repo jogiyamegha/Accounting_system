@@ -14,7 +14,7 @@
   padding: 24px;
   flex: 1;
   transition: margin-left 0.3s ease;
-  background: #f9fafb;
+  background: #e2e4e5;
 }
 
 /* When sidebar is collapsed (for mobile) */
@@ -99,24 +99,68 @@
 /* ================================
    Table Styling
 ================================ */
+.dashboardTable {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  padding: 16px;
+  overflow-x: auto; /* responsive for smaller screens */
+}
+
+.dashboardTable h2 {
+  margin-bottom: 14px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
 .dashboardTable table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.dashboardTable th,
-.dashboardTable td {
-  text-align: left;
-  padding: 10px 12px;
-  border-bottom: 1px solid #e2e8f0;
-  font-size: 14px;
-}
-
+/* Table Header */
 .dashboardTable th {
-  background: #f1f5f9;
+  background: #f8fafc;
   font-weight: 600;
+  font-size: 14px;
   color: #475569;
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 2px solid #e2e8f0;
 }
+
+/* Table Body */
+.dashboardTable td {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #334155;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Row hover effect */
+.dashboardTable tbody tr:hover {
+  background-color: #f9fafb;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* First & last cell rounded corners */
+.dashboardTable thead tr:first-child th:first-child {
+  border-top-left-radius: 8px;
+}
+.dashboardTable thead tr:first-child th:last-child {
+  border-top-right-radius: 8px;
+}
+.dashboardTable tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+.dashboardTable tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
+}
+
 
 /* ================================
    Notifications

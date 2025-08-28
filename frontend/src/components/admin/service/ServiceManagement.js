@@ -1,8 +1,11 @@
-// src/pages/ServiceManagement.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../Sidebar";
 import { ADMIN_END_POINT } from "../../../utils/constants";
+import styles from "../../../styles/serviceManagement.module.css";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTools } from "@fortawesome/free-solid-svg-icons";
 
 const SERVICE_TYPES = ["VAT Filing", "Corporate Tax", "Payroll", "Audit"];
 
@@ -45,7 +48,7 @@ export default function ServiceManagement() {
 
       let data = {};
       try {
-        const text = await res.text(); 
+        const text = await res.text();
         data = text ? JSON.parse(text) : {};
       } catch (parseErr) {
         console.warn("Response is not valid JSON:", parseErr);
@@ -65,8 +68,7 @@ export default function ServiceManagement() {
         Audit: "/admin/audit-service",
       };
 
-      const route = serviceRouteMap[selectedServiceType] || "/admin/services";
-      navigate(route);
+      navigate(serviceRouteMap[selectedServiceType] || "/admin/services");
     } catch (err) {
       console.error(err);
       alert(err.message);
@@ -74,50 +76,20 @@ export default function ServiceManagement() {
   };
 
   return (
-    <div
-      style={{ display: "flex", minHeight: "100vh", background: "#f5f5f5 " }}
-    >
+    <div className={styles.container}>
       <Sidebar />
 
-      <div style={{ flex: 1, padding: "20px", marginLeft: "240px" }}>
-        <h1>Service Management</h1>
+      <div className={styles.content}>
+        <h1 className={styles.title}> <FontAwesomeIcon icon={faTools} /> Service Management</h1>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "30px",
-            flexWrap: "wrap",
-            marginTop: "20px",
-            justifyContent: "flex-start",
-          }}
-        >
+        <div className={styles.serviceCards}>
           {SERVICE_TYPES.map((type) => (
-            <div
-              key={type}
-              style={{
-                background: "#fff",
-                border: "1px solid #a5a5a5ff",
-                borderRadius: "8px",
-                padding: "30px",
-                width: "280px", // bigger cards
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              }}
-            >
-              <h3 style={{ fontSize: "20px", marginBottom: "10px" }}>{type}</h3>
-              <p style={{ marginBottom: "20px" }}>
-                Track and assign this service to clients
-              </p>
+            <div key={type} className={styles.serviceCard}>
+              <h3>{type}</h3>
+              <p>Track and assign this service to clients</p>
               <button
+                className={styles.assignBtn}
                 onClick={() => handleAssignClick(type)}
-                style={{
-                  padding: "10px 15px",
-                  backgroundColor: "#1e293b",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  transition: "all 0.3s",
-                }}
               >
                 Assign Service
               </button>
@@ -125,41 +97,14 @@ export default function ServiceManagement() {
           ))}
         </div>
 
-        {/* Assign Service Form Modal */}
         {showForm && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              backgroundColor: "rgba(0,0,0,0.3)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <div
-              style={{
-                background: "#fff",
-                padding: "25px",
-                borderRadius: "8px",
-                minWidth: "350px",
-              }}
-            >
-              <h2 style={{ marginBottom: "15px" }}>
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <h2 className={styles.modalTitle}>
                 Assign Service - {selectedServiceType}
               </h2>
-              <form
-                onSubmit={handleSubmit}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "12px",
-                }}
-              >
-                <div>
+              <form onSubmit={handleSubmit}>
+                <div className={styles.formGroup}>
                   <label>Client Email:</label>
                   <input
                     type="email"
@@ -167,20 +112,18 @@ export default function ServiceManagement() {
                     value={formData.clientEmail}
                     onChange={handleChange}
                     required
-                    style={{ width: "100%", padding: "8px", marginTop: "5px" }}
                   />
                 </div>
-                <div>
+                <div className={styles.formGroup}>
                   <label>Service Type:</label>
                   <input
                     type="text"
                     name="serviceType"
                     value={formData.serviceType}
                     readOnly
-                    style={{ width: "100%", padding: "8px", marginTop: "5px" }}
                   />
                 </div>
-                <div>
+                <div className={styles.formGroup}>
                   <label>Start Date:</label>
                   <input
                     type="date"
@@ -199,58 +142,33 @@ export default function ServiceManagement() {
                       }));
                     }}
                     required
-                    style={{ width: "100%", padding: "8px", marginTop: "5px" }}
                   />
                 </div>
-
-                <div>
+                <div className={styles.formGroup}>
                   <label>End Date:</label>
                   <input
                     type="date"
                     name="endDate"
                     value={formData.endDate}
                     onChange={handleChange}
-                    required
                     min={
                       formData.startDate
                         ? formData.startDate
                         : new Date().toISOString().split("T")[0]
                     }
-                    style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                    required
                   />
                 </div>
 
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    gap: "10px",
-                    marginTop: "15px",
-                  }}
-                >
+                <div className={styles.modalButtons}>
                   <button
                     type="button"
+                    className={styles.cancelBtn}
                     onClick={() => setShowForm(false)}
-                    style={{
-                      padding: "8px 12px",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
                   >
                     Cancel
                   </button>
-                  <button
-                    type="submit"
-                    style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#1e293b",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
+                  <button type="submit" className={styles.submitBtn}>
                     Assign
                   </button>
                 </div>

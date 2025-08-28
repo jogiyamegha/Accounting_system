@@ -97,7 +97,7 @@ const HomePage = () => {
       <footer className={styles.footer}>
         <div className={styles.footerColumns}>
           <div className={styles.footerCol}>
-            <a href="/" className={styles.footerLogo}>e-Services</a>
+            <a href="/" className={styles.footerLogo}>E-Services</a>
             <p className={styles.footerTagline}>Your trusted partner in accounting and compliance.</p>
           </div>
           <div className={styles.footerCol}>
@@ -123,7 +123,7 @@ const HomePage = () => {
           </div>
         </div>
         <div className={styles.footerBottom}>
-          <p className={styles.copyright}>&copy; 2025 e-Services. All Rights Reserved.</p>
+          <p className={styles.copyright}>&copy; 2025 E-Services. All Rights Reserved.</p>
         </div>
       </footer>
     </div>

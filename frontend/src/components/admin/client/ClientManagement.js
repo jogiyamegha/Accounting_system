@@ -1,42 +1,36 @@
 import { useEffect, useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 
 import Sidebar from "../../Sidebar";
-
-import "../../../styles/clientManagement.css";
-
+import styles from "../../../styles/clientManagement.module.css"; // ✅ using CSS module
 import { ADMIN_END_POINT } from "../../../utils/constants";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUsers,
+  
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function ClientManagement() {
   const navigate = useNavigate();
 
   const [clients, setClients] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
-
   const [totalClients, setTotalClients] = useState(0);
 
   // Pagination
-
   const [page, setPage] = useState(1);
-
-  const limit = 10; // clients per page
+  const limit = 10;
 
   const fetchClients = async () => {
     try {
       setLoading(true);
-
       const queryParams = new URLSearchParams({
         searchTerm: search,
-
         limit,
-
         skip: (page - 1) * limit,
-
-        needCount: true, // get total clients from backend
+        needCount: true,
       });
 
       const response = await fetch(
@@ -49,10 +43,7 @@ export default function ClientManagement() {
       );
 
       const data = await response.json();
-      console.log("2",data)
-
       setClients(data.records || []);
-
       setTotalClients(data.total || 0);
     } catch (error) {
       console.error("Error fetching clients:", error);
@@ -65,59 +56,45 @@ export default function ClientManagement() {
     fetchClients();
   }, [page, search]);
 
-  const handleAddClient = () => {
-    navigate("/admin/add-client");
-  };
+  const handleAddClient = () => navigate("/admin/add-client");
+  const handleView = (id) => navigate(`/admin/client-detail/${id}`);
+  const handleEdit = (id) => navigate(`/admin/edit-client/${id}`);
 
-   const handleView = (clientId) => {
-    navigate(`/admin/client-detail/${clientId}`);
-  };
- 
-
-  const handleEdit = (id) => {
-    navigate(`/admin/edit-client/${id}`);
-  };
-
-  const handleDelete = async (clientId) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this client?")) {
       try {
-        await fetch(`${ADMIN_END_POINT}/delete-client/${clientId}`, { method: "DELETE" });
-
-        navigate('/admin/client-management')
-        fetchClients(); // refresh list
+        await fetch(`${ADMIN_END_POINT}/delete-client/${id}`, { method: "DELETE" });
+        fetchClients();
       } catch (error) {
         console.error("Failed to delete client:", error);
       }
     }
   };
 
-  const handleGenerateInvoice = async (clientId) => {
-    navigate(`/admin/generate-invoice/${clientId}`);
-  }
+  const handleGenerateInvoice = (id) => navigate(`/admin/generate-invoice/${id}`);
+
+  const handleAppyService = (id) => navigate(`/admin/service-management`);
+
 
   // Pagination helpers
-
   const totalPages = Math.ceil(totalClients / limit);
-
   const goToPage = (p) => {
-    if (p < 1 || p > totalPages) return;
-
-    setPage(p);
+    if (p >= 1 && p <= totalPages) setPage(p);
   };
 
   return (
-    <div className="client-management-layout">
+    <div className={styles.layout}>
       <Sidebar />
 
-      <main className="client-management-content">
-        <header className="client-management-header">
-          <h1>Client Management</h1>
-          <button className="add-client-btn" onClick={handleAddClient}>
+      <main className={styles.content}>
+        <header className={styles.header}>
+          <h1><FontAwesomeIcon icon={faUsers} /> Client Management</h1>
+          <button className={styles.addClientBtn} onClick={handleAddClient}>
             + Add Client
           </button>
         </header>
 
-        <div className="client-search">
+        <div className={styles.searchBox}>
           <input
             type="text"
             placeholder="Search by client name or email..."
@@ -126,21 +103,21 @@ export default function ClientManagement() {
           />
         </div>
 
-        <section className="client-table-section">
+        <section className={styles.tableSection}>
           {loading ? (
             <p>Loading clients...</p>
           ) : clients.length === 0 ? (
-            <p className="no-data">No clients found.</p>
+            <p className={styles.noData}>No clients found.</p>
           ) : (
             <>
-              <p>Total Clients: {totalClients}</p>
-              <table className="client-table">
+              <p className={styles.total}>Total Clients: {totalClients}</p>
+              <table className={styles.table}>
                 <thead>
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>Actions</th>
+                    <th className={styles.actionsCol}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -149,18 +126,15 @@ export default function ClientManagement() {
                       <td>{client.name}</td>
                       <td>{client.email}</td>
                       <td>{client.contact.phone}</td>
-                      <td className="client-actions">
-                        <button onClick={() => handleView(client._id)}>
-                          View
-                        </button>
-                        <button onClick={() => handleEdit(client._id)}>
-                          Edit
-                        </button>
-                        <button onClick={() => handleDelete(client._id)}>
-                          Delete
-                        </button>
+                      <td className={styles.actions}>
+                        <button onClick={() => handleView(client._id)}>View</button>
+                        <button onClick={() => handleEdit(client._id)}>Edit</button>
+                        <button onClick={() => handleDelete(client._id)}>Delete</button>
                         <button onClick={() => handleGenerateInvoice(client._id)}>
-                          Generate Invoice
+                          Invoice
+                        </button>
+                        <button onClick={() => handleAppyService(client._id)}>
+                          Service
                         </button>
                       </td>
                     </tr>
@@ -168,24 +142,22 @@ export default function ClientManagement() {
                 </tbody>
               </table>
 
-              {/* Pagination Controls */}
-              <div className="pagination">
-                <button
-                  onClick={() => goToPage(page - 1)}
-                  disabled={page === 1}
-                >
+              {/* Pagination */}
+              <div className={styles.pagination}>
+                <button onClick={() => goToPage(page - 1)} disabled={page === 1}>
                   Previous
                 </button>
 
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
                     key={i + 1}
-                    className={page === i + 1 ? "active-page" : ""}
+                    className={page === i + 1 ? styles.activePage : ""}
                     onClick={() => goToPage(i + 1)}
                   >
                     {i + 1}
                   </button>
                 ))}
+
                 <button
                   onClick={() => goToPage(page + 1)}
                   disabled={page === totalPages}

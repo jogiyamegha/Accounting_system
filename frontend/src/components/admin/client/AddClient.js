@@ -4,10 +4,10 @@ import { ADMIN_END_POINT } from "../../../utils/constants";
 import { countries } from "../../../utils/countries";
 import classes from "../../../styles/addClient.module.css";
 import Sidebar from "../../Sidebar";
- 
+
 export default function AddClient() {
   const navigate = useNavigate();
- 
+
   const [client, setClient] = useState({
     name: "",
     email: "",
@@ -15,7 +15,7 @@ export default function AddClient() {
     phone: "",
     position: "",
   });
- 
+
   const [company, setCompany] = useState({
     companyName: "",
     companyEmail: "",
@@ -36,12 +36,11 @@ export default function AddClient() {
     startDate: "",
     endDate: "",
   });
- 
+
   const documentTypes = [
     "VATcertificate",
     "CorporateTaxDocument",
     "BankStatement",
-    // "DrivingLicense",
     "Invoice",
     "auditFiles",
     "TradeLicense",
@@ -53,54 +52,27 @@ export default function AddClient() {
     "ExpenseReciept",
     "Other",
   ];
- 
+
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
- 
+
   const handleClientChange = (e) => {
     const { name, value } = e.target;
- 
-    // Validation for name & position (only alphabets and spaces)
-    if ((name === "name" || name === "position") && /\d/.test(value)) {
-      return; // prevent numbers
-    }
- 
+    if ((name === "name" || name === "position") && /\d/.test(value)) return;
     setClient({ ...client, [name]: value });
   };
- 
+
   const handleCompanyChange = (e) => {
     const { name, value } = e.target;
- 
     setCompany((prev) => {
       let updated = { ...prev, [name]: value };
- 
-      // Validation: companyName & landmark should not contain numbers
       if ((name === "companyName" || name === "landmark") && /\d/.test(value)) {
         return prev;
       }
- 
-      // Zip code → only digits & length 6
-      if (name === "zipcode") {
-        if (!/^\d{0,6}$/.test(value)) return prev; // block non-digits
-      }
- 
-      // Tax registration number → max 15 digits
-      if (name === "taxRegistrationNumber") {
-        if (!/^\d{0,15}$/.test(value)) return prev;
-      }
- 
-      // // License expiry should not be earlier than issue date
-      // if (
-      //   name === "licenseExpiry" &&
-      //   updated.licenseIssueDate &&
-      //   value < updated.licenseIssueDate
-      // ) {
-      //   alert("License expiry date cannot be earlier than issue date!");
-      //   return prev;
-      // }
- 
-      // License issue date should not be in future
+      if (name === "zipcode" && !/^\d{0,6}$/.test(value)) return prev;
+      if (name === "taxRegistrationNumber" && !/^\d{0,15}$/.test(value))
+        return prev;
       if (name === "licenseIssueDate") {
         const today = new Date().toISOString().split("T")[0];
         if (value > today) {
@@ -108,75 +80,57 @@ export default function AddClient() {
           return prev;
         }
       }
-
-      // if (
-      //   name === "endDate" &&
-      //   updated.startDate &&
-      //   value < updated.startDate
-      // ) {
-      //   alert("Financial End date cannot be earlier than start date!");
-      //   return prev;
-      // }
- 
       return updated;
     });
   };
- 
+
   const handleAddDocument = () =>
     setDocuments((prev) => [...prev, { documentType: "", file: null }]);
- 
+
   const handleDocumentChange = (index, field, value) => {
     setDocuments((prev) =>
       prev.map((doc, i) => (i === index ? { ...doc, [field]: value } : doc))
     );
   };
- 
+
   const handleRemoveDocument = (index) => {
     setDocuments((prev) => prev.filter((_, i) => i !== index));
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
- 
-    // Final validation before submit
+
     if (company.zipcode.length !== 6) {
       return setError("Zipcode must be exactly 6 digits.");
     }
     if (company.taxRegistrationNumber.length !== 15) {
       return setError("Tax Registration Number must be exactly 15 digits.");
     }
- 
+
     setLoading(true);
- 
     try {
       const merged = Object.assign({}, client, company);
       const formData = new FormData();
- 
       for (const [key, value] of Object.entries(merged)) {
         formData.append(key, value);
       }
- 
       documents.forEach((doc, index) => {
-        // console.log(doc)
         formData.append(`documents[${index}][file]`, doc.file);
-        formData.append(
-          `documents[${index}][documentType]`,
-          doc.documentType
-        );
+        formData.append(`documents[${index}][documentType]`, doc.documentType);
       });
- 
+
       const response = await fetch(`${ADMIN_END_POINT}/add-client`, {
         method: "POST",
         body: formData,
         credentials: "include",
       });
- 
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || "Failed to add client");
       }
- 
+
       alert("Client added successfully!");
       navigate("/admin/client-management");
     } catch (err) {
@@ -185,15 +139,20 @@ export default function AddClient() {
       setLoading(false);
     }
   };
- 
+
   return (
     <div className={classes.addClientContainer}>
       <Sidebar />
- 
-      {error && <p className={classes.errorMessage}>{error}</p>}
- 
+
+      {error && (
+        <div className={classes.alertBox}>
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className={classes.addClientForm}>
         <h2>Add New Client</h2>
+
         {/* Client Info */}
         <div className={classes.cardSection}>
           <h3>Client Info</h3>
@@ -240,17 +199,16 @@ export default function AddClient() {
             placeholder="Contact Number"
             value={client.phone}
             onChange={handleClientChange}
-            maxLength={10}
-              onInput={(e) => {
-                  e.target.value = e.target.value.replace(/\D/g, "")
-                  if(e.target.value.length > 10){
-                      e.target.value = e.target.value.slice(0, 10)
-                  }
-              }}
+            onInput={(e) => {
+              e.target.value = e.target.value.replace(/\D/g, "");
+              if (e.target.value.length > 10) {
+                e.target.value = e.target.value.slice(0, 10);
+              }
+            }}
             required
           />
         </div>
- 
+
         {/* Company Info */}
         <div className={classes.cardSection}>
           <h3>Company Info</h3>
@@ -363,7 +321,7 @@ export default function AddClient() {
             value={company.licenseIssueDate}
             onChange={handleCompanyChange}
             required
-            max={new Date().toISOString().split("T")[0]} // prevent future dates
+            max={new Date().toISOString().split("T")[0]}
           />
           <select
             name="businessType"
@@ -379,6 +337,14 @@ export default function AddClient() {
             <option value="Non-Profit">Non-Profit</option>
             <option value="Private Limited">Private Limited</option>
           </select>
+          <input
+            type="text"
+            name="taxRegistrationNumber"
+            placeholder="Tax Registration Number"
+            value={company.taxRegistrationNumber}
+            onChange={handleCompanyChange}
+            required
+          />
           <label>License Expiry Date :</label>
           <input
             type="date"
@@ -392,17 +358,7 @@ export default function AddClient() {
                 : new Date().toISOString().split("T")[0]
             }
           />
-          <input
-            type="text"
-            name="taxRegistrationNumber"
-            placeholder="Tax Registration Number"
-            value={company.taxRegistrationNumber}
-            onChange={handleCompanyChange}
-            required
-          />
 
-            <>
-            </>
           <label>Financial Year Start Date :</label>
           <input
             type="date"
@@ -410,9 +366,8 @@ export default function AddClient() {
             value={company.startDate}
             onChange={handleCompanyChange}
             required
-            max={new Date().toISOString().split("T")[0]} // prevent future dates
+            max={new Date().toISOString().split("T")[0]}
           />
-
           <label>Financial Year End Date :</label>
           <input
             type="date"
@@ -426,9 +381,8 @@ export default function AddClient() {
                 : new Date().toISOString().split("T")[0]
             }
           />
-
         </div>
- 
+
         {/* Documents */}
         <div className={classes.cardSection}>
           <h3>Upload Documents</h3>
@@ -473,9 +427,13 @@ export default function AddClient() {
             </div>
           ))}
         </div>
- 
-        <div style={{ width: "100%" }}>
-          <button  type="submit" disabled={loading}>
+
+        <div style={{ width: "100%" }} className={classes.buttonContainer}>
+          <button
+            type="submit"
+            disabled={loading}
+            className={classes.submitBtn}
+          >
             {loading ? "Adding..." : "+ Add Client"}
           </button>
         </div>
@@ -483,6 +441,3 @@ export default function AddClient() {
     </div>
   );
 }
- 
- 
- 

@@ -1,0 +1,185 @@
+/* Main container */
+.container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #e2e4e5;
+  transition: margin-left 0.3s ease;
+}
+
+.content {
+  flex: 1;
+  padding: 30px 40px;
+  margin-left: 280px; /* sidebar width */
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 992px) {
+  .content {
+    margin-left: 0;
+    padding: 20px;
+  }
+}
+
+/* Page title */
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #1f2937;
+}
+
+/* Service cards */
+.serviceCards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: flex-start;
+}
+
+.serviceCard {
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 30px 25px;
+  width: 280px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+.serviceCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.serviceCard h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.serviceCard p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #4b5563;
+}
+
+/* Assign button */
+.assignBtn {
+  padding: 10px 16px;
+  background-color: #1e293b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.assignBtn:hover {
+  background-color: #111827;
+  transform: translateY(-1px);
+}
+.assignBtn:active {
+  transform: scale(0.97);
+}
+
+/* Modal overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.modalContent {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Modal title */
+.modalTitle {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+/* Form */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+.formGroup label {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.formGroup input {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.formGroup input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.4);
+}
+
+/* Modal buttons */
+.modalButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.cancelBtn {
+  padding: 8px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.cancelBtn:hover {
+  background-color: #f3f4f6;
+}
+
+.submitBtn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #1e293b;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.submitBtn:hover {
+  background-color: #111827;
+  transform: translateY(-1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .serviceCards {
+    justify-content: center;
+  }
+  .serviceCard {
+    width: 100%;
+    max-width: 350px;
+  }
+}

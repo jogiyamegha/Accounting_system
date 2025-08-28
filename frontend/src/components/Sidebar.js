@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../redux/features/userSlice";
@@ -21,14 +21,33 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
-import styles from "../styles/sidebar.module.css"; // ✅ CSS Module
+import styles from "../styles/sidebar.module.css";
 
 export default function Sidebar() {
   const { role } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [isOpen, setIsOpen] = useState(true); // ✅ toggle for sidebar (hamburger)
+  const [isOpen, setIsOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // 🔹 Handle resizing logic
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setIsMobile(true);
+        setIsOpen(false); // sidebar hidden on mobile by default
+      } else {
+        setIsMobile(false);
+        setIsOpen(true); // sidebar always open on desktop
+      }
+    };
+
+    handleResize(); // run on mount
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleLogout = async () => {
     const endpoint =
@@ -60,14 +79,17 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Hamburger Button (only visible on small screens) */}
-      <button
-        className={styles.hamburger}
-        onClick={() => setIsOpen((prev) => !prev)}
-      >
-        <FontAwesomeIcon icon={isOpen ? faTimes : faBars} size="lg" />
-      </button>
+      {/* 🔹 Hamburger / Close Button (only visible on mobile) */}
+      {isMobile && (
+        <button
+          className={styles.hamburger}
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          <FontAwesomeIcon icon={isOpen ? faTimes : faBars} size="lg" />
+        </button>
+      )}
 
+      {/* 🔹 Sidebar */}
       <aside className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
         <div className={styles.sidebarHeader1}>
           <img src={logo} alt="Logo" className={styles.logoSvg} />

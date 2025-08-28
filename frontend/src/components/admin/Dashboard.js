@@ -13,7 +13,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import styles from "../../styles/adminDashboard.module.css";  // ✅ Import module CSS
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell, faFile, faChartLine } from "@fortawesome/free-solid-svg-icons";
+
+import styles from "../../styles/adminDashboard.module.css";
 import { ADMIN_END_POINT } from "../../utils/constants";
 
 const uploadData = [
@@ -62,7 +65,7 @@ export default function Dashboard() {
 
       <main className={styles.dashboardContent}>
         <header className={styles.dashboardHeader}>
-          <h1>Dashboard</h1>
+          <h1><FontAwesomeIcon icon={faChartLine} /> Dashboard</h1>
         </header>
 
         <section className={styles.dashboardCards}>
@@ -88,9 +91,9 @@ export default function Dashboard() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="Successful" fill="#4caf50" />
-                <Bar dataKey="Pending" fill="#ff9800" />
-                <Bar dataKey="Failed" fill="#f44336" />
+                <Bar dataKey="Successful" fill="#033670ff" />
+                <Bar dataKey="Pending" fill="#1c599fff" />
+                <Bar dataKey="Failed" fill="#5296e4ff" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -127,8 +130,14 @@ export default function Dashboard() {
         <section className={`${styles.dashboardNotifications} ${styles.card}`}>
           <h2>Notifications and Alerts</h2>
           <ul>
-            <li>📄 New document uploaded by Client A</li>
-            <li>⚠️ VAT return deadline approaching for Client B</li>
+            <li>
+              <FontAwesomeIcon icon={faFile} />
+              New document uploaded by Client A
+            </li>
+            <li>
+              <FontAwesomeIcon icon={faBell} />
+              VAT return deadline approaching for Client B
+            </li>
           </ul>
         </section>
       </main>

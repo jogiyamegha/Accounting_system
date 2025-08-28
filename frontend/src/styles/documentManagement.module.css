@@ -1,0 +1,172 @@
+/* Main container - adjusted for sidebar */
+.container {
+  margin-left: 260px; /* sidebar width */
+  padding: 30px 40px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #e2e4e5;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 992px) {
+  .container {
+    margin-left: 0;
+    padding: 20px;
+  }
+}
+
+/* Page Title */
+.title {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Search bar */
+.searchContainer {
+  margin-bottom: 25px;
+}
+.searchInput {
+  width: 100%;
+  max-width: 450px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.searchInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.4);
+}
+
+/* Loading & Empty */
+.loading,
+.empty {
+  font-size: 16px;
+  color: #6b7280;
+  text-align: center;
+  margin-top: 50px;
+}
+
+/* Client card */
+.clientList {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+.clientCard {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 25px 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.clientCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+.clientTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #111827;
+  cursor: pointer;
+}
+.clientTitle span {
+  color: #3b82f6;
+}
+
+/* Category section */
+.category {
+  margin-bottom: 18px;
+}
+.categoryTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+
+/* Document list */
+.docList {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+.docItem {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  background: #f9fafb;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid #e5e7eb;
+}
+.docItem:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+.docLink {
+  text-decoration: none;
+  color: #3b82f6;
+  font-weight: 500;
+  flex: 1 1 auto;
+}
+.docLink:hover {
+  text-decoration: underline;
+}
+.docStatus {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 10px;
+  white-space: nowrap;
+}
+
+/* Delete button */
+.deleteBtn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.deleteBtn:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+.deleteBtn:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .docItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .docStatus {
+    margin: 4px 0;
+  }
+  .deleteBtn {
+    margin-top: 4px;
+  }
+}

@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import "../../../styles/documentMangement.css";
+import styles from "../../../styles/documentManagement.module.css";
 import { ADMIN_END_POINT, DocStatus } from "../../../utils/constants";
 import Sidebar from "../../Sidebar";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
 
-const API_URL = `${ADMIN_END_POINT}/document-management`; // adjust backend URL
+const API_URL = `${ADMIN_END_POINT}/document-management`;
 
-// Map backend documentType numbers → categories
 const docTypeMap = {
   1: "Financial Statements",
   2: "VAT Returns & Invoices",
@@ -31,11 +32,7 @@ export default function DocumentManagement() {
       setLoading(true);
       const res = await fetch(
         `${API_URL}?searchTerm=${encodeURIComponent(searchTerm)}`,
-        {
-          method: "GET",
-
-          credentials: "include",
-        }
+        { method: "GET", credentials: "include" }
       );
       const data = await res.json();
       setDocuments(data.records || []);
@@ -47,76 +44,62 @@ export default function DocumentManagement() {
   };
 
   const handleDelete = async (clientId, docId) => {
-    if (!window.confirm("Are you sure you want to delete this document?"))
-      return;
-
+    if (!window.confirm("Are you sure you want to delete this document?")) return;
     try {
       const res = await fetch(`${ADMIN_END_POINT}/delete-document`, {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ clientId, docId }),
       });
-
-      //   const data = await res.json();
-
       if (res.ok) {
         alert("Document deleted successfully");
-        fetchDocuments(); // refresh list
-      } else {
-        alert("Failed to delete document");
-      }
+        fetchDocuments();
+      } else alert("Failed to delete document");
     } catch (err) {
       console.error("Error deleting document", err);
       alert("Something went wrong while deleting.");
     }
   };
 
-  // Group documents by client and category
   const categorizedDocs = documents.map((client) => {
     let categories = {};
     client.documents.forEach((doc) => {
       const type = doc.documentDetails.documentType;
       const category = docTypeMap[type] || "Other";
-
-      if (!categories[category]) {
-        categories[category] = [];
-      }
+      if (!categories[category]) categories[category] = [];
       categories[category].push(doc);
     });
-
     return { ...client, categories };
   });
-  //   console.log("gbhnj", categorizedDocs);
 
   return (
-    <div className="doc-management-container">
+    <div className={styles.container}>
       <Sidebar />
-      <h2 className="doc-title">📂 Document Management</h2>
+      <h2 className={styles.title}>
+        <FontAwesomeIcon icon={faFolderOpen} /> Document Management
+      </h2>
 
-      {/* Search bar */}
-      <div className="doc-search-container">
+      <div className={styles.searchContainer}>
         <input
           type="text"
           placeholder="Search documents..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="doc-search-input"
+          className={styles.searchInput}
         />
       </div>
 
       {loading ? (
-        <p className="doc-loading">Loading documents...</p>
+        <p className={styles.loading}>Loading documents...</p>
       ) : documents.length === 0 ? (
-        <p className="doc-empty">No document uploaded</p>
+        <p className={styles.empty}>No document uploaded</p>
       ) : (
-        <div className="doc-client-list">
+        <div className={styles.clientList}>
           {categorizedDocs.map((client) => (
-            <div key={client._id} className="doc-client-card">
+            <div key={client._id} className={styles.clientCard}>
               <h3
-                className="doc-client-title "
+                className={styles.clientTitle}
                 onClick={() =>
                   navigate(`/admin/client-detail/${client.clientId}`, {
                     state: { scrollToDocuments: true },
@@ -126,24 +109,21 @@ export default function DocumentManagement() {
                 Client Name: <span>{client.client.name}</span>
               </h3>
 
-              {/* Categories inside client */}
               {Object.keys(client.categories).map((category) => (
-                <div key={category} className="doc-category">
-                  <h4 className="doc-category-title">{category}</h4>
-                  
-                  <ul className="doc-list">
+                <div key={category} className={styles.category}>
+                  <h4 className={styles.categoryTitle}>{category}</h4>
+                  <ul className={styles.docList}>
                     {client.categories[category].map((doc) => (
-                      
-                      <li key={doc._id} className="doc-item">
+                      <li key={doc._id} className={styles.docItem}>
                         <a
                           href={`http://localhost:8000/${doc.documentDetails.document}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="doc-link"
+                          className={styles.docLink}
                         >
                           {doc.documentDetails.document.split("/").pop()}
                         </a>
-                        <span className="doc-status">
+                        <span className={styles.docStatus}>
                           Status:{" "}
                           {
                             Object.entries(DocStatus).find(
@@ -151,18 +131,17 @@ export default function DocumentManagement() {
                             )?.[0]
                           }
                         </span>
-                        {/* <button
-                          className="doc-delete-btn"
-                          onClick={() => handleDelete(client.clientId, doc._id)}
+                        <button
+                          className={styles.deleteBtn}
+                          onClick={() =>
+                            handleDelete(client.clientId, doc._id)
+                          }
                         >
                           ❌ Delete
-                        </button> */}
+                        </button>
                       </li>
-
-
                     ))}
                   </ul>
-
                 </div>
               ))}
             </div>
