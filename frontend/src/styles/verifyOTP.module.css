@@ -1,0 +1,122 @@
+/* Page wrapper */
+.otpWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  padding: 20px;
+}
+
+/* Card */
+.otpCard {
+  max-width: 420px;
+  width: 100%;
+  background: #ffffff;
+  padding: 35px 30px;
+  border-radius: 16px;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.otpCard:hover {
+  transform: translateY(-3px);
+}
+
+/* Title */
+.title {
+  text-align: center;
+  color: #1f2937;
+  margin-bottom: 20px;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+/* Info text */
+.info {
+  text-align: center;
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+/* Error */
+.error {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Form */
+.otpForm {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form group */
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.formGroup input {
+  width: 92%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 16px;
+  letter-spacing: 2px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus {
+  border-color: #04438b;
+  outline: none;
+  box-shadow: 0px 0px 6px rgba(9, 2, 141, 0.3);
+}
+
+/* Button */
+.otpButton {
+  padding: 14px;
+  background: linear-gradient(135deg, #04438b, #033b7c);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.otpButton:hover:not(:disabled) {
+  background: linear-gradient(90deg, #013066, #062f5f);
+}
+
+.otpButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .otpCard {
+    padding: 25px 20px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+}

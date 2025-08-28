@@ -1,98 +1,121 @@
 import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ADMIN_END_POINT } from "../../../utils/constants";
-import '../../../styles/changePassword.css';
- 
-export default function AdminChangePassword() {
-    const newPasswordInputRef = useRef();
-    const confirmPasswordInputRef = useRef();
-    const location = useLocation();
-    const email = location.state?.email || "";
-    const navigate = useNavigate();
-    
-    const [error, setError] = useState("");
-    
-    const submitHandler = async (event) => {
-        event.preventDefault();
-        setError("");
-    
-        const enteredNewPassword = newPasswordInputRef.current.value;
-        const enteredConfirmPassword = confirmPasswordInputRef.current.value;
-    
-        if (enteredNewPassword !== enteredConfirmPassword) {
-            setError("Passwords do not match!");
-            return;
-        }
-    
-        const data = {
-            email: email,
-            newPassword: enteredNewPassword,
-            confirmPassword: enteredConfirmPassword,
-        };
-    
-        try {
-            const response = await fetch(`${ADMIN_END_POINT}/change-password`, {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {
-                "Content-Type": "application/json",
-                },
-            });
-        
-            const result = await response.json();
-        
-            if (!response.ok) {
-                throw new Error(result.message || "Failed to set password");
-            }
-        
-            alert("Your New Password is set Successfully..");
-            navigate("/admin/login");
-        } catch (error) {
-            console.error(error);
-            setError(error.message);
-            //   alert("Something Went Wrong!!");
-        }
-    };
- 
-    return (
-        <div className="setpass-container">
-        <h2>Set New Password</h2>
-        <form onSubmit={submitHandler} className="setpass-form">
-            <p className="setpass-info">Please set the new password</p>
-            <p className="setpass-requirements">
-                    It should be 8 characters long & must contain at least 1 uppercase
-                    letter, 1 lowercase letter, 1 digit & a special character (@$!%*?&).
-            </p>
-            {error && <p className="error-message">{error}</p>}
+import styles from "../../../styles/changePassword.module.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { toast } from "react-toastify";
 
-                <div className="form-group">
-                <input
-                    type="password"
-                    name="newPassword"
-                    id="newPassword"
-                    placeholder="New Password"
-                    ref={newPasswordInputRef}
-                    required
-                />
-        </div>
-        
-        <div className="form-group">
+export default function AdminChangePassword() {
+  const newPasswordInputRef = useRef();
+  const confirmPasswordInputRef = useRef();
+  const location = useLocation();
+  const email = location.state?.email || "";
+  const navigate = useNavigate();
+
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    setError("");
+
+    const enteredNewPassword = newPasswordInputRef.current.value;
+    const enteredConfirmPassword = confirmPasswordInputRef.current.value;
+
+    if (enteredNewPassword !== enteredConfirmPassword) {
+      setError("Passwords do not match!");
+      toast.error("password do not match");
+
+      return;
+    }
+
+    const data = {
+      email,
+      newPassword: enteredNewPassword,
+      confirmPassword: enteredConfirmPassword,
+    };
+
+    try {
+      const response = await fetch(`${ADMIN_END_POINT}/change-password`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        toast.error("failed to set password");
+
+        throw new Error(result.message || "Failed to set password");
+      }
+
+      toast.success(" Your new password is set successfully.");
+      navigate("/admin/login");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something Went Wrong!!");
+      setError(error.message);
+    }
+  };
+
+  return (
+    <div className={styles.wrapper}>
+      <div className={styles.card}>
+        <h2 className={styles.title}>🔑 Set New Password</h2>
+        <form onSubmit={submitHandler} className={styles.form}>
+          <p className={styles.info}>Please set a strong new password</p>
+          <p className={styles.requirements}>
+            Must be at least <b>8 characters</b> long & include: <br />1
+            uppercase, 1 lowercase, 1 digit, and 1 special character (@$!%*?&).
+          </p>
+
+          {error && <p className={styles.error}>{error}</p>}
+
+          {/* New Password */}
+          <div className={styles.inputGroup}>
             <input
-                type="password"
-                name="confirmPassword"
-                id="confirmPassword"
-                placeholder="Confirm Password"
-                ref={confirmPasswordInputRef}
-                required
+              type={showPassword ? "text" : "password"}
+              id="newPassword"
+              placeholder="New Password"
+              ref={newPasswordInputRef}
+              required
             />
-        </div>
-            <button type="submit" className="setpass-button">
-                Set Password
+            <button
+              type="button"
+              className={styles.eyeButton}
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
+          </div>
+
+          {/* Confirm Password */}
+          <div className={styles.inputGroup}>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              id="confirmPassword"
+              placeholder="Confirm Password"
+              ref={confirmPasswordInputRef}
+              required
+            />
+            <button
+              type="button"
+              className={styles.eyeButton}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+
+          <button type="submit" className={styles.submitButton}>
+            Set Password
+          </button>
         </form>
-        </div>
- 
-    );
+      </div>
+    </div>
+  );
 }
-    
-    
