@@ -1,0 +1,374 @@
+/* ========== Layout ========== */
+.clientDetailPage {
+  margin-left: 280px; /* aligned with sidebar */
+  padding: 2rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #1f2937;
+  transition: margin-left 0.3s ease, padding 0.3s ease;
+}
+
+.adjustment {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.pageTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: 0.3px;
+}
+
+/* Action button */
+.gtBtn {
+  padding: 10px 18px;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.gtBtn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+}
+
+/* ========== Cards ========== */
+.clientCard {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 1.6rem 1.8rem;
+  margin-bottom: 1.8rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.clientCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.clientCardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+/* Reuse client info grid styling for company info */
+/* Container Grid for Info */
+.infoGrid {
+  display: grid;
+  grid-template-columns: max-content 1fr; /* label adjusts to content, value takes rest */
+  gap: 12px 20px; /* row gap 12px, column gap 20px */
+  padding-top: 12px;
+}
+
+/* Each row styled as a flex block with background and spacing */
+.infoRow {
+  display: contents; /* allow grid to manage placement */
+}
+
+.infoLabel {
+  font-weight: 600;
+  color: #475569;
+  text-align: left;
+  font-size: 14px;
+  align-self: center;
+  padding-right: 10px;
+}
+
+.infoValue {
+  font-weight: 500;
+  color: #111827;
+  font-size: 14px;
+  word-break: break-word;
+  padding: 8px 12px;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.infoValue:hover {
+  background-color: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+/* Optional subtle separator lines */
+.infoRow + .infoRow .infoValue {
+  margin-top: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .infoGrid {
+    grid-template-columns: 1fr; /* stack label & value vertically */
+  }
+
+  .infoLabel {
+    text-align: left;
+    padding-right: 0;
+    margin-bottom: 4px;
+  }
+
+  .infoValue {
+    width: 100%;
+  }
+}
+
+/* Documents List */
+.documentList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr; /* stack by default */
+  gap: 1rem;
+}
+
+.documentItem {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: start;
+  transition: all 0.3s ease;
+}
+
+.documentItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  background-color: #f9fafb;
+}
+
+/* Labels & values inside docAction */
+.docAction {
+  display: flex;
+  flex-direction: column;
+}
+
+.docLabel {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #475569;
+}
+
+/* Inputs & Selects */
+.docInput,
+.docSelect {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f9fafb;
+  transition: all 0.25s ease;
+}
+
+.docInput:focus,
+.docSelect:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  background: #ffffff;
+  outline: none;
+}
+
+/* Update button */
+.docUpdateBtn {
+  padding: 8px 16px;
+  margin-top: 24px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.docUpdateBtn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* View Link */
+.viewLink {
+  font-size: 13px;
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.viewLink:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+  transform: translateX(2px);
+}
+
+/* Filter bar */
+.filterBar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filterInput {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  font-size: 14px;
+  color: #374151;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filterInput:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  background-color: #ffffff;
+}
+
+/* Empty state */
+.emptyText {
+  font-size: 14px;
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .documentItem {
+    grid-template-columns: 1fr; /* stack items vertically on mobile */
+  }
+  .docAction {
+    width: 100%;
+  }
+}
+
+
+/* ========== Invoices Table ========== */
+.invoiceTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.invoiceTable th {
+  background: #f1f5f9;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  text-align: center;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.invoiceTable td {
+  padding: 12px;
+  font-size: 14px;
+  color: #374151;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.invoiceRow:hover {
+  background: #f9fafb;
+}
+
+.invoiceButtons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.invoiceLink {
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.invoiceLink.view {
+  background: #2563eb;
+  color: #fff;
+}
+.invoiceLink.download {
+  background: #22c55e;
+  color: #fff;
+}
+.invoiceLink:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* ========== Links & Messages ========== */
+.viewLink {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+.viewLink:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+.loadingText,
+.errorText,
+.emptyText {
+  font-size: 1rem;
+  margin: 1rem 0;
+  font-weight: 500;
+}
+.loadingText {
+  color: #6b7280;
+}
+.errorText {
+  color: #dc2626;
+}
+.emptyText {
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 1024px) {
+  .clientDetailPage {
+    margin-left: 220px;
+    padding: 1.5rem;
+  }
+}
+@media (max-width: 768px) {
+  .clientDetailPage {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  .adjustment {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .documentItem {
+    grid-template-columns: 1fr;
+  }
+}

@@ -160,52 +160,52 @@
 }
 
 .actions button:nth-child(1) {
-  /* background: #3b82f6;  */
-  background: #033c7c;
+  background: #3b82f6; 
+  /* background: #033c7c; */
 }
 .actions button:nth-child(1):hover {
-  /* background: #1d4ed8; */
-  background: #0550a3;
+  background: #1d4ed8;
+  /* background: #0550a3; */
   transform: translateY(-2px);
 }
 
 .actions button:nth-child(2) {
-  /* background: #f59e0b;  */
-  background: #0550a3;
+  background: #f59e0b; 
+  /* background: #0550a3; */
 }
 .actions button:nth-child(2):hover {
-  /* background: #b45309; */
-  background: #0665cb;
+  background: #b45309;
+  /* background: #0665cb; */
   transform: translateY(-2px);
 }
 
 .actions button:nth-child(3) {
-  /* background: #ef4444;  */
-  background: #0665cb;
+  background: #ef4444; 
+  /* background: #0665cb; */
 }
 .actions button:nth-child(3):hover {
-  /* background: #b91c1c; */
-  background: #0a7af3;
+  background: #b91c1c;
+  /* background: #0a7af3; */
   transform: translateY(-2px);
 }
 
 .actions button:nth-child(4) {
-  /* background: #6366f1;  */
-  background: #0a7af3;
+  background: #027534; 
+  /* background: #0a7af3; */
 }
 .actions button:nth-child(4):hover {
-  /* background: #4338ca; */
-  background: #3c94f7;
+  background: #63f1a1;
+  /* background: #3c94f7; */
   transform: translateY(-2px);
 }
 
 .actions button:nth-child(5) {
-  /* background: #6366f1;  */
-  background: #3c94f7;
+  background: #6366f1; 
+  /* background: #3c94f7; */
 }
 .actions button:nth-child(5):hover {
-  /* background: #4338ca; */
-  background: #66adfa;
+  background: #4338ca;
+  /* background: #66adfa; */
   transform: translateY(-2px);
 }
 
