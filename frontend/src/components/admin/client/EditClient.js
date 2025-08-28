@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ADMIN_END_POINT, docTypeMap } from "../../../utils/constants";
 import { countries } from "../../../utils/countries";
-import classes from "../../../styles/addClient.module.css";
 import Sidebar from "../../Sidebar";
 import classes from "../../../styles/editClient.module.css";
 import { toast } from "react-toastify";
