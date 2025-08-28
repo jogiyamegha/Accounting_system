@@ -4,10 +4,23 @@ const Schema = mongoose.Schema;
 
 const serviceSchema = new Schema(
     {
-        [TableFields.clientEmail]: {
-            type: String,
-            trim: true
+        [TableFields.clientDetail] : {
+
+            [TableFields.clientEmail]: {
+                type: String,
+                trim: true
+            },
+            [TableFields.clientId] : {
+                type : mongoose.Schema.Types.ObjectId,
+                ref: TableNames.Client,
+                required : [true, ValidationMsg.ClientIdEmpty]
+            },
+            [TableFields.clientName] : {
+                type : String,
+                trim : true
+            }
         },
+
         [TableFields.services] : [
             {
                 [TableFields.serviceType] : {

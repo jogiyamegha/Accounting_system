@@ -7,6 +7,7 @@ const cors = require('cors');
 const cron = require('node-cron');
 const env = require('dotenv');
 const Util = require('./utils/util');
+const CronController = require('./schedulers/CronController');
 const AdminRoutes = require('./routes/adminRoutes');
 const ClientRoutes = require('./routes/clientRoutes');
 const auth = require('./middlewares/adminAuth');
@@ -80,6 +81,14 @@ DBController.initConnection(async () => {
     const httpServer = require("http").createServer(app);
     httpServer.listen(process.env.PORT, async function () {
         console.log("Server is running on", Util.getBaseURL());
+
+        cron.schedule(
+            "10 * * * *",
+            async() => {
+                console.log("in cron");
+                await CronController.serviceDeadlineTomorrow();
+            }
+        )
     });
 });
 

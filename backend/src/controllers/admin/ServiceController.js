@@ -49,7 +49,7 @@ exports.assignService = async (req, res) => {
   if(!clientExists) { 
     throw new ValidationError(ValidationMsg.ClientNotExists);
   }
-
+  
   let client = await ClientService.findByEmail(clientEmail).withBasicInfo().execute()
 
   const existsService = await ServiceService.serviceExistsWithClient(clientEmail);
@@ -59,6 +59,7 @@ exports.assignService = async (req, res) => {
   if(!existsService) {
     data = await parseAndValidate(
       reqBody,
+      client,
       undefined,
       async (updatedFields) => {
         let records = await ServiceService.insertRecord(updatedFields)
@@ -151,6 +152,7 @@ exports.assignService = async (req, res) => {
 
 async function parseAndValidate (
   reqBody, 
+  client,
   existingField = {},
   onValidationCompleted = async (updatedFields) => {}
 ){
@@ -158,9 +160,13 @@ async function parseAndValidate (
     throw new ValidationError(ValidationMsg.ServiceTypeEmpty);
   }
   const response = await onValidationCompleted({
-    [TableFields.clientEmail] : reqBody[TableFields.clientEmail],
-    
-  })
+    [TableFields.clientDetail] : {
+      [TableFields.clientEmail] : reqBody[TableFields.clientEmail],
+      [TableFields.clientId] : client[TableFields.ID],
+      [TableFields.clientName] : client[TableFields.name_]
+    }
+  }
+  )
 }
 
 function isFieldEmpty(providedData, existingField) {
