@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CLIENT_END_POINT } from "../../../utils/constants";
-import '../../../styles/verifyOtp.css';
+// import '../../../styles/verifyOtp.css';
 import { toast } from "react-toastify";
 export default function ClientVerifyOtp() {
     const otpInputRef = useRef();
