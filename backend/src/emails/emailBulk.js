@@ -2,8 +2,14 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
 const Handlebars = require("handlebars");
-const {GeneralMessages} = require("../utils/constants");
+const {GeneralMessages, ServiceType } = require("../utils/constants");
 
+const ServiceTypeNames = {
+    [ServiceType.VATFiling]: "VAT Filing",
+    [ServiceType.CorporateTaxServices]: "Corporate Tax Services",
+    [ServiceType.Payroll]: "Payroll",
+    [ServiceType.AuditAndCompliance]: "Audit & Compliance"
+};
 class BulkEmail {
     constructor(maxBatchSize = 15) {
         this.queue = [];
@@ -26,9 +32,15 @@ class BulkEmail {
         });
     }
 
+
     addEmail(name, emailId, serviceTypes, templateName) {
-        console.log("add email", name, emailId, serviceTypes)
-        this.queue.push({name, emailId, serviceTypes, templateName});
+        let mappedServices;
+        if (Array.isArray(serviceTypes)) {
+            mappedServices = serviceTypes.map(st => ServiceTypeNames[st] || st);
+        } else {
+            mappedServices = ServiceTypeNames[serviceTypes] || serviceTypes;
+        }
+        this.queue.push({ name, emailId, serviceTypes: mappedServices, templateName });
     }
 
     async emailQueue() {

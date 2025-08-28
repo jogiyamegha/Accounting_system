@@ -73,7 +73,7 @@ app.get("/admin/invoice/:filename", auth,  (req, res) => {
 });
 
  
-app.get('/', (req, res) => {
+app.get('/', (res) => {
     res.sendStatus(200);
 });
 
@@ -83,10 +83,11 @@ DBController.initConnection(async () => {
         console.log("Server is running on", Util.getBaseURL());
 
         cron.schedule(
-            "10 * * * *",
+            "0 10 * * *",
             async() => {
                 console.log("in cron");
                 await CronController.serviceDeadlineTomorrow();
+                await CronController.serviceDeadlineToday();
             }
         )
     });

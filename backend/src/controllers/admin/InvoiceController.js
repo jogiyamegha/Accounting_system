@@ -16,7 +16,6 @@ exports.addInvoice = async (req) => {
     const reqUser = req.user;
     const clientId = req.params.clientId;
     const files = req.files;
-    // console.log("files", files)
     
     const client = await ClientService.getUserById(MongoUtil.toObjectId(clientId))
         .withBasicInfo()

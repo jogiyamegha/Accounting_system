@@ -22,7 +22,6 @@ exports.getDocumentsForAdmin = async (req) => {
 };
 
 exports.updateDocumentStatus = async (req) => {
-  // console.log(req.body)
   const clientId = req.params.clientId;
   const documentId = req.body.docId;
   const docStatus = req.body.status;
@@ -111,11 +110,9 @@ exports.getAllDocuments = async (req) => {
 exports.deleteDocument = async (req) => {
     let clientId = req.body.clientId;
     let documentId =  req.body.docId;
-    console.log(req.body);
   const document = await DocumentService.getDocsByClientId(clientId)
     .withBasicInfo()
     .execute();
-    // console.log("kjghj",document)
 
   if (document) {
     

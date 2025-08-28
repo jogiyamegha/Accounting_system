@@ -96,7 +96,6 @@ exports.addClient = async (req) => {
 
 exports.editClient = async (req) => {
   let reqBody = req.body;
-  // console.log("reqBody",reqBody);
 
   let files = req.files;
   const clientId = req.params[TableFields.clientId];
@@ -123,7 +122,6 @@ exports.editClient = async (req) => {
     reqBody,
     undefined,
     async (updatedFields) => {
-      // console.log("company",updatedFields)
       let companyRecords = await CompanyService.updateRecord(
         existingCompany[TableFields.ID],
         updatedFields
@@ -300,7 +298,6 @@ async function parseAndValidateDocuments(
   files,
   onValidationCompleted = async () => {}
 ) {
-  // console.log("reqBody",reqBody)
   if (!clientId) {
     throw new ValidationError(ValidationMsg.ClientIdEmpty);
   }
@@ -316,7 +313,6 @@ async function parseAndValidateDocuments(
 
       // ✅ Get documentType from reqBody, not files
       const documentType = reqBody.documents?.[index]?.documentType || null;
-      // console.log(documentType)
 
       let docType = null;
       if (typeof documentType === "string") {
@@ -339,7 +335,6 @@ async function parseAndValidateDocuments(
         docType = docTypeMap[documentType];
       }
 
-      // console.log(docType)
 
       // ✅ Upload file via addPdfFile instead of using file.path
       let persistedFileKey = null;
@@ -469,7 +464,6 @@ exports.getClientDetails = async (req, res) => {
   const client = await ClientService.getUserById(clientId)
     .withBasicInfo()
     .execute();
-  // console.log(client)
   const associatedCompanyId = client[TableFields.companyId];
   const associatedCompany = await CompanyService.getCompanyById(
     associatedCompanyId
