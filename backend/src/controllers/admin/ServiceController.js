@@ -150,6 +150,12 @@ exports.assignService = async (req, res) => {
 //   return response;
 // }
 
+
+exports.getClientsAssignedService = async (req) => {
+  const serviceType = req.params.serviceType;
+  return await ServiceService.getClientsFilterByServiceType(serviceType).withBasicInfo().execute()
+}
+
 async function parseAndValidate (
   reqBody, 
   client,

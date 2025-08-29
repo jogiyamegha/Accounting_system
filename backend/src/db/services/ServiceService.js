@@ -37,6 +37,14 @@ class ServiceService {
     });
   };
 
+  static getClientsFilterByServiceType = (serviceType) => {
+    return new ProjectionBuilder(async function () {
+      return await Service.find({
+        [`${TableFields.services}.${TableFields.serviceType}`]: serviceType
+      });
+    });
+  };
+
   static findByServiceType = async (serviceType) => {
     if (typeof serviceType === "string") {
       const serviceTypeMap = {
