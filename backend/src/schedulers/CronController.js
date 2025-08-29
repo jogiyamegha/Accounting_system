@@ -1,7 +1,9 @@
 const Service = require("../db/models/service");
 const EmailBulk = require("../emails/emailBulk");
 const NotificationController = require("../controllers/admin/NotificationController");
-const { TableFields } = require("../utils/constants");
+const { TableFields, DocStatus, DocumentType } = require("../utils/constants");
+const { serviceTypeMap } = require("../../../frontend/src/utils/constants");
+const Document = require("../db/models/document");
 
 exports.serviceDeadlineTomorrow = async () => {
   try {
@@ -236,12 +238,12 @@ exports.sendNotificationsBasedOnDB = async () => {
 
     const now = new Date(); // current datetime
 
-    // Step 1: Query all users with services whose end date is in the future or today
     const allUsers = await Service.find({
       "services.serviceEndDate": { $gte: now }, // all future or ongoing services
     });
 
-    // Step 2: Loop over users and filter services that are ending today or in the future
+    // console.log("allUsers", allUsers)
+
     for (const user of allUsers) {
       const upcomingServices = user.services.filter(
         (service) => service.serviceEndDate >= now
@@ -255,11 +257,15 @@ exports.sendNotificationsBasedOnDB = async () => {
           Math.min(...upcomingServices.map((s) => s.serviceEndDate))
         );
 
+
+        let servType = serviceTypeMap[serviceTypes]
+        
+
         const fakeReq = {
           body: {
             email: user.clientDetail.clientEmail,
-            type: "Service Deadline Reminder",
-            message: `Your service(s) ${serviceTypes} will end on ${earliestEndDate.toDateString()}.`,
+            type: "UpComing Deadline",
+            message: `Your service(s) ${servType} will end on ${earliestEndDate.toDateString()}.`,
             expiresAt: earliestEndDate,
           },
         };
@@ -272,5 +278,127 @@ exports.sendNotificationsBasedOnDB = async () => {
     }
   } catch (err) {
     console.error("❌ Error in sendNotificationsBasedOnDB:", err);
+  }
+};
+
+
+const documentTypeMap = {
+  [DocumentType.VATcertificate]: "VATcertificate",
+  [DocumentType.CorporateTaxDocument]: "CorporateTaxDocument",
+  [DocumentType.BankStatement]: "BankStatement",
+  [DocumentType.Invoice]: "Invoice",
+  [DocumentType.auditFiles]: "auditFiles",
+  [DocumentType.TradeLicense]: "TradeLicense",
+  [DocumentType.passport]: "passport",
+  [DocumentType.FinancialStatements]: "FinancialStatements",
+  [DocumentType.Payroll]: "Payroll",
+  [DocumentType.WPSReport]: "WPSReport",
+  [DocumentType.ExpenseReciept]: "ExpenseReciept",
+  [DocumentType.Other]: "Other",
+  // add more as per your enums
+};
+
+
+// exports.documentStatusNotifications = async () => {
+//   try {
+//     console.log("📂 Checking for pending/missing documents...");
+
+//     // Step 1: Fetch all documents with pending/missing status
+//     const docs = await Document.find({
+//       "documents.documentDetails.docStatus": { $in: [DocStatus.pending] },
+//       deleted: false,
+//     }).populate(TableFields.clientId);
+
+//     // Step 2: Loop over clients and collect their pending/missing documents
+//     for (const doc of docs) {
+//       const client = doc[TableFields.clientId];
+//       console.log(client)
+//       if (!client) continue;
+
+//       // filter nested documents
+//       const pendingDocs = doc.documents.filter((d) =>
+//         [DocStatus.pending].includes(d.documentDetails.docStatus)
+//       );
+
+//       if (pendingDocs.length > 0) {
+//         const docTypes = pendingDocs
+//           .map((d) => documentTypeMap[d.documentDetails.documentType] || "Document")
+//           .join(", ");
+
+//         // fake request for notification controller
+//         const fakeReq = {
+//           body: {
+//             email: client.email,
+//             type: "Document Status",
+//             message: `You have pending/missing documents: ${docTypes}. Please upload/complete them at the earliest.`,
+//             expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // expiry 3 days later
+//           },
+//         };
+
+//         console.log(`📨 Sending doc status notification to: ${client.clientEmail}`);
+//         await NotificationController.addNotification(fakeReq);
+//       }
+//     }
+//   } catch (err) {
+//     console.error("❌ Error in documentStatusNotifications:", err);
+//   }
+// };
+
+
+exports.documentStatusNotifications = async () => {
+  try {
+    console.log("📂 Checking for pending/missing documents...");
+
+    // Fetch all docs where at least one document is pending
+    const docs = await Document.find({
+      "documents.documentDetails.docStatus": { $in: [DocStatus.pending] },
+      deleted: false,
+    }).populate(TableFields.clientId);
+
+    // Group by clientId
+    const clientMap = new Map();
+
+    for (const doc of docs) {
+      const client = doc[TableFields.clientId];
+      if (!client) continue;
+
+      const pendingDocs = doc.documents.filter((d) =>
+        [DocStatus.pending].includes(d.documentDetails.docStatus)
+      );
+
+      if (pendingDocs.length > 0) {
+        const docTypes = pendingDocs
+          .map((d) => documentTypeMap[d.documentDetails.documentType] || "Document")
+          .join(", ");
+
+        if (!clientMap.has(client._id.toString())) {
+          clientMap.set(client._id.toString(), {
+            email: client.email,
+            docTypes: new Set(),
+          });
+        }
+
+        // accumulate doc types per client
+        const entry = clientMap.get(client._id.toString());
+        docTypes.split(", ").forEach((t) => entry.docTypes.add(t));
+      }
+    }
+
+    // Send one notification per client
+    for (const [clientId, { email, docTypes }] of clientMap.entries()) {
+      const fakeReq = {
+        body: {
+          email,
+          type: "Document Status",
+          message: `You have pending/missing documents: ${Array.from(docTypes).join(", ")}. Please upload/complete them at the earliest.`,
+          expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        },
+      };
+
+      console.log(`📨 Sending doc status notification to: ${email}`);
+      await NotificationController.addNotification(fakeReq);
+    }
+  } catch (err) {
+    console.error("❌ Error in documentStatusNotifications:", err);
   }
 };

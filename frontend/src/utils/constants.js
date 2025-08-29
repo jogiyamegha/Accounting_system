@@ -27,23 +27,21 @@ export const DocStatus = (function () {
   return DocStatus;
 })();
 
-export const BusinessType = (function (){
-  function BusinessType() {};
+export const BusinessType = function () {
+  function BusinessType() {}
   BusinessType.soleProprietorship = 1;
   BusinessType.Partnership = 2;
   BusinessType.LLC = 3;
   BusinessType.Corporation = 4;
   BusinessType.Cooperative = 5;
   return BusinessType;
-})
-
+};
 
 export const statusMap = {
   1: "Pending",
   2: "Approved",
   3: "Rejected",
 };
-
 
 export const docTypeMap = {
   1: "VATcertificate",
@@ -58,8 +56,8 @@ export const docTypeMap = {
   10: "Payroll",
   11: "WPSReport",
   12: "ExpenseReciept",
-  13: "Other"
-}
+  13: "Other",
+};
 
 export function formDataToJSON(formData) {
   const obj = {};
@@ -77,16 +75,16 @@ export const documentType = {
   5: "auditFiles",
   6: "TradeLicense",
   7: "passport",
-  8: "Other"
-}
+  8: "Other",
+};
 
-export function generateInvoiceNumber(){
+export function generateInvoiceNumber() {
   var result = "";
-        var characters = "0123456789";
-        var charactersLength = characters.length;
-        for (var i = 0; i < 5; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
+  var characters = "0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < 5; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
   return result;
 }
 
@@ -108,4 +106,11 @@ export const notificationIcons = {
   5: "faBell",
   6: "faBell",
   7: "faClock",
+};
+
+export const serviceTypeMap = {
+  1: "VATServices",
+  2: "CorporateTaxServices",
+  3: "AccountingServices",
+  4: "AuditAndCompliance",
 };

@@ -5,12 +5,13 @@ const ClientService = require("../../db/services/ClientService");
 
 exports.addNotification = async (req) => {
     let reqBody = req.body;
+    console.log("reqBody", reqBody);
     let client = await ClientService.findByEmail(reqBody[TableFields.email]).withBasicInfo().execute();
 
     let receiverId = client[TableFields.ID];
-    // console.log("reqBody", reqBody);
 
-    let existingNotification = await NotificationService.getExistingNotification(receiverId, reqBody.type, reqBody[TableFields.expiresAt])
+    let existingNotification = await NotificationService.getExistingNotification(receiverId, reqBody.type, reqBody[TableFields.expiresAt] , reqBody.message);
+    // console.log("existingNotification",existingNotification)
 
     if (existingNotification) {
         console.log(`⚠️ Notification already exists for ${reqBody.email} (expiresAt: ${reqBody.expiresAt})`);

@@ -36,7 +36,7 @@ class NotificationService {
     });
   };
 
-  static getExistingNotification = async (receiverId, type, expiresAt) => {
+  static getExistingNotification = async (receiverId, type, expiresAt, message) => {
     let notificationType = type;
 
     let notfType = null;
@@ -44,7 +44,7 @@ class NotificationService {
       const notificationTypeMap = {
         "UpComing Deadline": NotificationTypes.upcomingDeadline,
         "Missing Document": NotificationTypes.missingDocuments,
-        Feedback: NotificationTypes.feedback,
+        "Feedback": NotificationTypes.feedback,
         "Document Status": NotificationTypes.documentStatus,
         "Client Active Status": NotificationTypes.clientActiveStatus,
         "System Update": NotificationTypes.systemUpdate,
@@ -52,11 +52,18 @@ class NotificationService {
       };
       notfType = notificationTypeMap[notificationType];
     }
+
+    
+
     const existingNotification = await Notification.findOne({
       receiverId: receiverId,
-      type: notfType,
+      notificationType: notfType,
       expiresAt: expiresAt,
+      message: message,
+      deleted: false
     });
+
+    // console.log("22",existingNotification)
     return existingNotification;
   };
 
