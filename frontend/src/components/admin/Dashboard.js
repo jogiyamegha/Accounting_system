@@ -16,8 +16,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faFile, faChartLine } from "@fortawesome/free-solid-svg-icons";
 
 import styles from "../../styles/adminDashboard.module.css";
-import { ADMIN_END_POINT } from "../../utils/constants";
+import {
+  ADMIN_END_POINT,
+  notificationIcons,
+  notificationTypeLabels,
+} from "../../utils/constants";
 import { toast } from "react-toastify";
+import { format } from "date-fns";
 
 const uploadData = [
   { day: "Mon", Successful: 25, Pending: 10, Failed: 5 },
@@ -33,6 +38,7 @@ export default function Dashboard() {
   const [activeClients, setActiveClients] = useState(0);
   const [loading, setLoading] = useState(true);
   const [totalClients, setTotalClients] = useState(0);
+  const [notifications, setNotifications] = useState([]);
 
   const fetchClients = async () => {
     try {
@@ -48,7 +54,7 @@ export default function Dashboard() {
       setTotalClients(data.allClients || 0);
       setActiveClients(data.allActiveClients || 0);
     } catch (error) {
-      toast.error("Error fetching clients:")
+      toast.error("Error fetching clients:");
       console.error("Error fetching clients:", error);
     } finally {
       setLoading(false);
@@ -59,13 +65,37 @@ export default function Dashboard() {
     fetchClients();
   }, [totalClients, activeClients]);
 
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch(`${ADMIN_END_POINT}/notification-management`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+        const data = await res.json();
+        setNotifications(data);
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  const previewNotifications = notifications.slice(0, 3);
+
   return (
     <div className={styles.dashboardLayout}>
       <Sidebar />
 
       <main className={styles.dashboardContent}>
         <header className={styles.dashboardHeader}>
-          <h1><FontAwesomeIcon icon={faChartLine} /> Dashboard</h1>
+          <h1>
+            <FontAwesomeIcon icon={faChartLine} /> Dashboard
+          </h1>
         </header>
 
         <section className={styles.dashboardCards}>
@@ -129,16 +159,38 @@ export default function Dashboard() {
         {/* Notifications */}
         <section className={`${styles.dashboardNotifications} ${styles.card}`}>
           <h2>Notifications and Alerts</h2>
-          <ul>
-            <li>
-              <FontAwesomeIcon icon={faFile} />
-              New document uploaded by Client A
-            </li>
-            <li>
-              <FontAwesomeIcon icon={faBell} />
-              VAT return deadline approaching for Client B
-            </li>
-          </ul>
+
+          {loading ? (
+            <p>Loading notifications...</p>
+          ) : notifications.length === 0 ? (
+            <p>No new notifications</p>
+          ) : (
+            <>
+              <ul>
+                {previewNotifications.map((n) => (
+                  <li key={n._id}>
+                    <FontAwesomeIcon
+                      icon={notificationIcons[n.type] || faBell}
+                    />{" "}
+                    <strong>{notificationTypeLabels[n.notificationType]}</strong> {" "}
+                    {/* {n.message} */}
+                    {/* <small style={{ marginLeft: "8px", color: "#666" }}>
+                      {format(new Date(n.expiresAt), "dd-MM-yyyy HH:mm")}
+                    </small> */}
+                  </li>
+                ))}
+              </ul>
+
+              
+                <a
+                  href="/admin/notification-management"
+                  className={styles.moreLink}
+                >
+                  View All Notifications →
+                </a>
+              
+            </>
+          )}
         </section>
       </main>
     </div>

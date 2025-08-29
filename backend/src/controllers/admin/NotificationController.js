@@ -16,14 +16,20 @@ exports.addNotification = async (req) => {
             return await NotificationService.insertRecord(updatedFields)
         }
     )
+
+    return result;
 }
 
 exports.getAllNotifications = async (req) => {
     let userId = req.user[TableFields.ID];
+
+    
     
     const notification = await NotificationService.findByReceiverId(userId)
     .withBasicInfo()
     .execute()
+
+    // console.log("ntf",notification)
     
     return notification;
 }
@@ -44,21 +50,25 @@ async function parseAndValidateNotification (
         throw new ValidationError(ValidationMsg.NotificationTypeEmpty);
     }
 
+    // console.log("reqbody",reqBody)
+
     let notificationType = reqBody.type;
 
     let notfType = null;
     if(typeof notificationType === 'string'){
         const notificationTypeMap = {
-            upcomingDeadline : NotificationTypes.upcomingDeadline,
-            missingDocuments : NotificationTypes.missingDocuments,
-            feedback : NotificationTypes.feedback,
-            documentStatus : NotificationTypes.documentStatus,
-            clientActiveStatus : NotificationTypes.clientActiveStatus,
-            systemUpdate : NotificationTypes.systemUpdate,
-            payrollReminder : NotificationTypes.payrollReminder,
+            "UpComing Deadline" : NotificationTypes.upcomingDeadline,
+            "Missing Document" : NotificationTypes.missingDocuments,
+           "Feedback"  : NotificationTypes.feedback,
+            "Document Status" : NotificationTypes.documentStatus,
+            "Client Active Status" : NotificationTypes.clientActiveStatus,
+            "System Update" : NotificationTypes.systemUpdate,
+            "Payroll Alert" : NotificationTypes.payrollReminder,
         };
         notfType = notificationTypeMap[notificationType];
     }
+
+    // console.log("fgb",notfType)
 
     const response = await onValidationCompleted({
         [TableFields.receiverId]: receiverId,
@@ -66,6 +76,7 @@ async function parseAndValidateNotification (
         [TableFields.message]: reqBody[TableFields.message],
         [TableFields.expiresAt]: reqBody[TableFields.expiresAt] || null,
     })
+    // console.log("sdxcfvg",response)
     
     return response;
 

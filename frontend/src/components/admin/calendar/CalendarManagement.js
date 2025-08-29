@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Sidebar";
 import styles from "../../../styles/calendar.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
 export default function CalendarManagement({ userRole = "client" }) {
   const today = new Date();
@@ -69,6 +71,9 @@ export default function CalendarManagement({ userRole = "client" }) {
   return (
     <div className={styles.mainCalendarContainer} style={{display:"flex", backgroundColor: "#e2e4e5"}}>
       <Sidebar/>
+      <h2 className={styles.title}>
+        <FontAwesomeIcon icon={faCalendarAlt} /> Calendar Management
+      </h2>
       <div className={styles.calendarContainer}>
         <div className={styles.calendarHeader}>
           <div className={styles.monthControls}>

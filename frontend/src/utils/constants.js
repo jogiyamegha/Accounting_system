@@ -89,3 +89,23 @@ export function generateInvoiceNumber(){
         }
   return result;
 }
+
+export const notificationTypeLabels = {
+  1: "Upcoming Deadline",
+  2: "Missing Documents",
+  3: "Feedback",
+  4: "Document Status",
+  5: "Client Active Status",
+  6: "System Update",
+  7: "Payroll Reminder",
+};
+
+export const notificationIcons = {
+  1: "faClock",
+  2: "faFile",
+  3: "faBell",
+  4: "faFile",
+  5: "faBell",
+  6: "faBell",
+  7: "faClock",
+};

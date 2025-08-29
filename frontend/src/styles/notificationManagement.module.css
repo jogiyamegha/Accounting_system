@@ -1,87 +1,113 @@
-.addClientContainer {
+.pageWrapper {
   display: flex;
   min-height: 100vh;
-  background: #f9f9f9;
+  background: #f9fafb;
 }
 
-.addClientForm {
+/* Main content beside sidebar */
+.mainContent {
   flex: 1;
   padding: 2rem;
+  margin-left: 260px; /* adjust to sidebar width */
 }
 
-.addClientForm h2 {
-  font-size: 1.6rem;
+.pageTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #111827;
+}
+
+/* Card styles */
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.cardTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
   margin-bottom: 1rem;
-  color: #333;
+  color: #1f2937;
 }
 
 /* Notifications List */
 .notificationList {
   list-style: none;
   padding: 0;
-  margin: 0 0 2rem 0;
+  margin: 0;
 }
 
 .notificationItem {
   background: #fff;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
+  margin-bottom: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s ease;
 }
 
 .notificationItem:hover {
-  transform: translateY(-2px);
+  background: #fefce8;
 }
 
-.notificationItem strong {
-  color: #1976d2;
+.notificationItem.read {
+  background: #f3f4f6;
 }
 
-.notificationItem small {
+.notifMessage {
+  font-weight: 500;
+  color: #111827;
+}
+
+.notifMeta {
   display: block;
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
   font-size: 0.85rem;
-  color: #777;
+  color: #6b7280;
 }
 
-/* Button */
-.addBtn {
-  background: #1976d2;
-  color: #fff;
-  border: none;
-  padding: 0.6rem 1.2rem;
+/* Empty state */
+.noNotif {
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Mark as Read button */
+.markReadBtn {
+  background: #fff;
+  border: 1px solid #d1d5db;
+  padding: 0.4rem 0.8rem;
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.2s ease;
 }
 
-.addBtn:hover {
-  background: #155a9c;
+.markReadBtn:hover {
+  background: #e5e7eb;
 }
 
 /* Manual Notification Form */
 .notificationForm {
-  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .notificationForm input,
 .notificationForm select,
 .notificationForm textarea {
   padding: 0.7rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.2s ease;
@@ -90,20 +116,20 @@
 .notificationForm input:focus,
 .notificationForm select:focus,
 .notificationForm textarea:focus {
-  border-color: #1976d2;
+  border-color: #3b82f6;
 }
 
 .notificationForm textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 90px;
 }
 
 .notifyBtn {
-  background: #43a047;
+  background: #10b981;
   color: #fff;
   border: none;
   padding: 0.7rem 1.4rem;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.95rem;
   cursor: pointer;
   align-self: flex-start;
@@ -111,5 +137,5 @@
 }
 
 .notifyBtn:hover {
-  background: #2e7d32;
+  background: #059669;
 }

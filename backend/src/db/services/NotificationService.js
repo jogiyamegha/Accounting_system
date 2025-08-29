@@ -13,7 +13,7 @@ const { MongoUtil } = require("../../db/mongoose");
 class NotificationService {
     static findByReceiverId = (receiverId) => {
         return new ProjectionBuilder(async function () {
-            return await Notification.findOne({ [TableFields.receiverId] : receiverId }, this);
+            return await Notification.find({ [TableFields.receiverId] : receiverId }, this);
         });
     };
 
