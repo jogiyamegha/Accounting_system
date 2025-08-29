@@ -31,6 +31,23 @@ export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  const [showServiceMenu, setShowServiceMenu] = useState(false); // State for Service Management dropdown
+
+  // Event handlers for the Service Management dropdown
+  const handleServiceHover = () => {
+    setShowServiceMenu(true);
+  };
+
+  const handleServiceLeave = () => {
+    setShowServiceMenu(false);
+  };
+
+  const handleItemClick = (path) => {
+    navigate(path);
+    // Hide dropdowns after clicking a link
+    setShowServiceMenu(false);
+  };
+
   // 🔹 Handle resizing logic
   useEffect(() => {
     const handleResize = () => {
@@ -121,11 +138,27 @@ export default function Sidebar() {
                 <FontAwesomeIcon icon={faFolderOpen} /> Document Management
               </a>
             </li>
-            <li>
-              <a href="/admin/service-management">
+            <li
+              className={styles.sidebarItemWithDropdown} 
+              onMouseEnter={handleServiceHover}
+              onMouseLeave={handleServiceLeave}
+            >
+              <div
+                className={styles.sidebarLinkContent}
+                onClick={() => handleItemClick("/admin/service-management")}
+              >
                 <FontAwesomeIcon icon={faTasks} /> Service Management
-              </a>
+              </div>
+              {showServiceMenu && (
+                <ul className={styles.dropdownMenu}>
+                  <li onClick={() => handleItemClick("/admin/service/1")}>VAT Filing</li>
+                  <li onClick={() => handleItemClick("/admin/service/2")}>Corporate Tax</li>
+                  <li onClick={() => handleItemClick("/admin/service/3")}>Payroll</li>
+                  <li onClick={() => handleItemClick("/admin/service/4")}>Audit</li>
+                </ul>
+              )}
             </li>
+
             <li>
               <a href="/reports">
                 <FontAwesomeIcon icon={faChartBar} /> Reports & Insights

@@ -138,3 +138,61 @@
     transform: translateX(0);
   }
 }
+
+
+/* Add these styles to your existing sidebar.css file */
+
+/* --- Dropdown Menu Styles --- */
+/* This is the container for the list item that holds the dropdown menu.
+   It must be positioned relatively for the absolute positioning of the dropdown to work. */
+.sidebarItemWithDropdown {
+  position: relative;
+}
+
+/* This new class ensures that the parent list item's content has consistent padding and a hover effect,
+   since the <li> itself now acts as the hover trigger. */
+.sidebarLinkContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 15px;
+  transition: background 0.3s, color 0.3s;
+  cursor: pointer;
+}
+
+.sidebarLinkContent:hover {
+  background-color: #334155;
+  color: #fff;
+}
+
+/* The actual dropdown menu. */
+.dropdownMenu {
+  position: absolute;
+  top: 0;
+  left: 100%; /* Positions the dropdown to the right of the parent li */
+  min-width: 200px;
+  background-color: #1e293b; /* Matches the sidebar background */
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 1000; /* Ensures it appears on top */
+  border-radius: 4px;
+}
+
+/* Individual items within the dropdown. */
+.dropdownMenu li {
+  padding: 12px 20px;
+  white-space: nowrap; /* Prevents text from wrapping */
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  color: #cbd5e1; /* Set the text color */
+}
+
+.dropdownMenu li:hover {
+  background-color: #334155; /* Darker hover effect for dropdown items */
+  color: #fff;
+}
