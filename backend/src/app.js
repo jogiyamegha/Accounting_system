@@ -83,11 +83,13 @@ DBController.initConnection(async () => {
         console.log("Server is running on", Util.getBaseURL());
 
         cron.schedule(
-            "0 10 * * *",
+            // "0 0 * * *",  //every midnight
+            "* * * * *",
             async() => {
                 console.log("in cron");
-                await CronController.serviceDeadlineTomorrow();
-                await CronController.serviceDeadlineToday();
+                // await CronController.serviceDeadlineTomorrow();
+                // await CronController.serviceDeadlineToday();
+                // await CronController.sendNotifiactionServiceDeadlineTomorrow();
             }
         )
     });

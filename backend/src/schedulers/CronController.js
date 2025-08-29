@@ -1,5 +1,6 @@
 const Service = require('../db/models/service');
 const EmailBulk = require('../emails/emailBulk');
+const NotificationController = require('../controllers/admin/NotificationController');
 const { TableFields } = require('../utils/constants');
 
 exports.serviceDeadlineTomorrow = async () => {
@@ -92,3 +93,32 @@ exports.serviceDeadlineToday = async () => {
         throw error;
     }
 };
+
+exports.sendNotifiactionServiceDeadlineTomorrow = async () => {
+    console.log("object");
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowString = tomorrow.toISOString().split('T')[0]; 
+        
+    const tomorrowStart = new Date(`${tomorrowString}T00:00:00.000Z`);
+    const tomorrowEnd = new Date(`${tomorrowString}T23:59:59.999Z`);
+
+    const allUsers = await Service.find({
+        "services.serviceEndDate": {
+            $eq: tomorrowStart,
+        }
+    });
+
+    if (allUsers.length > 0) {            
+        const fakeReq = {
+            body: {
+                email: allUsers[TableFields.clientEmail],
+                type: "Service Deadline Reminder",
+                message: `Your service(s)} will end tomorrow.`,
+                expiresAt: tomorrowStart,
+            },
+        };
+        console.log(fakeReq);
+        await NotificationController.addNotification(fakeReq);
+    }
+}
