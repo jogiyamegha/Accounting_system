@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import classes from "../../../styles/notificationManagement.module.css";
-import { ADMIN_END_POINT, notificationTypeLabels } from "../../../utils/constants";
+import {
+  ADMIN_END_POINT,
+  notificationTypeLabels,
+} from "../../../utils/constants";
 import Sidebar from "../../Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faClock } from "@fortawesome/free-solid-svg-icons";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 export default function NotificationManagement() {
   const [notifications, setNotifications] = useState([]);
@@ -49,7 +52,7 @@ export default function NotificationManagement() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newNotification),
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (!res.ok) throw new Error("Failed to send notification");
@@ -63,10 +66,33 @@ export default function NotificationManagement() {
     }
   };
 
-  const markAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n._id === id ? { ...n, read: true } : n))
-    );
+  const markAsRead = async (id) => {
+    try {
+      // optimistic update in UI
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, read: true } : n))
+      );
+
+      console.log("1", id);
+      const res = await fetch(
+        `${ADMIN_END_POINT}/notification-mark-as-read/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      console.log(res);
+
+      if (!res.ok) {
+        throw new Error("Failed to mark notification as read");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -93,7 +119,8 @@ export default function NotificationManagement() {
                     <p className={classes.notifMessage}>{n.message}</p>
                     <small className={classes.notifMeta}>
                       {notificationTypeLabels[n.notificationType]}{" "}
-                       <FontAwesomeIcon icon={faClock} /> {format(new Date(n.expiresAt), 'dd-MM-yyyy ,  HH:mm:ss')}
+                      <FontAwesomeIcon icon={faClock} />{" "}
+                      {format(new Date(n.expiresAt), "dd-MM-yyyy ,  HH:mm:ss")}
                     </small>
                   </div>
                   {!n.read && (

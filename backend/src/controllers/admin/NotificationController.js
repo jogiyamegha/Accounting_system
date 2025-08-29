@@ -9,6 +9,13 @@ exports.addNotification = async (req) => {
 
     let receiverId = client[TableFields.ID];
     // console.log("reqBody", reqBody);
+
+    let existingNotification = await NotificationService.getExistingNotification(receiverId, reqBody.type, reqBody[TableFields.expiresAt])
+
+    if (existingNotification) {
+        console.log(`⚠️ Notification already exists for ${reqBody.email} (expiresAt: ${reqBody.expiresAt})`);
+        return existingNotification; // don’t insert again
+    }
     const result = await parseAndValidateNotification(
         reqBody,
         receiverId,
@@ -32,6 +39,11 @@ exports.getAllNotifications = async (req) => {
     // console.log("ntf",notification)
     
     return notification;
+}
+
+exports.setNotificationMarkAsRead = async (req) => {
+    const id = req.params._id;
+    await NotificationService.setNotificationMarkAsRead(id);
 }
 
 

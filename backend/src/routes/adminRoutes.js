@@ -146,6 +146,11 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/all-clients-assigned-service/:${TableFields.serviceType}`)
+.asGET(ServiceController.getClientsAssignedService)
+.useAdminAuth()
+.build()
+
 // .addPath('/approve-vat-request')
 // .asPOST(VATController.approveVATRequest)
 // .build()
@@ -175,6 +180,14 @@ const router = API.configRoute("/admin")
 .asPOST(NotificationController.addNotification)
 .useAdminAuth()
 .build()
+
+.addPath(`/notification-mark-as-read/:${TableFields.ID}`)
+.asUPDATE(NotificationController.setNotificationMarkAsRead)
+.useAdminAuth()
+.build()
+
+
+
 
 .getRouter()
 module.exports = router;

@@ -66,8 +66,8 @@ export default function ServiceManagement() {
       const serviceRouteMap = {
         "VAT Filing": "/admin/VAT-service",
         "Corporate Tax": "/admin/corporate-tax-service",
-        Payroll: "/admin/payroll-service",
-        Audit: "/admin/audit-service",
+        "Payroll": "/admin/payroll-service",
+        "Audit": "/admin/audit-service",
       };
 
       navigate(serviceRouteMap[selectedServiceType] || "/admin/services");
