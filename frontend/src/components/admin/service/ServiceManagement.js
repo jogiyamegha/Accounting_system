@@ -8,12 +8,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTools } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 
+// Display names for service cards
 const SERVICE_TYPES = ["VAT Filing", "Corporate Tax", "Payroll", "Audit"];
+
+// Mapping string → number for backend
+const SERVICE_TYPE_MAP = {
+  "VAT Filing": 1,
+  "Corporate Tax": 2,
+  "Payroll": 3,
+  "Audit": 4,
+};
+
+// Reverse mapping number → string for displaying
+const SERVICE_TYPE_LABELS = {
+  1: "VAT Filing",
+  2: "Corporate Tax",
+  3: "Payroll",
+  4: "Audit",
+};
 
 export default function ServiceManagement() {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
-  const [selectedServiceType, setSelectedServiceType] = useState("");
+  const [selectedServiceType, setSelectedServiceType] = useState(null);
   const [formData, setFormData] = useState({
     clientEmail: "",
     serviceType: "",
@@ -21,21 +38,32 @@ export default function ServiceManagement() {
     endDate: "",
   });
 
+  // When clicking "Assign Service"
   const handleAssignClick = (type) => {
-    setSelectedServiceType(type);
+    const typeId = SERVICE_TYPE_MAP[type];
+    setSelectedServiceType(typeId);
     setFormData({
       clientEmail: "",
-      serviceType: type,
+      serviceType: typeId, // send number to backend
       startDate: "",
       endDate: "",
     });
     setShowForm(true);
   };
 
+  // When clicking "View"
+  const handleViewClick = (type) => {
+    const typeId = SERVICE_TYPE_MAP[type];
+    setSelectedServiceType(typeId);
+    navigate(`/admin/service/${typeId}`); // navigate with numeric ID
+  };
+
+  // Handle form input change
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // Submit assign form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -56,21 +84,15 @@ export default function ServiceManagement() {
       }
 
       if (!res.ok) {
-        toast.error("Failed to assign service")
+        toast.error("Failed to assign service");
         throw new Error(data.message || "Failed to assign service");
       }
 
       toast.success(data.message || "Service assigned successfully!");
       setShowForm(false);
 
-      const serviceRouteMap = {
-        "VAT Filing": "/admin/VAT-service",
-        "Corporate Tax": "/admin/corporate-tax-service",
-        "Payroll": "/admin/payroll-service",
-        "Audit": "/admin/audit-service",
-      };
-
-      navigate(serviceRouteMap[selectedServiceType] || "/admin/services");
+      // Navigate dynamically using serviceType id
+      navigate(`/admin/service/${formData.serviceType}`);
     } catch (err) {
       console.error(err);
       toast.error(err.message);
@@ -82,7 +104,9 @@ export default function ServiceManagement() {
       <Sidebar />
 
       <div className={styles.content}>
-        <h1 className={styles.title}> <FontAwesomeIcon icon={faTools} /> Service Management</h1>
+        <h1 className={styles.title}>
+          <FontAwesomeIcon icon={faTools} /> Service Management
+        </h1>
 
         <div className={styles.serviceCards}>
           {SERVICE_TYPES.map((type) => (
@@ -95,6 +119,12 @@ export default function ServiceManagement() {
               >
                 Assign Service
               </button>
+              <button
+                className={styles.viewBtn}
+                onClick={() => handleViewClick(type)}
+              >
+                View
+              </button>
             </div>
           ))}
         </div>
@@ -103,7 +133,7 @@ export default function ServiceManagement() {
           <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
               <h2 className={styles.modalTitle}>
-                Assign Service - {selectedServiceType}
+                Assign Service - {SERVICE_TYPE_LABELS[selectedServiceType]}
               </h2>
               <form onSubmit={handleSubmit}>
                 <div className={styles.formGroup}>
@@ -120,8 +150,7 @@ export default function ServiceManagement() {
                   <label>Service Type:</label>
                   <input
                     type="text"
-                    name="serviceType"
-                    value={formData.serviceType}
+                    value={SERVICE_TYPE_LABELS[formData.serviceType]}
                     readOnly
                   />
                 </div>

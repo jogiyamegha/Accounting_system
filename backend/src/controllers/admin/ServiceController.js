@@ -7,39 +7,7 @@ const {
 } = require("../../utils/constants");
 const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
-const Email = require('../../emails/email')
-
-// exports.addService = async (req) => {
-//   const reqBody = req.body;
-
-//   const type = reqBody[TableFields.serviceType];
-
-//   let existingService = await ServiceService.existsWithType(type);
-
-//   if (existingService) {
-//     let result = await parseAndValidateService(
-//       reqBody,
-//       existingService,
-//       async (updatedFields) => {
-//         let records = await ServiceService.updateRecord(
-//           existingService[TableFields.ID],
-//           updatedFields
-//         );
-//       }
-//     );
-//     return result;
-//   } else {
-//     let data = await parseAndValidateService(
-//       reqBody,
-//       undefined,
-//       async (updatedFields) => {
-//         let records = await ServiceService.insertRecord(updatedFields);
-//       }
-//     );
-
-//     return data;
-//   }
-// };
+const Email = require('../../emails/email');
 
 exports.assignService = async (req, res) => {
   const reqBody = req.body;
@@ -65,95 +33,20 @@ exports.assignService = async (req, res) => {
         let records = await ServiceService.insertRecord(updatedFields)
         await ServiceService.updateServiceDetails(records ,records[TableFields.ID], reqBody, res)
       
-        Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
-
+        // Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
       }
     ) 
   } else {
     const service = await ServiceService.findByEmail(clientEmail).withBasicInfo().execute();
     await ServiceService.updateServiceDetails(service, service[TableFields.ID], reqBody, res)
-    Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
+    // Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
 
   }
 }
 
-// async function parseAndValidateService(
-//   reqBody,
-//   existingField = {},
-//   onValidationCompleted = async (updatedFields) => {}
-// ) {
-//   if (
-//     isFieldEmpty(
-//       reqBody[TableFields.serviceType],
-//       existingField[TableFields.serviceType]
-//     )
-//   ) {
-//     throw new ValidationError(ValidationMsg.ServiceTypeEmpty);
-//   }
-
-//   if (
-//     isFieldEmpty(
-//       reqBody.duration,
-//       existingField[TableFields.targetCompletionDurationInYears]
-//     )
-//   ) {
-//     throw new ValidationError(ValidationMsg.TargetCompletionDateEmpty);
-//   }
-
-//   if (
-//     isFieldEmpty(
-//       reqBody[TableFields.description],
-//       existingField[TableFields.description]
-//     )
-//   ) {
-//     throw new ValidationError(ValidationMsg.DescriptionEmpty);
-//   }
-
-//   if (
-//     isFieldEmpty(
-//       reqBody[TableFields.accountantName],
-//       existingField[TableFields.accountantName]
-//     )
-//   ) {
-//     throw new ValidationError(ValidationMsg.NameEmpty);
-//   }
-//   if (
-//     isFieldEmpty(reqBody[TableFields.email], existingField[TableFields.email])
-//   ) {
-//     throw new ValidationError(ValidationMsg.EmailEmpty);
-//   }
-
-//   let serviceType = reqBody[TableFields.serviceType];
-
-//   if (typeof serviceType === "string") {
-//     const serviceTypeMap = {
-//       VATServices: ServiceType.VATServices,
-//       CorporateTaxServices: ServiceType.CorporateTaxServices,
-//       AccountingServices: ServiceType.AccountingServices,
-//       AuditAndCompliance: ServiceType.AuditAndCompliance,
-//     };
-
-//     serviceType = serviceTypeMap[serviceType];
-//   }
-
-//   const response = await onValidationCompleted({
-//     [TableFields.clientEmail] : reqBody[TableFields.email],
-//     [TableFields.serviceType]: serviceType,
-//     [TableFields.serviceEndDate]: reqBody.duration,
-//     [TableFields.description]: reqBody[TableFields.description],
-//     [TableFields.assignedStaff]: {
-//       [TableFields.accountantName]: reqBody[TableFields.accountantName],
-//       [TableFields.email]: reqBody[TableFields.email],
-//     },
-//   });
-
-//   return response;
-// }
-
-
 exports.getClientsAssignedService = async (req) => {
-  const serviceType = req.params.serviceType;
-  return await ServiceService.getClientsFilterByServiceType(serviceType).withBasicInfo().execute()
+  const clients = await ServiceService.getClientsFilterByServiceType(req.params.serviceType).withBasicInfo().execute()
+  return clients
 }
 
 async function parseAndValidate (

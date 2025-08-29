@@ -24,7 +24,7 @@ class ServiceService {
     return new ProjectionBuilder(async function () {
       return await Service.findOne(
         {
-          [TableFields.clientEmail]: email,
+          [TableFields.clientDetail + '.' + TableFields.clientEmail]: email,
         },
         this
       );
@@ -32,8 +32,9 @@ class ServiceService {
   };
 
   static serviceExistsWithClient = async (clientEmail) => {
+    console.log(clientEmail);
     return await Service.exists({
-      [TableFields.clientEmail]: clientEmail,
+      [TableFields.clientDetail + '.' + TableFields.clientEmail]: clientEmail,
     });
   };
 

@@ -65,7 +65,7 @@
 /* Assign button */
 .assignBtn {
   padding: 10px 16px;
-  background-color: #1e293b;
+  background-color: #3e5881;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -74,12 +74,33 @@
   transition: all 0.3s ease;
 }
 .assignBtn:hover {
-  background-color: #111827;
+  background-color: #2b3e68;
   transform: translateY(-1px);
 }
 .assignBtn:active {
   transform: scale(0.97);
 }
+
+.viewBtn{
+  padding: 10px 16px;
+  margin-left:10px;
+  background-color: #1b3660;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.viewBtn:hover{
+  background-color: #082667;
+  transform: translateY(-1px);
+}
+.viewBtn:active{
+  transform: scale(0.97);
+}
+
+
 
 /* Modal overlay */
 .modalOverlay {

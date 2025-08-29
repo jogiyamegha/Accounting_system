@@ -198,6 +198,7 @@ const GeneralMessages = (function () {
   function GeneralMessages() {}
   GeneralMessages.PendingSubject = "Updates Pending";
   GeneralMessages.DocStatus = "Document's Update Message";
+  GeneralMessages.ServiceAssign = "New Service Assign ";
   GeneralMessages.forgotPasswordEmailSubject = "Reset your password";
   GeneralMessages.signupEmailSucess = "Your Account is Ready!";
   GeneralMessages.changePasswordSucess =

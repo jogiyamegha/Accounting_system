@@ -1,0 +1,142 @@
+.pageWrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6f9;
+  font-family: "Inter", sans-serif;
+}
+
+.mainContent {
+    flex: 1;
+    padding: 2rem 3rem;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card {
+  background: #ffffff;
+  padding: 1.8rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.cardTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  color: #1a202c;
+  border-left: 4px solid #4f46e5;
+  padding-left: 10px;
+}
+
+.loading {
+  color: #718096;
+  font-size: 1rem;
+  padding: 1rem;
+}
+
+.noData {
+  color: #e53e3e;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 1rem;
+}
+
+.clientList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.clientItem {
+  background: #fafbff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.clientItem:hover {
+  background: #f0f4ff;
+  border-color: #c3dafe;
+}
+
+.clientName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.clientEmail {
+  font-size: 0.95rem;
+  color: #4a5568;
+  margin: 0;
+}
+
+.clientMeta {
+  font-size: 0.85rem;
+  color: #718096;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .mainContent {
+    padding: 1.5rem 2rem;
+  }
+
+  .pageTitle {
+    font-size: 1.7rem;
+  }
+
+  .card {
+    padding: 1.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    padding: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .clientItem {
+    padding: 1rem;
+  }
+
+  .clientName {
+    font-size: 1rem;
+  }
+
+  .clientEmail {
+    font-size: 0.9rem;
+  }
+
+  .clientMeta {
+    font-size: 0.8rem;
+  }
+}

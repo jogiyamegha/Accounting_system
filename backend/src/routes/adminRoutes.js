@@ -186,7 +186,10 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
-
+.addPath('/service/:serviceType')
+.asGET(ServiceController.getClientsAssignedService)
+.useAdminAuth()
+.build()
 
 
 .getRouter()

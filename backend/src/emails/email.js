@@ -150,7 +150,7 @@ exports.sendServiceAssignMail = async (name, emailId, serviceType) => {
 
   const template = Handlebars.compile(invitationTemplate);
   try {
-    await sendEmail(emailId, GeneralMessages.DocStatus, template(data));
+    await sendEmail(emailId, GeneralMessages.ServiceAssign, template(data));
   } catch (e) {
     console.log(e);
   }
