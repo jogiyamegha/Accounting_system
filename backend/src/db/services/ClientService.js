@@ -11,6 +11,12 @@ const Util = require("../../utils/util");
 const { MongoUtil } = require("../mongoose");
 
 class ClientService {
+  static userExists = (id) => {
+    return Client.exists({
+      [TableFields.ID] : id
+    })
+  }
+
   static findByEmail = (email) => {
     return new ProjectionBuilder(async function () {
       return await Client.findOne({ email }, this);

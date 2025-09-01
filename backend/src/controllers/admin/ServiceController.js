@@ -49,6 +49,35 @@ exports.getClientsAssignedService = async (req) => {
   return clients
 }
 
+exports.deAssignService  = async (req) => {
+  const serviceId = req.params[TableFields.ID];
+  const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+  console.log(service);
+  const clientId = service[TableFields.clientDetail][TableFields.clientId];
+  const serviceType = req.params[TableFields.serviceType]
+  console.log(clientId);
+  console.log(serviceType);
+  const clientExists = await ClientService.userExists(clientId);
+  if(!clientExists) {
+    throw new ValidationError(ValidationMsg.ClientNotExists);
+  }
+
+  const checkClientAssignService = await ServiceService.checkClientAssignService(clientId,serviceType);
+  console.log(checkClientAssignService);
+  if(!checkClientAssignService) {
+    throw new ValidationError(ValidationMsg.ClientNotAssignService);
+  }
+
+  const isServiceCompleted = await ServiceService.checkIsServiceCompleted(service, serviceType);
+  console.log(isServiceCompleted);
+
+  if(isServiceCompleted) {
+    throw new ValidationError(ValidationMsg.ServiceIsCompleted)
+  }
+
+  await ServiceService.updateDeassign(service, serviceType);
+}
+
 async function parseAndValidate (
   reqBody, 
   client,

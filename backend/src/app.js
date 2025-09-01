@@ -101,16 +101,19 @@ DBController.initConnection(async () => {
 
     // cron.schedule(
     //   // "0 0 * * *",  //every midnight
-    //   "*/5 * * * * *",
+    //   // "*/5 * * * * *",
+    //   "* * * * *",
     //   async () => {
     //     console.log("in cron");
     //     // await CronController.serviceDeadlineTomorrow();
     //     // await CronController.serviceDeadlineToday();
         
 
-        // await CronController.sendNotificationsBasedOnDB();
-        // await CronController.documentStatusNotifications();
-     //   }
+    //     // await CronController.sendNotificationsBasedOnDB();
+    //     // await CronController.documentStatusNotifications();
+
+    //     await CronController.setServiceStatusCompleted();
+    //    }
     // );
   });
 });

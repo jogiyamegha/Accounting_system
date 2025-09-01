@@ -6,104 +6,135 @@ const { serviceTypeMap } = require("../../../frontend/src/utils/constants");
 const Document = require("../db/models/document");
 
 exports.serviceDeadlineTomorrow = async () => {
-  try {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowString = tomorrow.toISOString().split("T")[0];
+    try {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowString = tomorrow.toISOString().split("T")[0];
 
-    const tomorrowStart = new Date(`${tomorrowString}T00:00:00.000Z`);
-    const tomorrowEnd = new Date(`${tomorrowString}T23:59:59.999Z`);
+        const tomorrowStart = new Date(`${tomorrowString}T00:00:00.000Z`);
+        const tomorrowEnd = new Date(`${tomorrowString}T23:59:59.999Z`);
 
-    const allUsers = await Service.find({
-      "services.serviceEndDate": {
-        $eq: tomorrowStart,
-      },
-    });
+        const allUsers = await Service.find({
+            "services.serviceEndDate": {
+                $eq: tomorrowStart,
+            },
+        });
 
-    if (allUsers.length > 0) {
-      let bulkEmail = new EmailBulk();
+        if (allUsers.length > 0) {
+        let bulkEmail = new EmailBulk();
 
-      allUsers.forEach((client) => {
-        const tomorrowServices = client[TableFields.services].filter(
-          (service) => {
-            const serviceEndDate = new Date(
-              service[TableFields.serviceEndDate]
+        allUsers.forEach((client) => {
+            const tomorrowServices = client[TableFields.services].filter(
+            (service) => {
+                const serviceEndDate = new Date(
+                service[TableFields.serviceEndDate]
+                );
+                const serviceDateString = serviceEndDate
+                .toISOString()
+                .split("T")[0];
+                return serviceDateString === tomorrowString;
+            }
             );
-            const serviceDateString = serviceEndDate
-              .toISOString()
-              .split("T")[0];
-            return serviceDateString === tomorrowString;
-          }
-        );
 
-        const serviceTypes = tomorrowServices.map(
-          (service) => service[TableFields.serviceType]
-        );
+            const serviceTypes = tomorrowServices.map(
+            (service) => service[TableFields.serviceType]
+            );
 
-        if (serviceTypes.length > 0) {
-          bulkEmail.addEmail(
-            client[TableFields.clientDetail][TableFields.clientName],
-            client[TableFields.clientDetail][TableFields.clientEmail],
-            serviceTypes,
-            "service-deadline-tomorrow.hbs"
-          );
+            if (serviceTypes.length > 0) {
+                bulkEmail.addEmail(
+                    client[TableFields.clientDetail][TableFields.clientName],
+                    client[TableFields.clientDetail][TableFields.clientEmail],
+                    serviceTypes,
+                    "service-deadline-tomorrow.hbs"
+                );
+            }
+        });
+
+        bulkEmail.emailQueue();
         }
-      });
-
-      bulkEmail.emailQueue();
+    } catch (error) {
+        console.error("Error in serviceDeadlineTomorrow:", error);
+        throw error;
     }
-  } catch (error) {
-    console.error("Error in serviceDeadlineTomorrow:", error);
-    throw error;
-  }
 };
 
 exports.serviceDeadlineToday = async () => {
-  try {
-    const today = new Date();
-    const todayString = today.toISOString().split("T")[0];
+    try {
+        const today = new Date();
+        const todayString = today.toISOString().split("T")[0];
 
-    const todayStart = new Date(`${todayString}T00:00:00.000Z`);
-    const todayEnd = new Date(`${todayString}T23:59:59.999Z`);
+        const todayStart = new Date(`${todayString}T00:00:00.000Z`);
+        const todayEnd = new Date(`${todayString}T23:59:59.999Z`);
 
-    const allUsers = await Service.find({
-      "services.serviceEndDate": {
-        $gte: todayStart,
-        $lte: todayEnd,
-      },
-    });
-
-    if (allUsers.length > 0) {
-      let bulkEmail = new EmailBulk();
-
-      allUsers.forEach((client) => {
-        const todayServices = client[TableFields.services].filter((service) => {
-          const serviceEndDate = new Date(service[TableFields.serviceEndDate]);
-          const serviceDateString = serviceEndDate.toISOString().split("T")[0];
-          return serviceDateString === todayString;
+        const allUsers = await Service.find({
+            "services.serviceEndDate": {
+                $gte: todayStart,
+                $lte: todayEnd,
+            },
         });
 
-        const serviceTypes = todayServices.map(
-          (service) => service[TableFields.serviceType]
-        );
+        if (allUsers.length > 0) {
+        let bulkEmail = new EmailBulk();
 
-        if (serviceTypes.length > 0) {
-          bulkEmail.addEmail(
-            client[TableFields.clientDetail][TableFields.clientName],
-            client[TableFields.clientDetail][TableFields.clientEmail],
-            serviceTypes,
-            "service-deadline-today.hbs"
-          );
+        allUsers.forEach((client) => {
+            const todayServices = client[TableFields.services].filter((service) => {
+            const serviceEndDate = new Date(service[TableFields.serviceEndDate]);
+            const serviceDateString = serviceEndDate.toISOString().split("T")[0];
+            return serviceDateString === todayString;
+            });
+
+            const serviceTypes = todayServices.map(
+            (service) => service[TableFields.serviceType]
+            );
+
+            if (serviceTypes.length > 0) {
+                bulkEmail.addEmail(
+                    client[TableFields.clientDetail][TableFields.clientName],
+                    client[TableFields.clientDetail][TableFields.clientEmail],
+                    serviceTypes,
+                    "service-deadline-today.hbs"
+                );
+            }
+        });
+
+        bulkEmail.emailQueue();
         }
-      });
-
-      bulkEmail.emailQueue();
+    } catch (error) {
+        console.error("Error in serviceDeadlineToday:", error);
+        throw error;
     }
-  } catch (error) {
-    console.error("Error in serviceDeadlineToday:", error);
-    throw error;
-  }
 };
+
+exports.setServiceStatusCompleted = async () => {
+    try {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayString = yesterday.toISOString().split("T")[0];
+
+        const yesterdayStart = new Date(`${yesterdayString}T00:00:00.000Z`);
+        const yesterdayEnd = new Date(`${yesterdayString}T23:59:59.999Z`);
+
+        console.log(yesterday);
+        console.log(yesterdayStart);
+
+        const allUsers = await Service.find({
+            "services.serviceEndDate": {
+                $eq: yesterdayStart,
+            },
+        });
+        console.log(allUsers);
+
+        if(allUsers.length > 0) {
+            // Service.updateOne(
+
+            // )
+            console.log("nino abe");
+        }
+    } catch(error) {
+
+    }
+
+}
 
 // exports.sendNotificationForServiceDeadline = async ({ daysFromNow = 0 } = {}) => {
 //     try {
@@ -233,172 +264,172 @@ exports.serviceDeadlineToday = async () => {
 // };
 
 exports.sendNotificationsBasedOnDB = async () => {
-  try {
-    console.log("🔔 Checking for upcoming service deadlines based on DB...");
+    try {
+        console.log("Checking for upcoming service deadlines based on DB...");
 
-    const now = new Date(); // current datetime
+        const now = new Date(); // current datetime
 
-    const allUsers = await Service.find({
-      "services.serviceEndDate": { $gte: now }, // all future or ongoing services
-    });
+        const allUsers = await Service.find({
+        "services.serviceEndDate": { $gte: now }, // all future or ongoing services
+        });
 
-    // console.log("allUsers", allUsers)
+        // console.log("allUsers", allUsers)
 
-    for (const user of allUsers) {
-      const upcomingServices = user.services.filter(
-        (service) => service.serviceEndDate >= now
-      );
-
-      if (upcomingServices.length > 0) {
-        const serviceTypes = upcomingServices
-          .map((s) => s.serviceType)
-          .join(", ");
-        const earliestEndDate = new Date(
-          Math.min(...upcomingServices.map((s) => s.serviceEndDate))
+        for (const user of allUsers) {
+        const upcomingServices = user.services.filter(
+            (service) => service.serviceEndDate >= now
         );
 
-
-        let servType = serviceTypeMap[serviceTypes]
-        
-
-        const fakeReq = {
-          body: {
-            email: user.clientDetail.clientEmail,
-            type: "UpComing Deadline",
-            message: `Your service(s) ${servType} will end on ${earliestEndDate.toDateString()}.`,
-            expiresAt: earliestEndDate,
-          },
-        };
-
-        console.log(
-          `📨 Sending notification to: ${user.clientDetail.clientEmail}`
-        );
-        await NotificationController.addNotification(fakeReq);
-      }
-    }
-  } catch (err) {
-    console.error("❌ Error in sendNotificationsBasedOnDB:", err);
-  }
-};
+        if (upcomingServices.length > 0) {
+            const serviceTypes = upcomingServices
+            .map((s) => s.serviceType)
+            .join(", ");
+            const earliestEndDate = new Date(
+            Math.min(...upcomingServices.map((s) => s.serviceEndDate))
+            );
 
 
-const documentTypeMap = {
-  [DocumentType.VATcertificate]: "VATcertificate",
-  [DocumentType.CorporateTaxDocument]: "CorporateTaxDocument",
-  [DocumentType.BankStatement]: "BankStatement",
-  [DocumentType.Invoice]: "Invoice",
-  [DocumentType.auditFiles]: "auditFiles",
-  [DocumentType.TradeLicense]: "TradeLicense",
-  [DocumentType.passport]: "passport",
-  [DocumentType.FinancialStatements]: "FinancialStatements",
-  [DocumentType.Payroll]: "Payroll",
-  [DocumentType.WPSReport]: "WPSReport",
-  [DocumentType.ExpenseReciept]: "ExpenseReciept",
-  [DocumentType.Other]: "Other",
-  // add more as per your enums
-};
+            let servType = serviceTypeMap[serviceTypes]
+            
 
+            const fakeReq = {
+                body: {
+                    email: user.clientDetail.clientEmail,
+                    type: "UpComing Deadline",
+                    message: `Your service(s) ${servType} will end on ${earliestEndDate.toDateString()}.`,
+                    expiresAt: earliestEndDate,
+                },
+                };
 
-// exports.documentStatusNotifications = async () => {
-//   try {
-//     console.log("📂 Checking for pending/missing documents...");
-
-//     // Step 1: Fetch all documents with pending/missing status
-//     const docs = await Document.find({
-//       "documents.documentDetails.docStatus": { $in: [DocStatus.pending] },
-//       deleted: false,
-//     }).populate(TableFields.clientId);
-
-//     // Step 2: Loop over clients and collect their pending/missing documents
-//     for (const doc of docs) {
-//       const client = doc[TableFields.clientId];
-//       console.log(client)
-//       if (!client) continue;
-
-//       // filter nested documents
-//       const pendingDocs = doc.documents.filter((d) =>
-//         [DocStatus.pending].includes(d.documentDetails.docStatus)
-//       );
-
-//       if (pendingDocs.length > 0) {
-//         const docTypes = pendingDocs
-//           .map((d) => documentTypeMap[d.documentDetails.documentType] || "Document")
-//           .join(", ");
-
-//         // fake request for notification controller
-//         const fakeReq = {
-//           body: {
-//             email: client.email,
-//             type: "Document Status",
-//             message: `You have pending/missing documents: ${docTypes}. Please upload/complete them at the earliest.`,
-//             expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // expiry 3 days later
-//           },
-//         };
-
-//         console.log(`📨 Sending doc status notification to: ${client.clientEmail}`);
-//         await NotificationController.addNotification(fakeReq);
-//       }
-//     }
-//   } catch (err) {
-//     console.error("❌ Error in documentStatusNotifications:", err);
-//   }
-// };
-
-
-exports.documentStatusNotifications = async () => {
-  try {
-    console.log("📂 Checking for pending/missing documents...");
-
-    // Fetch all docs where at least one document is pending
-    const docs = await Document.find({
-      "documents.documentDetails.docStatus": { $in: [DocStatus.pending] },
-      deleted: false,
-    }).populate(TableFields.clientId);
-
-    // Group by clientId
-    const clientMap = new Map();
-
-    for (const doc of docs) {
-      const client = doc[TableFields.clientId];
-      if (!client) continue;
-
-      const pendingDocs = doc.documents.filter((d) =>
-        [DocStatus.pending].includes(d.documentDetails.docStatus)
-      );
-
-      if (pendingDocs.length > 0) {
-        const docTypes = pendingDocs
-          .map((d) => documentTypeMap[d.documentDetails.documentType] || "Document")
-          .join(", ");
-
-        if (!clientMap.has(client._id.toString())) {
-          clientMap.set(client._id.toString(), {
-            email: client.email,
-            docTypes: new Set(),
-          });
+                console.log(
+                `📨 Sending notification to: ${user.clientDetail.clientEmail}`
+                );
+                await NotificationController.addNotification(fakeReq);
+            }
+            }
+        } catch (err) {
+            console.error("❌ Error in sendNotificationsBasedOnDB:", err);
         }
+    };
 
-        // accumulate doc types per client
-        const entry = clientMap.get(client._id.toString());
-        docTypes.split(", ").forEach((t) => entry.docTypes.add(t));
-      }
-    }
 
-    // Send one notification per client
-    for (const [clientId, { email, docTypes }] of clientMap.entries()) {
-      const fakeReq = {
-        body: {
-          email,
-          type: "Document Status",
-          message: `You have pending/missing documents: ${Array.from(docTypes).join(", ")}. Please upload/complete them at the earliest.`,
-          expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-        },
-      };
+    const documentTypeMap = {
+        [DocumentType.VATcertificate]: "VATcertificate",
+        [DocumentType.CorporateTaxDocument]: "CorporateTaxDocument",
+        [DocumentType.BankStatement]: "BankStatement",
+        [DocumentType.Invoice]: "Invoice",
+        [DocumentType.auditFiles]: "auditFiles",
+        [DocumentType.TradeLicense]: "TradeLicense",
+        [DocumentType.passport]: "passport",
+        [DocumentType.FinancialStatements]: "FinancialStatements",
+        [DocumentType.Payroll]: "Payroll",
+        [DocumentType.WPSReport]: "WPSReport",
+        [DocumentType.ExpenseReciept]: "ExpenseReciept",
+        [DocumentType.Other]: "Other",
+        // add more as per your enums
+    };
 
-      console.log(`📨 Sending doc status notification to: ${email}`);
-      await NotificationController.addNotification(fakeReq);
-    }
-  } catch (err) {
-    console.error("❌ Error in documentStatusNotifications:", err);
-  }
-};
+
+    // exports.documentStatusNotifications = async () => {
+    //   try {
+    //     console.log("📂 Checking for pending/missing documents...");
+
+    //     // Step 1: Fetch all documents with pending/missing status
+    //     const docs = await Document.find({
+    //       "documents.documentDetails.docStatus": { $in: [DocStatus.pending] },
+    //       deleted: false,
+    //     }).populate(TableFields.clientId);
+
+    //     // Step 2: Loop over clients and collect their pending/missing documents
+    //     for (const doc of docs) {
+    //       const client = doc[TableFields.clientId];
+    //       console.log(client)
+    //       if (!client) continue;
+
+    //       // filter nested documents
+    //       const pendingDocs = doc.documents.filter((d) =>
+    //         [DocStatus.pending].includes(d.documentDetails.docStatus)
+    //       );
+
+    //       if (pendingDocs.length > 0) {
+    //         const docTypes = pendingDocs
+    //           .map((d) => documentTypeMap[d.documentDetails.documentType] || "Document")
+    //           .join(", ");
+
+    //         // fake request for notification controller
+    //         const fakeReq = {
+    //           body: {
+    //             email: client.email,
+    //             type: "Document Status",
+    //             message: `You have pending/missing documents: ${docTypes}. Please upload/complete them at the earliest.`,
+    //             expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // expiry 3 days later
+    //           },
+    //         };
+
+    //         console.log(`📨 Sending doc status notification to: ${client.clientEmail}`);
+    //         await NotificationController.addNotification(fakeReq);
+    //       }
+    //     }
+    //   } catch (err) {
+    //     console.error("❌ Error in documentStatusNotifications:", err);
+    //   }
+    // };
+
+
+    exports.documentStatusNotifications = async () => {
+        try {
+            console.log("📂 Checking for pending/missing documents...");
+
+            // Fetch all docs where at least one document is pending
+            const docs = await Document.find({
+            "documents.documentDetails.docStatus": { $in: [DocStatus.pending] },
+            deleted: false,
+            }).populate(TableFields.clientId);
+
+            // Group by clientId
+            const clientMap = new Map();
+
+            for (const doc of docs) {
+            const client = doc[TableFields.clientId];
+            if (!client) continue;
+
+            const pendingDocs = doc.documents.filter((d) =>
+                [DocStatus.pending].includes(d.documentDetails.docStatus)
+            );
+
+            if (pendingDocs.length > 0) {
+                const docTypes = pendingDocs
+                .map((d) => documentTypeMap[d.documentDetails.documentType] || "Document")
+                .join(", ");
+
+                if (!clientMap.has(client._id.toString())) {
+                clientMap.set(client._id.toString(), {
+                    email: client.email,
+                    docTypes: new Set(),
+                });
+                }
+
+                // accumulate doc types per client
+                const entry = clientMap.get(client._id.toString());
+                docTypes.split(", ").forEach((t) => entry.docTypes.add(t));
+            }
+            }
+
+            // Send one notification per client
+            for (const [clientId, { email, docTypes }] of clientMap.entries()) {
+            const fakeReq = {
+                body: {
+                email,
+                type: "Document Status",
+                message: `You have pending/missing documents: ${Array.from(docTypes).join(", ")}. Please upload/complete them at the earliest.`,
+                expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+                },
+            };
+
+            console.log(`Sending doc status notification to: ${email}`);
+            await NotificationController.addNotification(fakeReq);
+            }
+        } catch (err) {
+            console.error(" Error in documentStatusNotifications:", err);
+        }
+    };
