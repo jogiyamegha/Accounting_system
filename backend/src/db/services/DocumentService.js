@@ -1,8 +1,29 @@
 const Document = require("../models/document");
-const { TableFields, TableNames, DocStatus } = require("../../utils/constants");
+const {
+  TableFields,
+  TableNames,
+  DocStatus,
+  DocumentType,
+  ServiceType,
+} = require("../../utils/constants");
 const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
 const { MongoUtil } = require("../mongoose");
+
+const serviceDocMap = {
+  [ServiceType.VATFiling]: [DocumentType.VATcertificate],
+  [ServiceType.CorporateTaxServices]: [
+    DocumentType.CorporateTaxDocument,
+    DocumentType.FinancialStatements,
+    DocumentType.BalanceSheet,
+  ],
+  [ServiceType.Payroll]: [DocumentType.Payroll, DocumentType.WPSReport],
+  [ServiceType.AuditAndCompliance]: [
+    DocumentType.auditFiles,
+    DocumentType.BankStatement,
+    DocumentType.Invoice,
+  ],
+};
 
 class DocumentService {
   static findById = (id) => {
@@ -20,6 +41,28 @@ class DocumentService {
     return new ProjectionBuilder(async function () {
       return await Document.findOne({ [TableFields.clientId]: clientId }, this);
     });
+  };
+
+  static getClientDocumentsByService = async (clientId, serviceType) => {
+    const clientDocs = await Document.findOne({ clientId, deleted: false });
+
+    const uploadedDocs =
+      clientDocs?.documents?.map((d) => d.documentDetails.documentType) || [];
+
+    const requiredDocs = serviceDocMap[serviceType] || [];
+
+    const remainingDocs = requiredDocs.filter(
+      (req) => !uploadedDocs.includes(req)
+    );
+
+    return {
+      uploadedDocs: uploadedDocs.map((docType) => ({
+        type: docType,
+      })),
+      remainingDocs: remainingDocs.map((docType) => ({
+        type: docType,
+      })),
+    };
   };
 
   static existsWithClient = async (clientId) => {
@@ -63,6 +106,8 @@ class DocumentService {
       },
       { upsert: true, new: true }
     );
+
+    // console.log(updatedDoc)
 
     return updatedDoc;
   };
@@ -253,7 +298,6 @@ class DocumentService {
 
     // console.log("doc:",docs)
 
-
     const daysMap = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     // initialize week with zeros
@@ -264,10 +308,8 @@ class DocumentService {
       Rejected: 0,
     }));
 
-    
     // fill in counts
     docs.forEach((d) => {
-
       const dayIndex = d._id.day - 1; // MongoDB: 1=Sun
       if (d._id.status === DocStatus.pending)
         result[dayIndex].Pending = d.count;

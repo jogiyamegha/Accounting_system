@@ -139,6 +139,7 @@ const router = API.configRoute("/admin")
 .build()
 
 
+
 // .addPath('/add-service')
 // .asPOST(ServiceController.addService)
 // .useAdminAuth()
@@ -155,6 +156,17 @@ const router = API.configRoute("/admin")
 
 .addPath(`/all-clients-assigned-service/:${TableFields.serviceType}`)
 .asGET(ServiceController.getClientsAssignedService)
+.useAdminAuth()
+.build()
+
+.addPath(`/documents/:${TableFields.clientId}/:${TableFields.serviceType}`)
+.asGET(DocumentController.getClientDocuments)
+.useAdminAuth()
+.build()
+
+.addPath(`/documents/upload/:${TableFields.clientId}/:${TableFields.serviceType}`)
+.asPOST(DocumentController.addClientDocument)
+.userMiddlewares(PDFHandler.uploadPDFFile("file"))
 .useAdminAuth()
 .build()
 

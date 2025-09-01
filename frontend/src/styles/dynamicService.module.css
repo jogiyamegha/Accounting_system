@@ -6,8 +6,9 @@
 }
 
 .mainContent {
-    flex: 1;
-    padding: 2rem 3rem;
+  flex: 1;
+  padding: 2rem 3rem;
+  margin-left: 280px;
 }
 
 .pageTitle {
@@ -39,7 +40,7 @@
   font-weight: 600;
   margin-bottom: 1.2rem;
   color: #1a202c;
-  border-left: 4px solid #4f46e5;
+  border-left: 4px solid #033c7c;
   padding-left: 10px;
 }
 
@@ -69,8 +70,9 @@
   padding: 1.2rem 1.5rem;
   margin-bottom: 1rem;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
   transition: all 0.2s ease;
 }
 
@@ -97,6 +99,148 @@
   color: #718096;
   margin-top: 2px;
   font-style: italic;
+}
+
+/* Upload Button */
+.uploadBtn {
+  background: #033c7c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.uploadBtn:hover {
+  background: #003673;
+  transform: translateY(-2px);
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 14px;
+  width: 600px;
+  max-width: 90%;
+  max-height: 80vh; /* ✅ limit modal height */
+  overflow-y: auto; /* ✅ enable vertical scroll */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease;
+}
+
+/* Optional: nice custom scrollbar */
+.modalContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 6px;
+}
+
+.modalContent::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.modalContent h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #1a202c;
+}
+
+.modalContent h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.6rem;
+  font-size: 1.1rem;
+  color: #2d3748;
+}
+
+.modalContent ul {
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modalContent li {
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+  color: #374151;
+}
+
+.modalContent a {
+  color: #033c7c;
+  text-decoration: underline;
+}
+
+.modalContent form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.modalContent input[type="file"],
+.modalContent select,
+.modalContent input[type="text"] {
+  padding: 0.5rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.modalContent button[type="submit"] {
+  background: #033c7c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modalContent button[type="submit"]:hover {
+  background: #003673;
+}
+
+.modalContent button:last-of-type {
+  margin-top: 1rem;
+  background: #e2e8f0;
+  color: #1a202c;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.modalContent button:last-of-type:hover {
+  background: #a6adb3;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Responsive Design */
@@ -126,6 +270,8 @@
 
   .clientItem {
     padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .clientName {
@@ -138,5 +284,10 @@
 
   .clientMeta {
     font-size: 0.8rem;
+  }
+
+  .modalContent {
+    width: 95%;
+    padding: 1.5rem;
   }
 }

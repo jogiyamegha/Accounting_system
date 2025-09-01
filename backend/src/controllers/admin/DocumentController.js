@@ -1,9 +1,16 @@
 const ClientService = require("../../db/services/ClientService");
 const DocumentService = require("../../db/services/DocumentService");
-const { TableFields, ValidationMsg, TableNames } = require("../../utils/constants");
+const {
+  TableFields,
+  ValidationMsg,
+  TableNames,
+  DocStatus,
+  DocumentType,
+} = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const Email = require("../../emails/email");
-const ServiceManager = require('../../db/serviceManager')
+const ServiceManager = require("../../db/serviceManager");
+const { addPdfFile, Folders } = require("../../utils/storage");
 
 exports.getDocumentsForAdmin = async (req) => {
   const email = req.body.email;
@@ -51,25 +58,24 @@ exports.updateDocumentStatus = async (req) => {
 
 exports.addClientDocument = async (req) => {
   const reqBody = req.body;
-  const reqUser = req.user;
   const document = req.file;
-  const clientId = reqUser[TableFields.ID];
+  const { clientId } = req.params;
 
-  const existsWithClientId = await DocumentService.existsWithClient(clientId);
+  // console.log("reqBody",reqBody)
+  // console.log("files", files);
 
-  const result = await parseAndValidateDocument(
+  // const existsWithClientId = await DocumentService.existsWithClient(clientId);
+
+  const result = await parseAndValidateDocuments(
     reqBody,
-    reqUser,
+    clientId,
     document,
     async function (updatedFields) {
-      if (!existsWithClientId) {
-        return await DocumentService.insertRecord(updatedFields);
-      } else {
-        return await DocumentService.upsertDocumentForClient(
-          clientId,
-          updatedFields
-        );
-      }
+      let record = await DocumentService.upsertDocumentForClient(
+        clientId,
+        updatedFields
+      );
+      return record;
     }
   );
   return result;
@@ -112,21 +118,98 @@ exports.getUploadStats = async (req) => {
     const stats = await DocumentService.getWeeklyUploadStats();
     // console.log("stats",stats)
     return stats;
-
   } catch (error) {
     console.error("Error fetching upload stats:", error);
   }
-}
+};
+
+exports.getClientDocuments = async (req) => {
+  try {
+    const { clientId, serviceType } = req.params;
+    const data = await DocumentService.getClientDocumentsByService(
+      clientId,
+      serviceType
+    );
+    // console.log("1", data);
+
+    return data;
+  } catch (err) {
+    console.error("Error fetching documents:", err);
+    throw new ValidationError(ValidationMsg.RecordNotFound);
+  }
+};
 
 exports.deleteDocument = async (req) => {
-    let clientId = req.body.clientId;
-    let documentId =  req.body.docId;
+  let clientId = req.body.clientId;
+  let documentId = req.body.docId;
   const document = await DocumentService.getDocsByClientId(clientId)
     .withBasicInfo()
     .execute();
 
   if (document) {
-    
-    await DocumentService.deleteDocFromArray(clientId, documentId, document[TableFields.documents])
+    await DocumentService.deleteDocFromArray(
+      clientId,
+      documentId,
+      document[TableFields.documents]
+    );
   }
 };
+
+async function parseAndValidateDocuments(
+  reqBody,
+  clientId,
+  file,
+  onValidationCompleted = async () => {}
+) {
+  if (!clientId) {
+    throw new ValidationError(ValidationMsg.ClientIdEmpty);
+  }
+
+  let docs = [];
+
+  // for (const file of files) {
+    // file.fieldname will be like: "documents[0][file]"
+    // const match = file.fieldname.match(/documents\[(\d+)\]\[file\]/);
+    // console.log("match", match)
+
+    // if (match) {
+    //   const index = match[1];
+
+      // ✅ Get documentType from reqBody, not files
+      const documentType = reqBody.documentType || null;
+
+      
+
+      // ✅ Upload file via addPdfFile instead of using file.path
+      let persistedFileKey = null;
+      try {
+        const newFileKey = await addPdfFile(
+          Folders.ClientDocument,
+          file.originalname,
+          file.buffer
+        );
+        persistedFileKey = newFileKey;
+      } catch (err) {
+        console.error("Error uploading file:", err);
+        throw new ValidationError("File upload failed");
+      }
+
+      docs.push({
+        [TableFields.documentDetails]: {
+          [TableFields.docStatus]: DocStatus.pending, // default
+          [TableFields.documentType]: documentType,
+          [TableFields.document]: persistedFileKey,
+          [TableFields.uploadedAt]: Date.now(),
+        },
+      });
+    // }
+  // }
+
+  const payload = {
+    [TableFields.clientId]: clientId,
+    [TableFields.documents]: docs,
+  };
+
+
+  return await onValidationCompleted(payload);
+}
