@@ -223,6 +223,63 @@ class DocumentService {
     });
   };
 
+  static getWeeklyUploadStats = async () => {
+    const startOfWeek = new Date();
+    // console.log(startOfWeek)
+
+    startOfWeek.setDate(startOfWeek.getDate() - 6);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    // console.log(startOfWeek)
+
+    const docs = await Document.aggregate([
+      { $unwind: "$documents" },
+      { $unwind: "$documents.documentDetails" },
+      {
+        $match: {
+          "documents.documentDetails.uploadedAt": { $gte: startOfWeek },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            day: { $dayOfWeek: "$documents.documentDetails.uploadedAt" },
+            status: "$documents.documentDetails.docStatus",
+          },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // console.log("doc:",docs)
+
+
+    const daysMap = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    // initialize week with zeros
+    const result = Array.from({ length: 7 }).map((_, i) => ({
+      day: daysMap[i],
+      Approved: 0,
+      Pending: 0,
+      Rejected: 0,
+    }));
+
+    
+    // fill in counts
+    docs.forEach((d) => {
+
+      const dayIndex = d._id.day - 1; // MongoDB: 1=Sun
+      if (d._id.status === DocStatus.pending)
+        result[dayIndex].Pending = d.count;
+      if (d._id.status === DocStatus.approved)
+        result[dayIndex].Approved = d.count;
+      if (d._id.status === DocStatus.rejected)
+        result[dayIndex].Rejected = d.count;
+    });
+
+    return result;
+  };
+
   static deleteDocFromArray = async (clientId, documentId, docArray) => {
     const matchedDoc = docArray.find(
       (doc) => doc._id.toString() === documentId

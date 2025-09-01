@@ -24,21 +24,32 @@ import {
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 
-const uploadData = [
-  { day: "Mon", Successful: 25, Pending: 10, Failed: 5 },
-  { day: "Tue", Successful: 28, Pending: 8, Failed: 4 },
-  { day: "Wed", Successful: 35, Pending: 5, Failed: 6 },
-  { day: "Thu", Successful: 30, Pending: 12, Failed: 7 },
-  { day: "Fri", Successful: 20, Pending: 20, Failed: 10 },
-  { day: "Sat", Successful: 15, Pending: 10, Failed: 8 },
-  { day: "Sun", Successful: 18, Pending: 12, Failed: 9 },
-];
+// const uploadData = [
+//   { day: "Mon", Approved: 25, Pending: 10, Rejected: 5 },
+//   { day: "Tue", Approved: 28, Pending: 8, Rejected: 4 },
+//   { day: "Wed", Approved: 35, Pending: 5, Rejected: 6 },
+//   { day: "Thu", Approved: 30, Pending: 12, Rejected: 7 },
+//   { day: "Fri", Approved: 20, Pending: 20, Rejected: 10 },
+//   { day: "Sat", Approved: 15, Pending: 10, Rejected: 8 },
+//   { day: "Sun", Approved: 18, Pending: 12, Rejected: 9 },
+// ];
 
 export default function Dashboard() {
   const [activeClients, setActiveClients] = useState(0);
   const [loading, setLoading] = useState(true);
   const [totalClients, setTotalClients] = useState(0);
   const [notifications, setNotifications] = useState([]);
+  const [uploadData, setUploadData] = useState([]);
+
+  useEffect(() => {
+    fetch(`${ADMIN_END_POINT}/documents/upload-stats`, {
+      method: "GET",
+      // headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => setUploadData(data));
+  }, []);
 
   const fetchClients = async () => {
     try {
@@ -121,9 +132,9 @@ export default function Dashboard() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="Successful" fill="#033670ff" />
+                <Bar dataKey="Approved" fill="#033670ff" />
                 <Bar dataKey="Pending" fill="#1c599fff" />
-                <Bar dataKey="Failed" fill="#5296e4ff" />
+                <Bar dataKey="Rejected" fill="#5296e4ff" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -172,7 +183,9 @@ export default function Dashboard() {
                     <FontAwesomeIcon
                       icon={notificationIcons[n.type] || faBell}
                     />{" "}
-                    <strong>{notificationTypeLabels[n.notificationType]}</strong> {" "}
+                    <strong>
+                      {notificationTypeLabels[n.notificationType]}
+                    </strong>{" "}
                     {/* {n.message} */}
                     {/* <small style={{ marginLeft: "8px", color: "#666" }}>
                       {format(new Date(n.expiresAt), "dd-MM-yyyy HH:mm")}
@@ -181,14 +194,12 @@ export default function Dashboard() {
                 ))}
               </ul>
 
-              
-                <a
-                  href="/admin/notification-management"
-                  className={styles.moreLink}
-                >
-                  View All Notifications →
-                </a>
-              
+              <a
+                href="/admin/notification-management"
+                className={styles.moreLink}
+              >
+                View All Notifications →
+              </a>
             </>
           )}
         </section>

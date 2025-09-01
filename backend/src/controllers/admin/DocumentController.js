@@ -107,6 +107,17 @@ exports.getAllDocuments = async (req) => {
   };
 };
 
+exports.getUploadStats = async (req) => {
+  try {
+    const stats = await DocumentService.getWeeklyUploadStats();
+    // console.log("stats",stats)
+    return stats;
+
+  } catch (error) {
+    console.error("Error fetching upload stats:", error);
+  }
+}
+
 exports.deleteDocument = async (req) => {
     let clientId = req.body.clientId;
     let documentId =  req.body.docId;

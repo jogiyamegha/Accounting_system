@@ -65,6 +65,13 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath('/documents/upload-stats')
+.asGET(DocumentController.getUploadStats)
+.useAdminAuth()
+.build()
+
+
+
 /**
  * 
  * Client-Management Routes
@@ -154,6 +161,7 @@ const router = API.configRoute("/admin")
 // .addPath('/approve-vat-request')
 // .asPOST(VATController.approveVATRequest)
 // .build()
+
 
 
 .addPath('/document-management')
