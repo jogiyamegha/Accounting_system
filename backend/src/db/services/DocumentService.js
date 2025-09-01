@@ -1,8 +1,29 @@
 const Document = require("../models/document");
-const { TableFields, TableNames, DocStatus } = require("../../utils/constants");
+const {
+  TableFields,
+  TableNames,
+  DocStatus,
+  DocumentType,
+  ServiceType,
+} = require("../../utils/constants");
 const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
 const { MongoUtil } = require("../mongoose");
+
+const serviceDocMap = {
+  [ServiceType.VATFiling]: [DocumentType.VATcertificate],
+  [ServiceType.CorporateTaxServices]: [
+    DocumentType.CorporateTaxDocument,
+    DocumentType.FinancialStatements,
+    DocumentType.BalanceSheet,
+  ],
+  [ServiceType.Payroll]: [DocumentType.Payroll, DocumentType.WPSReport],
+  [ServiceType.AuditAndCompliance]: [
+    DocumentType.auditFiles,
+    DocumentType.BankStatement,
+    DocumentType.Invoice,
+  ],
+};
 
 class DocumentService {
   static findById = (id) => {
@@ -20,6 +41,28 @@ class DocumentService {
     return new ProjectionBuilder(async function () {
       return await Document.findOne({ [TableFields.clientId]: clientId }, this);
     });
+  };
+
+  static getClientDocumentsByService = async (clientId, serviceType) => {
+    const clientDocs = await Document.findOne({ clientId, deleted: false });
+
+    const uploadedDocs =
+      clientDocs?.documents?.map((d) => d.documentDetails.documentType) || [];
+
+    const requiredDocs = serviceDocMap[serviceType] || [];
+
+    const remainingDocs = requiredDocs.filter(
+      (req) => !uploadedDocs.includes(req)
+    );
+
+    return {
+      uploadedDocs: uploadedDocs.map((docType) => ({
+        type: docType,
+      })),
+      remainingDocs: remainingDocs.map((docType) => ({
+        type: docType,
+      })),
+    };
   };
 
   static existsWithClient = async (clientId) => {
@@ -63,6 +106,8 @@ class DocumentService {
       },
       { upsert: true, new: true }
     );
+
+    // console.log(updatedDoc)
 
     return updatedDoc;
   };
@@ -221,6 +266,60 @@ class DocumentService {
           .sort({ [sortKey]: parseInt(sortOrder) }),
       ]).then(([total, records]) => ({ total, records }));
     });
+  };
+
+  static getWeeklyUploadStats = async () => {
+    const startOfWeek = new Date();
+    // console.log(startOfWeek)
+
+    startOfWeek.setDate(startOfWeek.getDate() - 6);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    // console.log(startOfWeek)
+
+    const docs = await Document.aggregate([
+      { $unwind: "$documents" },
+      { $unwind: "$documents.documentDetails" },
+      {
+        $match: {
+          "documents.documentDetails.uploadedAt": { $gte: startOfWeek },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            day: { $dayOfWeek: "$documents.documentDetails.uploadedAt" },
+            status: "$documents.documentDetails.docStatus",
+          },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // console.log("doc:",docs)
+
+    const daysMap = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    // initialize week with zeros
+    const result = Array.from({ length: 7 }).map((_, i) => ({
+      day: daysMap[i],
+      Approved: 0,
+      Pending: 0,
+      Rejected: 0,
+    }));
+
+    // fill in counts
+    docs.forEach((d) => {
+      const dayIndex = d._id.day - 1; // MongoDB: 1=Sun
+      if (d._id.status === DocStatus.pending)
+        result[dayIndex].Pending = d.count;
+      if (d._id.status === DocStatus.approved)
+        result[dayIndex].Approved = d.count;
+      if (d._id.status === DocStatus.rejected)
+        result[dayIndex].Rejected = d.count;
+    });
+
+    return result;
   };
 
   static deleteDocFromArray = async (clientId, documentId, docArray) => {

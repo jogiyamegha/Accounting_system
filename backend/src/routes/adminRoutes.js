@@ -66,6 +66,13 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath('/documents/upload-stats')
+.asGET(DocumentController.getUploadStats)
+.useAdminAuth()
+.build()
+
+
+
 /**
  * 
  * Client-Management Routes
@@ -133,6 +140,7 @@ const router = API.configRoute("/admin")
 .build()
 
 
+
 // .addPath('/add-service')
 // .asPOST(ServiceController.addService)
 // .useAdminAuth()
@@ -152,9 +160,21 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/documents/:${TableFields.clientId}/:${TableFields.serviceType}`)
+.asGET(DocumentController.getClientDocuments)
+.useAdminAuth()
+.build()
+
+.addPath(`/documents/upload/:${TableFields.clientId}/:${TableFields.serviceType}`)
+.asPOST(DocumentController.addClientDocument)
+.userMiddlewares(PDFHandler.uploadPDFFile("file"))
+.useAdminAuth()
+.build()
+
 // .addPath('/approve-vat-request')
 // .asPOST(VATController.approveVATRequest)
 // .build()
+
 
 
 .addPath('/document-management')
