@@ -94,19 +94,34 @@ export default function ClientManagement() {
         method: "PATCH",
         credentials: "include",
       });
-      const data = await res.json();
-      
-      if (data.client.isActive === "false") {
-        toast.success("Client is Deactivated  Suceesfully!");
-      } else {
-        toast.success("Client is Activated  Suceesfully!");
+
+      if (!res.ok) {
+        throw new Error(`Server responded with ${res.status}`);
       }
-      navigate(0);
+
+      const data = await res.json();
+      console.log("data in try", data);
+
+      if (data?.client?.isActive === undefined && data?.isActive === undefined) {
+        throw new Error("Invalid response format, missing isActive field");
+      }
+
+      const isActive = data?.client?.isActive ?? data.isActive;
+
+      console.log(isActive);
+
+      if (isActive === false || isActive === "false") {
+        toast.success("Client is Deactivated Successfully!");
+      } else {
+        toast.success("Client is Activated Successfully!");
+      }
+      fetchClients();
     } catch (error) {
-      toast.error("Failed to change  client status");
-      console.error("Failed to client status:", error);
+      console.error("Failed to change client status:", error);
+      toast.error("Failed to change client status");
     }
   };
+
 
   // Pagination helpers
   const totalPages = Math.ceil(totalClients / limit);
