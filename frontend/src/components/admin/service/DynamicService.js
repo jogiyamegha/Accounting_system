@@ -449,10 +449,13 @@ export default function DynamicService() {
       );
       if (!res.ok) throw new Error("Failed to fetch documents");
       const data = await res.json();
+      
 
       setDocuments(data.uploadedDocs || []);
-      // console.log(data.uploadedDocs);
+      console.log(data.uploadedDocs);
       setRequiredDocs(data.remainingDocs || []);
+      console.log(data.remainingDocs);
+
     } catch (err) {
       console.error("Error fetching documents:", err);
     }
@@ -640,6 +643,7 @@ export default function DynamicService() {
             </ul>
 
             {/* Upload Form */}
+            
             <form onSubmit={handleFileUpload}>
               <label>Select Document Type:</label>
               <select

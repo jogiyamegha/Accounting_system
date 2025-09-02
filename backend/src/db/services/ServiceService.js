@@ -103,10 +103,21 @@ class ServiceService {
   };
 
   static checkIsServiceCompleted = async (clientId, serviceId) => {
-    return await Service.exists({
-      [`${TableFields.clientDetail}.${TableFields.clientId}`]: clientId,
-      [`${TableFields.services}._id`]: serviceId,
-    });
+    const mainService = await ServiceService.getServiceByClientId(clientId)
+      .withBasicInfo()
+      .execute();
+
+    const allServices = mainService[TableFields.services];
+
+    for (let service of allServices) {
+      if (
+        service[TableFields.ID].toString() === serviceId &&
+        service[TableFields.serviceStatus] === 3
+      ) {
+        return true;
+      }
+    }
+    return false;
   };
 
   static updateDeassign = async (clientId, serviceId) => {
@@ -186,7 +197,7 @@ class ServiceService {
 
     if (typeof serviceType === "string") {
       const serviceTypeMap = {
-        "VAT Filing": ServiceType.VATFiling,
+        VAT: ServiceType.VAT,
         "Corporate Tax": ServiceType.CorporateTaxServices,
         Payroll: ServiceType.Payroll,
         Audit: ServiceType.AuditAndCompliance,

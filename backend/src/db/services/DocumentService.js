@@ -11,7 +11,7 @@ const ValidationError = require("../../utils/ValidationError");
 const { MongoUtil } = require("../mongoose");
 
 const serviceDocMap = {
-  [ServiceType.VATFiling]: [DocumentType.VATcertificate],
+  [ServiceType.VAT]: [DocumentType.VATcertificate],
   [ServiceType.CorporateTaxServices]: [
     DocumentType.CorporateTaxDocument,
     DocumentType.FinancialStatements,
@@ -230,6 +230,7 @@ class DocumentService {
         10: "Payroll",
         11: "WPSReport",
         12: "ExpenseReciept",
+        13: "Other",
       };
 
       let searchQuery = {};

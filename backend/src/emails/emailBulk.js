@@ -5,7 +5,7 @@ const Handlebars = require("handlebars");
 const {GeneralMessages, ServiceType } = require("../utils/constants");
 
 const ServiceTypeNames = {
-    [ServiceType.VATFiling]: "VAT Filing",
+    [ServiceType.VAT]: "VAT",
     [ServiceType.CorporateTaxServices]: "Corporate Tax Services",
     [ServiceType.Payroll]: "Payroll",
     [ServiceType.AuditAndCompliance]: "Audit & Compliance"
