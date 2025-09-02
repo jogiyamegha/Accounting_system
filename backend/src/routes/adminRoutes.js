@@ -223,10 +223,7 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
-.addPath(`/de-assign-service/:${TableFields.ID}/:${TableFields.serviceType}`)
-.asDELETE(ServiceController.deAssignService)
-.useAdminAuth()
-.build()
+
 
 .addPath(`/service-details/:${TableFields.clientId}`)
 .asGET(ServiceController.getServiceDetail)
