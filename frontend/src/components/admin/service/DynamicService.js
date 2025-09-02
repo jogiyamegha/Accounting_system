@@ -347,7 +347,12 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ADMIN_END_POINT, docTypeMap, serviceStatusMap, serviceTypeMap } from "../../../utils/constants";
+import {
+  ADMIN_END_POINT,
+  docTypeMap,
+  serviceStatusMap,
+  serviceTypeMap,
+} from "../../../utils/constants";
 import classes from "../../../styles/dynamicService.module.css";
 import Sidebar from "../../Sidebar";
 
@@ -491,9 +496,8 @@ export default function DynamicService() {
   };
 
   const handleDetails = async (clientId) => {
-
     navigate(`/admin/service-details/${clientId}`);
-  }
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -545,13 +549,14 @@ export default function DynamicService() {
                       </small>
                       <br></br>
                       <small className={classes.clientMeta}>
-                        Status: {" "}
-                        {serviceStatusMap[service.serviceStatus]}
+                        Status: {serviceStatusMap[service.serviceStatus]}
                       </small>
                     </div>
                     <button
                       className={classes.uploadBtn}
-                      onClick={() => handleDetails(client.clientDetail.clientId)}
+                      onClick={() =>
+                        handleDetails(client.clientDetail.clientId)
+                      }
                     >
                       View Details
                     </button>
