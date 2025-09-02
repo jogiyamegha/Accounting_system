@@ -28,11 +28,9 @@ exports.addNotification = async (req) => {
 }
 
 exports.getAllNotifications = async (req) => {
-    let userId = req.user[TableFields.ID];
+    // let userId = req.user[TableFields.ID];
 
-    
-    
-    const notification = await NotificationService.findByReceiverId(userId)
+    const notification = await NotificationService.findByNotifications()
     .withBasicInfo()
     .execute()
 

@@ -194,12 +194,15 @@ export default function Dashboard() {
                 ))}
               </ul>
 
-              <a
-                href="/admin/notification-management"
-                className={styles.moreLink}
-              >
+                {notifications.length >= 2 && (
+
+                  <a
+                  href="/admin/notification-management"
+                  className={styles.moreLink}
+                  >
                 View All Notifications →
               </a>
+              )}
             </>
           )}
         </section>

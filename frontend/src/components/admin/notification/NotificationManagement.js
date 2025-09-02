@@ -77,7 +77,7 @@ export default function NotificationManagement() {
         prev.map((n) => (n._id === id ? { ...n, read: true } : n))
       );
 
-      console.log("1", id);
+      // console.log("1", id);
       const res = await fetch(
         `${ADMIN_END_POINT}/notification-mark-as-read/${id}`,
         {
@@ -89,12 +89,12 @@ export default function NotificationManagement() {
         }
       );
 
-      console.log(res);
+      // console.log(res);
 
       if (!res.ok) {
         throw new Error("Failed to mark notification as read");
       }
-      toast.success("Nootification send Successfully..")
+      toast.success("Notification send Successfully..")
       navigate(0);
     } catch (err) {
       console.error(err);

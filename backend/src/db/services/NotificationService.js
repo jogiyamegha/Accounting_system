@@ -15,7 +15,20 @@ class NotificationService {
   static findByReceiverId = (receiverId) => {
     return new ProjectionBuilder(async function () {
       return await Notification.find(
-        { [TableFields.receiverId]: receiverId },
+        { [TableFields.receiverId]: receiverId,
+          [TableFields.isRead]: false,
+         },
+        this
+      );
+    });
+  };
+
+  static findByNotifications = () => {
+    return new ProjectionBuilder(async function () {
+      return await Notification.find(
+        { 
+          [TableFields.isRead]: false,
+         },
         this
       );
     });
