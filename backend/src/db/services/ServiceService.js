@@ -259,6 +259,13 @@ class ServiceService {
 
     return updatedService.toObject();
   };
+  static getServiceByClientId = (clientId) => {
+    return new ProjectionBuilder(async function () {
+      return await Service.find({
+        [TableFields.clientDetail + "." + TableFields.clientId]: clientId,
+      });
+    });
+  };
 }
 
 const ProjectionBuilder = class {
