@@ -99,39 +99,40 @@ exports.getServiceDetail = async (req) => {
   return { clientDetails, allServices, docs };
 };
 
-exports.deAssignService = async (req) => {
-  // console.log("in bacj=ke");
-  const serviceId = req.params[TableFields.serviceId];
-  const clientId = req.params[TableFields.clientId];
 
+
+
+exports.deAssignService  = async (req) => {
+  const serviceId = req.params[TableFields.ID];
+  const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+  console.log(service);
+  const clientId = service[TableFields.clientDetail][TableFields.clientId];
+  const serviceType = req.params[TableFields.serviceType]
+  console.log(clientId);
+  console.log(serviceType);
   const clientExists = await ClientService.userExists(clientId);
-  if (!clientExists) {
+  if(!clientExists) {
     throw new ValidationError(ValidationMsg.ClientNotExists);
   }
 
-  const checkClientAssignService =
-    await ServiceService.checkClientAssignService(clientId, serviceId);
+  const checkClientAssignService = await ServiceService.checkClientAssignService(clientId,serviceType);
   console.log(checkClientAssignService);
-
-  if (!checkClientAssignService) {
+  if(!checkClientAssignService) {
     throw new ValidationError(ValidationMsg.ClientNotAssignService);
   }
 
-  const isServiceCompleted = await ServiceService.checkIsServiceCompleted(
-    clientId,
-    serviceId
-  );
+  const isServiceCompleted = await ServiceService.checkIsServiceCompleted(service, serviceType);
   console.log(isServiceCompleted);
 
-  if (isServiceCompleted) {
-    throw new ValidationError(ValidationMsg.ServiceIsCompleted);
+  if(isServiceCompleted) {
+    throw new ValidationError(ValidationMsg.ServiceIsCompleted)
   }
 
-  await ServiceService.updateDeassign(clientId, serviceId);
-};
+  await ServiceService.updateDeassign(service, serviceType);
+}
 
-async function parseAndValidate(
-  reqBody,
+async function parseAndValidate (
+  reqBody, 
   client,
   existingField = {},
   onValidationCompleted = async (updatedFields) => {}

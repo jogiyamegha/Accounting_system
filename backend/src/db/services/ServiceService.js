@@ -1,19 +1,19 @@
 const {
   TableFields,
-  TableNames,
-  ValidationMsg,
   ServiceType,
+  ServiceDuration,
 } = require("../../utils/constants");
 const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
 const Service = require("../models/service");
+const { MongoUtil } = require("../mongoose");
 
 class ServiceService {
   static findById = (id) => {
     return new ProjectionBuilder(async function () {
       return await Service.findOne(
         {
-          id,
+          [TableFields.ID]: MongoUtil.toObjectId(id),
         },
         this
       );
@@ -32,17 +32,8 @@ class ServiceService {
   };
 
   static serviceExistsWithClient = async (clientEmail) => {
-    console.log(clientEmail);
     return await Service.exists({
       [TableFields.clientDetail + "." + TableFields.clientEmail]: clientEmail,
-    });
-  };
-
-  static getServiceByClientId = (clientId) => {
-    return new ProjectionBuilder(async function () {
-      return await Service.find({
-        [TableFields.clientDetail + "." + TableFields.clientId]: clientId,
-      });
     });
   };
 
@@ -50,6 +41,8 @@ class ServiceService {
     return new ProjectionBuilder(async function () {
       return await Service.find({
         [`${TableFields.services}.${TableFields.serviceType}`]: serviceType,
+
+        [`${TableFields.services}.${TableFields.deleted}`]: false,
       });
     });
   };
@@ -98,41 +91,34 @@ class ServiceService {
     });
   };
 
-  static checkClientAssignService = async (clientId, serviceId) => {
-    return await Service.exists({
-      "clientDetail.clientId": clientId,
-      services: {
-        $elemMatch: {
-          _id: serviceId,
-        },
-      },
-    });
-  };
-
-  static checkIsServiceCompleted = async (clientId, serviceId) => {
-    return await Service.exists({
-      [`${TableFields.clientDetail}.${TableFields.clientId}`]: clientId,
-      [`${TableFields.services}._id`]: serviceId,
-    });
-  };
-
-  static checkIsServiceCompleted = async (clientId, serviceId) => {
+  static checkClientAssignService = async (clientId, serviceType) => {
     return await Service.exists({
       [`${TableFields.clientDetail}.${TableFields.clientId}`]: clientId,
       [TableFields.services]: {
         $elemMatch: {
-          _id: serviceId,
-          [TableFields.serviceStatus]: 3,
+          [TableFields.serviceType]: serviceType,
         },
       },
     });
   };
 
-  static updateDeassign = async (clientId, serviceId) => {
+  static checkIsServiceCompleted = async (service, serviceType) => {
+    const services = service[TableFields.services];
+    for (let i of services) {
+      if (i[TableFields.serviceType] == serviceType) {
+        if (i[TableFields.serviceStatus] == 3) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  static updateDeassign = async (service, serviceType) => {
     await Service.updateOne(
       {
-        [`${TableFields.clientDetail}.${TableFields.clientId}`]: clientId,
-        [`${TableFields.services}.${TableFields.ID}`]: serviceId,
+        _id: service._id,
+        [`${TableFields.services}.${TableFields.serviceType}`]: serviceType,
       },
       {
         $set: {
@@ -161,6 +147,45 @@ class ServiceService {
     }
   };
 
+  // static updateServiceDetails = async (service, id, reqBody, res) => {
+  //   let serviceType =  reqBody[TableFields.serviceType];
+
+  //   if (typeof serviceType === "string") {
+  //       const serviceTypeMap = {
+  //         "VAT Filing": ServiceType.VATFiling,
+  //         "Corporate Tax": ServiceType.CorporateTaxServices,
+  //         "Payroll": ServiceType.Payroll,
+  //         "Audit": ServiceType.AuditAndCompliance,
+  //       };
+
+  //       serviceType = serviceTypeMap[serviceType];
+  //     }
+
+  //   const services = service[TableFields.services];
+  //   for(let s of services) {
+  //     if(s[TableFields.serviceType] === serviceType && s[TableFields.serviceStatus] === 2){
+  //       return res.status(400).json({ message: "This service is running! please wait until completion.." });
+  //     }
+  //   }
+
+  //   return await Service.findByIdAndUpdate(
+  //     id,
+  //     {
+  //       $push: {
+  //         [TableFields.services]: {
+  //           [TableFields.serviceType]: serviceType,
+  //           [TableFields.serviceStartDate]: new Date.now(),
+  //           [TableFields.serviceEndDate]: new Date(
+  //             reqBody[TableFields.endDate]
+  //           ),
+  //           [TableFields.serviceStatus] : 2
+  //         },
+  //       },
+  //     },
+  //     { new: true, runValidators: true }
+  //   );
+  // };
+
   static updateServiceDetails = async (service, id, reqBody, res) => {
     let serviceType = reqBody[TableFields.serviceType];
 
@@ -175,18 +200,31 @@ class ServiceService {
       serviceType = serviceTypeMap[serviceType];
     }
 
+    // check if same service is already running
     const services = service[TableFields.services];
     for (let s of services) {
       if (
         s[TableFields.serviceType] === serviceType &&
         s[TableFields.serviceStatus] === 2
       ) {
-        return res
-          .status(400)
-          .json({
-            message: "This service is running! please wait until completion..",
-          });
+        return res.status(400).json({
+          message: "This service is running! please wait until completion..",
+        });
       }
+    }
+
+    // calculate end date based on duration
+    const durationInDays =
+      ServiceDuration[
+        Object.keys(ServiceDuration).find(
+          (key) => ServiceType[key] === serviceType
+        )
+      ];
+
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    if (durationInDays) {
+      endDate.setDate(startDate.getDate() + durationInDays);
     }
 
     return await Service.findByIdAndUpdate(
@@ -195,12 +233,9 @@ class ServiceService {
         $push: {
           [TableFields.services]: {
             [TableFields.serviceType]: serviceType,
-            [TableFields.serviceStartDate]: new Date(
-              reqBody[TableFields.startDate]
-            ),
-            [TableFields.serviceEndDate]: new Date(
-              reqBody[TableFields.endDate]
-            ),
+
+            [TableFields.serviceStartDate]: startDate,
+            [TableFields.serviceEndDate]: endDate,
             [TableFields.serviceStatus]: 2,
           },
         },

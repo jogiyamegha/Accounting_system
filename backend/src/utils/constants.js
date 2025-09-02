@@ -76,11 +76,20 @@ const DurationType = (function () {
 
 const ServiceType = (function () {
   function ServiceType() {}
-  ServiceType.VATFiling = 1;
+  ServiceType.VAT = 1;
   ServiceType.CorporateTaxServices = 2;
   ServiceType.Payroll = 3;
   ServiceType.AuditAndCompliance = 4;
   return ServiceType;
+})();
+
+const ServiceDuration = (function() {
+  function ServiceDuration(){}
+  ServiceDuration.VAT = 30;
+  ServiceDuration.CorporateTaxServices = 60;
+  ServiceDuration.Payroll = 45;
+  ServiceDuration.AuditAndCompliance = 30
+  return ServiceDuration;
 })();
 
 const LicenseTypes = (function () {
@@ -181,7 +190,8 @@ const ValidationMsg = (function () {
   ValidationMsg.UserNotFound = "Cannot get the user Token to verify";
   ValidationMsg.AdminNotFound = "Admin Not Found from Token";
   ValidationMsg.ServiceNotEnded = "Opps, can not assign service as past service is running!"
-
+  ValidationMsg.ClientNotAssignService = 'this service is not assigned to client..';
+  ValidationMsg.ServiceIsCompleted = 'service is already completed, You can not De-assign.';
   return ValidationMsg;
 })();
 
@@ -276,6 +286,7 @@ const TableFields = (function () {
   TableFields.clientDetail = "clientDetail";
   TableFields.clientName = "clientName";
   TableFields.serviceType = "serviceType";
+  TableFields.serviceDuration = 'serviceDuration';
   TableFields.deadlineDetails = "deadlineDetails";
   TableFields.deadlineCategory = "deadlineCategory";
   TableFields.deadline = "deadline";
@@ -323,6 +334,7 @@ const TableFields = (function () {
   TableFields.startDate = 'startDate';
   TableFields.endDate = 'endDate';
   TableFields.serviceType = "serviceType";
+  TableFields.serviceDuration = "ServiceDuration "
 
   return TableFields;
 })();
@@ -388,6 +400,7 @@ module.exports = {
   DocumentType,
   DocStatus,
   ServiceType,
+  ServiceDuration,
   LicenseTypes,
   BusinessTypes,
   NotificationTypes,

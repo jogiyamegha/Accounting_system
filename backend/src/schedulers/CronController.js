@@ -111,6 +111,34 @@ exports.serviceDeadlineToday = async () => {
   }
 };
 
+exports.setServiceStatusCompleted = async () => {
+  try {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayString = yesterday.toISOString().split("T")[0];
+
+    const yesterdayStart = new Date(`${yesterdayString}T00:00:00.000Z`);
+    const yesterdayEnd = new Date(`${yesterdayString}T23:59:59.999Z`);
+
+    console.log(yesterday);
+    console.log(yesterdayStart);
+
+    const allUsers = await Service.find({
+      "services.serviceEndDate": {
+        $eq: yesterdayStart,
+      },
+    });
+    console.log(allUsers);
+
+    if (allUsers.length > 0) {
+      // Service.updateOne(
+
+      // )
+      console.log("nino abe");
+    }
+  } catch (error) {}
+};
+
 // exports.sendNotificationForServiceDeadline = async ({ daysFromNow = 0 } = {}) => {
 //     try {
 //         console.log(`🔔 Checking for service deadlines exactly ${daysFromNow} day(s) ahead...`);
@@ -240,7 +268,7 @@ exports.serviceDeadlineToday = async () => {
 
 exports.sendNotificationsBasedOnDB = async () => {
   try {
-    console.log("🔔 Checking for upcoming service deadlines based on DB...");
+    console.log("Checking for upcoming service deadlines based on DB...");
 
     const now = new Date(); // current datetime
 
@@ -300,51 +328,6 @@ const documentTypeMap = {
   [DocumentType.Other]: "Other",
   // add more as per your enums
 };
-
-// exports.documentStatusNotifications = async () => {
-//   try {
-//     console.log("📂 Checking for pending/missing documents...");
-
-//     // Step 1: Fetch all documents with pending/missing status
-//     const docs = await Document.find({
-//       "documents.documentDetails.docStatus": { $in: [DocStatus.pending] },
-//       deleted: false,
-//     }).populate(TableFields.clientId);
-
-//     // Step 2: Loop over clients and collect their pending/missing documents
-//     for (const doc of docs) {
-//       const client = doc[TableFields.clientId];
-//       console.log(client)
-//       if (!client) continue;
-
-//       // filter nested documents
-//       const pendingDocs = doc.documents.filter((d) =>
-//         [DocStatus.pending].includes(d.documentDetails.docStatus)
-//       );
-
-//       if (pendingDocs.length > 0) {
-//         const docTypes = pendingDocs
-//           .map((d) => documentTypeMap[d.documentDetails.documentType] || "Document")
-//           .join(", ");
-
-//         // fake request for notification controller
-//         const fakeReq = {
-//           body: {
-//             email: client.email,
-//             type: "Document Status",
-//             message: `You have pending/missing documents: ${docTypes}. Please upload/complete them at the earliest.`,
-//             expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // expiry 3 days later
-//           },
-//         };
-
-//         console.log(`📨 Sending doc status notification to: ${client.clientEmail}`);
-//         await NotificationController.addNotification(fakeReq);
-//       }
-//     }
-//   } catch (err) {
-//     console.error("❌ Error in documentStatusNotifications:", err);
-//   }
-// };
 
 exports.documentStatusNotifications = async () => {
   try {

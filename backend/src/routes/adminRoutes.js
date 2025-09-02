@@ -6,7 +6,8 @@ const ServiceController = require('../controllers/admin/ServiceController');
 const VATController = require('../controllers/admin/VATController');
 const NotificationController = require('../controllers/admin/NotificationController');
 const InvoiceController = require('../controllers/admin/InvoiceController');
-const AdminDashboardController = require('../controllers/admin/AdminDashboardController')
+const AdminDashboardController = require('../controllers/admin/AdminDashboardController');
+const CronController = require('../schedulers/CronController');
 const { TableFields } = require("../utils/constants");
 const PDFHandler = require('../middlewares/pdfHandler');
 
@@ -217,8 +218,13 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
-.addPath('/service/:serviceType')
+.addPath(`/service/:${TableFields.serviceType}`)
 .asGET(ServiceController.getClientsAssignedService)
+.useAdminAuth()
+.build()
+
+.addPath(`/de-assign-client/:${TableFields.ID}/:${TableFields.serviceType}`)
+.asDELETE(ServiceController.deAssignService)
 .useAdminAuth()
 .build()
 
@@ -226,6 +232,7 @@ const router = API.configRoute("/admin")
 .asGET(ServiceController.getServiceDetail)
 .useAdminAuth()
 .build()
+
 
 
 .getRouter()
