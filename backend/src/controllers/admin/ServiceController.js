@@ -101,9 +101,6 @@ exports.getServiceDetail = async (req) => {
     return { clientDetails, allServices, docs };
 };
 
-
-
-
 exports.deAssignService = async (req) => {
     const serviceId = req.params[TableFields.serviceId];
     const clientId = req.params[TableFields.clientId];
@@ -120,11 +117,12 @@ exports.deAssignService = async (req) => {
     }
 
     const isServiceCompleted = await ServiceService.checkIsServiceCompleted(clientId, serviceId);
-    console.log(isServiceCompleted);
 
     if (isServiceCompleted) {
         throw new ValidationError(ValidationMsg.ServiceIsCompleted)
     }
+
+    await ServiceService.updateDeassign(clientId, serviceId);
 }
 
 
@@ -147,7 +145,11 @@ exports.renewService = async (req) => {
 
     const mainService = await ServiceService.getServiceByClientId(clientId).withBasicInfo().execute();
 
-    await ServiceService.updateServiceArrayAsRenewService(mainService, serviceType)
+    let { serviceTypeKey, endDate } = await ServiceService.updateServiceArrayAsRenewService(mainService, serviceType)
+    let client = await ClientService.getUserById(clientId).withBasicInfo().execute()
+    
+    Email.sendServiceRenewalMail(client[TableFields.name_], client[TableFields.email], serviceTypeKey, endDate)
+ 
 }
 
 async function parseAndValidate(

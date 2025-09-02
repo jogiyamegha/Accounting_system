@@ -246,7 +246,9 @@ class ServiceService {
             [TableFields.deleted]: false,
         });
 
-        return await mainService.save();
+        let result = await mainService.save();
+        return { serviceTypeKey, endDate }
+ 
     };
 
 

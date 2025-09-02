@@ -5,6 +5,15 @@ const fs = require("fs");
 const customerViewDirPath = path.join(__dirname, "../templates");
 const nodemailer = require("nodemailer");
 
+function formatDateToDDMMYYYY(dateString) {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = ("0" + date.getDate()).slice(-2);
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
 exports.sendForgotPasswordMail = async (emailId, code, name) => {
     const resetPasswordTemplate = fs
         .readFileSync(
@@ -198,7 +207,8 @@ exports.sendServiceRenewalMail = async (name, emailId, serviceName, serviceEndDa
         name: name,
         email: emailId,
         serviceName: serviceName,
-        serviceEndDate: serviceEndDate
+        serviceEndDate: formatDateToDDMMYYYY(serviceEndDate)
+ 
     };
 
     const template = Handlebars.compile(invitationTemplate);

@@ -426,7 +426,7 @@ export default function DynamicService() {
                         : client
                 )
             );
-            navigate(0);
+            navigate(`/admin/service/${serviceType}`);
         } catch (err) {
             console.error("Error de-assigning service:", err);
         }
