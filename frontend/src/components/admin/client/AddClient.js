@@ -51,7 +51,6 @@ export default function AddClient() {
     "Payroll",
     "WPSReport",
     "ExpenseReciept",
-    "Other",
   ];
 
   const [documents, setDocuments] = useState([]);

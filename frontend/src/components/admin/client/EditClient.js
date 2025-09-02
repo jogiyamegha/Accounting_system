@@ -66,7 +66,6 @@ export default function EditClient() {
     "Payroll",
     "WPSReport",
     "ExpenseReciept",
-    "Other",
   ];
 
   /** Fetch client details **/

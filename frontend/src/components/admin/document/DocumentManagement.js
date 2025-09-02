@@ -9,12 +9,18 @@ import { toast } from "react-toastify";
 const API_URL = `${ADMIN_END_POINT}/document-management`;
 
 const docTypeMap = {
-  1: "Financial Statements",
-  2: "VAT Returns & Invoices",
-  3: "Payroll & WPS Reports",
-  4: "Bank Statements",
-  5: "Expense Receipts",
-  6: "Audit Reports",
+  1: "VATcertificate",
+  2: "CorporateTaxDocument",
+  3: "BankStatement",
+  4: "Invoice",
+  5: "auditFiles",
+  6: "TradeLicense",
+  7: "passport",
+  8: "FinancialStatements",
+  9: "BalanceSheet",
+  10: "Payroll",
+  11: "WPSReport",
+  12: "ExpenseReciept",
 };
 
 export default function DocumentManagement() {
@@ -67,7 +73,7 @@ export default function DocumentManagement() {
     let categories = {};
     client.documents.forEach((doc) => {
       const type = doc.documentDetails.documentType;
-      const category = docTypeMap[type] || "Other";
+      const category = docTypeMap[type];
       if (!categories[category]) categories[category] = [];
       categories[category].push(doc);
     });

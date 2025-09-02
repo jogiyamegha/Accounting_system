@@ -218,12 +218,18 @@ class DocumentService {
       let needCount = Util.parseBoolean(filter.needCount);
       // mapping between names and numbers
       const docTypeMap = {
-        1: "Financial Statements",
-        2: "VAT Returns & Invoices",
-        3: "Payroll & WPS Reports",
-        4: "Bank Statements",
-        5: "Expense Receipts",
-        6: "Audit Reports",
+        1: "VATcertificate",
+        2: "CorporateTaxDocument",
+        3: "BankStatement",
+        4: "Invoice",
+        5: "auditFiles",
+        6: "TradeLicense",
+        7: "passport",
+        8: "FinancialStatements",
+        9: "BalanceSheet",
+        10: "Payroll",
+        11: "WPSReport",
+        12: "ExpenseReciept",
       };
 
       let searchQuery = {};

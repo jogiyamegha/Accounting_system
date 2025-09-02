@@ -322,12 +322,13 @@ const documentTypeMap = {
   [DocumentType.TradeLicense]: "TradeLicense",
   [DocumentType.passport]: "passport",
   [DocumentType.FinancialStatements]: "FinancialStatements",
+  [DocumentType.BalanceSheet]: "BalanceSheet",
   [DocumentType.Payroll]: "Payroll",
   [DocumentType.WPSReport]: "WPSReport",
   [DocumentType.ExpenseReciept]: "ExpenseReciept",
-  [DocumentType.Other]: "Other",
   // add more as per your enums
 };
+
 
 exports.documentStatusNotifications = async () => {
   try {

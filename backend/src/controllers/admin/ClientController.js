@@ -330,7 +330,6 @@ async function parseAndValidateDocuments(
           Payroll: DocumentType.Payroll,
           WPSReport: DocumentType.WPSReport,
           ExpenseReciept: DocumentType.ExpenseReciept,
-          Other: DocumentType.Other,
         };
         docType = docTypeMap[documentType];
       }
@@ -409,7 +408,6 @@ async function parseAndValidateEditDocuments(
           Payroll: DocumentType.Payroll,
           WPSReport: DocumentType.WPSReport,
           ExpenseReciept: DocumentType.ExpenseReciept,
-          Other: DocumentType.Other,
         };
         docType = docTypeMap[documentType];
       }

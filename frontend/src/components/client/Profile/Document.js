@@ -26,7 +26,6 @@ export default function DocumentPage() {
     "Payroll",
     "WPSReport",
     "ExpenseReciept",
-    "Other",
   ];
 
   const handleAddDocument = () => {
