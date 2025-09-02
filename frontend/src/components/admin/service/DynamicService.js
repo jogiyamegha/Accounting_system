@@ -350,11 +350,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   ADMIN_END_POINT,
   docTypeMap,
+  formatDateToDDMMYYYY,
   serviceStatusMap,
   serviceTypeMap,
 } from "../../../utils/constants";
 import classes from "../../../styles/dynamicService.module.css";
 import Sidebar from "../../Sidebar";
+
 
 export default function DynamicService() {
   const { serviceType } = useParams();
@@ -536,15 +538,15 @@ export default function DynamicService() {
                       <small className={classes.clientMeta}>
                         Start:{" "}
                         {service.serviceStartDate
-                          ? new Date(
+                          ? formatDateToDDMMYYYY(
                               service.serviceStartDate
-                            ).toLocaleDateString()
+                            )
                           : "-"}
                         {" | "}End:{" "}
                         {service.serviceEndDate
-                          ? new Date(
+                          ? formatDateToDDMMYYYY(
                               service.serviceEndDate
-                            ).toLocaleDateString()
+                            )
                           : "-"}
                       </small>
                       <br></br>

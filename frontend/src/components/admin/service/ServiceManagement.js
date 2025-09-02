@@ -15,8 +15,8 @@ const SERVICE_TYPES = ["VAT Filing", "Corporate Tax", "Payroll", "Audit"];
 const SERVICE_TYPE_MAP = {
     "VAT Filing": 1,
     "Corporate Tax": 2,
-    Payroll: 3,
-    Audit: 4,
+    "Payroll": 3,
+    "Audit": 4,
 };
 
 // Reverse mapping number → string for displaying

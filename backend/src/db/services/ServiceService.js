@@ -91,34 +91,29 @@ class ServiceService {
     });
   };
 
-  static checkClientAssignService = async (clientId, serviceType) => {
+  static checkClientAssignService = async (clientId, serviceId) => {
     return await Service.exists({
-      [`${TableFields.clientDetail}.${TableFields.clientId}`]: clientId,
-      [TableFields.services]: {
+      "clientDetail.clientId": clientId,
+      services: {
         $elemMatch: {
-          [TableFields.serviceType]: serviceType,
+          _id: serviceId,
         },
       },
     });
   };
 
-  static checkIsServiceCompleted = async (service, serviceType) => {
-    const services = service[TableFields.services];
-    for (let i of services) {
-      if (i[TableFields.serviceType] == serviceType) {
-        if (i[TableFields.serviceStatus] == 3) {
-          return true;
-        }
-      }
-    }
-    return false;
+  static checkIsServiceCompleted = async (clientId, serviceId) => {
+    return await Service.exists({
+      [`${TableFields.clientDetail}.${TableFields.clientId}`]: clientId,
+      [`${TableFields.services}._id`]: serviceId,
+    });
   };
 
-  static updateDeassign = async (service, serviceType) => {
+  static updateDeassign = async (clientId, serviceId) => {
     await Service.updateOne(
       {
-        _id: service._id,
-        [`${TableFields.services}.${TableFields.serviceType}`]: serviceType,
+        [`${TableFields.clientDetail}.${TableFields.clientId}`]: clientId,
+        [`${TableFields.services}.${TableFields.ID}`]: serviceId,
       },
       {
         $set: {

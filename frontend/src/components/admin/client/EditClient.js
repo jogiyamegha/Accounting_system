@@ -215,7 +215,7 @@ export default function EditClient() {
 
 
       toast.success("Client updated successfully!");
-      navigate("/admin/client-management");
+      navigate(`/admin/client-detail/${clientId}`);
     } catch (err) {
       setError(err.message);
     } finally {

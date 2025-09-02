@@ -118,3 +118,12 @@ export const serviceStatusMap = {
   2: "In Progress", 
   3: "Completed", 
 }
+
+export function formatDateToDDMMYYYY(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const day = ("0" + date.getDate()).slice(-2);
+  const month = ("0" + (date.getMonth() + 1)).slice(-2);
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
