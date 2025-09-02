@@ -80,7 +80,7 @@ exports.getServiceDetail = async (req) => {
     throw new ValidationError(ValidationMsg.RecordNotFound);
   }
 
-  let allServices = await ServiceService.getServiceByClientId(clientId)
+  let allServices = await ServiceService.getAllServiceByClientId(clientId)
     .withBasicInfo()
     .execute();
 

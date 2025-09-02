@@ -356,6 +356,7 @@ import {
 } from "../../../utils/constants";
 import classes from "../../../styles/dynamicService.module.css";
 import Sidebar from "../../Sidebar";
+import { toast } from "react-toastify";
 
 
 export default function DynamicService() {
@@ -420,7 +421,7 @@ export default function DynamicService() {
         throw new Error("Failed to de-assign service");
       }
 
-      const result = await res.json();
+      // const result = await res.json();
 
       setClients((prev) =>
         prev.map((client) =>
@@ -509,7 +510,8 @@ export default function DynamicService() {
   }
 
   if (clients.length === 0) {
-    return <p>No clients have applied for this service.</p>;
+    toast.info("No clients have applied for this service.")
+    navigate('/admin/service-management')
   }
 
   return (
@@ -643,7 +645,7 @@ export default function DynamicService() {
             </ul>
 
             {/* Upload Form */}
-            
+            {requiredDocs.length > 0 && (
             <form onSubmit={handleFileUpload}>
               <label>Select Document Type:</label>
               <select
@@ -681,7 +683,7 @@ export default function DynamicService() {
 
               <button type="submit">Upload</button>
             </form>
-
+            )}
             <button onClick={() => setShowModal(false)}>Close</button>
           </div>
         </div>
