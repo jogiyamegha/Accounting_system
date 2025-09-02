@@ -166,6 +166,11 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/renew-service/:${TableFields.serviceId}/:${TableFields.clientId}/:${TableFields.serviceType}`)
+.asPOST(ServiceController.renewService)
+.useAdminAuth()
+.build()
+
 .addPath(`/all-clients-assigned-service/:${TableFields.serviceType}`)
 .asGET(ServiceController.getClientsAssignedService)
 .useAdminAuth()

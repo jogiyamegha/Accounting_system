@@ -39,7 +39,34 @@ class DocumentService {
 
   static getDocsByClientId = (clientId) => {
     return new ProjectionBuilder(async function () {
-      return await Document.findOne({ [TableFields.clientId]: clientId }, this);
+      const result = await Document.aggregate([
+        {
+          $match: {
+            [TableFields.clientId]: MongoUtil.toObjectId(clientId),
+            [TableFields.deleted]: false, // parent must not be deleted
+          },
+        },
+        {
+          $project: {
+            clientId: 1,
+            deleted: 1,
+            documents: {
+              $filter: {
+                input: `$${TableFields.documents}`,
+                as: "doc",
+                cond: {
+                  $eq: [
+                    `$$doc.${TableFields.documentDetails}.${TableFields.deleteDoc}`,
+                    false,
+                  ],
+                },
+              },
+            },
+          },
+        },
+      ]);
+ 
+      return result[0] || null;
     });
   };
 
@@ -330,23 +357,21 @@ class DocumentService {
   };
 
   static deleteDocFromArray = async (clientId, documentId, docArray) => {
-    const matchedDoc = docArray.find(
-      (doc) => doc._id.toString() === documentId
-    );
-
     const updatedDoc = await Document.updateOne(
-      { [TableFields.clientId]: MongoUtil.toObjectId(clientId) },
+      {
+        [`${TableFields.clientId}`]: MongoUtil.toObjectId(clientId),
+        [`${TableFields.documents}.${TableFields.ID}`]: MongoUtil.toObjectId(documentId)
+      },
       {
         $set: {
-          "documents.$[elem].documentDetails.deleteDoc": true,
-        },
-      },
-      { arrayFilters: [{ "elem._id": documentId }] }
-    );
-
+          [`${TableFields.documents}.$.${TableFields.documentDetails}.${TableFields.deleteDoc}`]: true
+        }
+      }
+    )
+ 
     return updatedDoc;
   };
-
+ 
   static deleteMyReferences = async (
     cascadeDeleteMethodReference,
     tableName,

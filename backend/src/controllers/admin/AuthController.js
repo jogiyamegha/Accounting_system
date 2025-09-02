@@ -1,63 +1,63 @@
 const AdminService = require("../../db/services/AdminService");
 const {
-  TableFields,
-  UserTypes,
-  InterfaceType,
-  ValidationMsg,
+    TableFields,
+    UserTypes,
+    InterfaceType,
+    ValidationMsg,
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
 const Email = require("../../emails/email");
 
 exports.addAdminUser = async (req) => {
-  if (Util.parseBoolean(req.headers.dbuser)) {
-    await AdminService.insertUserRecord(req.body);
+    if (Util.parseBoolean(req.headers.dbuser)) {
+        await AdminService.insertUserRecord(req.body);
 
-    let email = req.body[TableFields.email];
-    email = (email + "").trim().toLowerCase();
+        let email = req.body[TableFields.email];
+        email = (email + "").trim().toLowerCase();
 
-    let user = await AdminService.findByEmail(email).withEmail().execute();
+        let user = await AdminService.findByEmail(email).withEmail().execute();
 
-    const token = user.createAuthToken(InterfaceType.Admin.AdminWeb);
-    await AdminService.saveAuthToken(user[TableFields.ID], token);
-    return { user, token };
-  } else {
-    throw new ValidationError(ValidationMsg.NotAllowed);
-  }
+        const token = user.createAuthToken(InterfaceType.Admin.AdminWeb);
+        await AdminService.saveAuthToken(user[TableFields.ID], token);
+        return { user, token };
+    } else {
+        throw new ValidationError(ValidationMsg.NotAllowed);
+    }
 };
 
 exports.login = async (req, res) => {
-  let email = req.body[TableFields.email];
-  email = (email + "").trim().toLocaleLowerCase();
-  let password = req.body[TableFields.password];
+    let email = req.body[TableFields.email];
+    email = (email + "").trim().toLocaleLowerCase();
+    let password = req.body[TableFields.password];
 
-  if (!email) {
-    throw new ValidationError(ValidationMsg.EmailEmpty);
-  }
-  if (!password) {
-    throw new ValidationError(ValidationMsg.PasswordEmpty);
-  }
+    if (!email) {
+        throw new ValidationError(ValidationMsg.EmailEmpty);
+    }
+    if (!password) {
+        throw new ValidationError(ValidationMsg.PasswordEmpty);
+    }
 
-  let user = await AdminService.findByEmail(email)
-    .withBasicInfo()
-    .withPassword()
-    .execute();
+    let user = await AdminService.findByEmail(email)
+        .withBasicInfo()
+        .withPassword()
+        .execute();
 
-  if (user && (await user.isValidAuth(password))) {
-    const token = user.createAuthToken();
-    await AdminService.saveAuthToken(user[TableFields.ID], token);
+    if (user && (await user.isValidAuth(password))) {
+        const token = user.createAuthToken();
+        await AdminService.saveAuthToken(user[TableFields.ID], token);
 
-    res.cookie("admin_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+        res.cookie("admin_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000,
+        });
 
-    return  res.json({ role: "admin", user });;
-  } else {
-    throw new ValidationError(ValidationMsg.UnableToLogin);
-  }
+        return res.json({ role: "admin", user });;
+    } else {
+        throw new ValidationError(ValidationMsg.UnableToLogin);
+    }
 };
 
 // exports.logout = async (req) => {
@@ -67,57 +67,57 @@ exports.login = async (req, res) => {
 // };
 
 exports.logout = async (req, res) => {
-  try {
-    const token = req.cookies.admin_token;
-    if (!token) {
-      throw new ValidationError("No active session found");
+    try {
+        const token = req.cookies.admin_token;
+        if (!token) {
+            throw new ValidationError("No active session found");
+        }
+
+        // Remove token from DB
+        await AdminService.removeAuth(req.user[TableFields.ID], token);
+
+        // Clear cookie
+        res.clearCookie("admin_token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+        });
+
+        console.log("You Logged Out....");
+        return { message: "Logged out successfully" };
+    } catch (err) {
+        throw err;
     }
-
-    // Remove token from DB
-    await AdminService.removeAuth(req.user[TableFields.ID], token);
-
-    // Clear cookie
-    res.clearCookie("admin_token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
-
-    console.log("You Logged Out....");
-    return { message: "Logged out successfully" };
-  } catch (err) {
-    throw err;
-  }
 };
 
 exports.forgotPassword = async (req) => {
-  let providedEmail = req.body[TableFields.email];
-  providedEmail = (providedEmail + "").trim().toLowerCase();
+    let providedEmail = req.body[TableFields.email];
+    providedEmail = (providedEmail + "").trim().toLowerCase();
 
-  if (!providedEmail) throw new ValidationError(ValidationMsg.EmailEmpty);
+    if (!providedEmail) throw new ValidationError(ValidationMsg.EmailEmpty);
 
-  let { code, email, name } = await AdminService.getResetPasswordToken(
-    providedEmail
-  );
-  Email.sendForgotPasswordMail(email, code, name);
+    let { code, email, name } = await AdminService.getResetPasswordToken(
+        providedEmail
+    );
+    Email.sendForgotPasswordMail(email, code, name);
 };
 
 exports.forgotPasswordCodeExists = async (req) => {
-  let providedEmail = req.body[TableFields.email];
-  let providedCode = req.body.code;
-  if (providedEmail) {
-    providedEmail = (providedEmail + "").trim().toLowerCase();
-  }
-  if (!providedEmail || !providedCode) {
-    throw new ValidationError(ValidationMsg.ParametersError);
-  }
-  let exists = await AdminService.resetPasswordCodeExists(
-    providedEmail,
-    providedCode
-  );
-  if (!exists) {
-    throw new ValidationError(ValidationMsg.InvalidPassResetCode);
-  }
+    let providedEmail = req.body[TableFields.email];
+    let providedCode = req.body.code;
+    if (providedEmail) {
+        providedEmail = (providedEmail + "").trim().toLowerCase();
+    }
+    if (!providedEmail || !providedCode) {
+        throw new ValidationError(ValidationMsg.ParametersError);
+    }
+    let exists = await AdminService.resetPasswordCodeExists(
+        providedEmail,
+        providedCode
+    );
+    if (!exists) {
+        throw new ValidationError(ValidationMsg.InvalidPassResetCode);
+    }
 };
 
 // exports.resetPassword = async (req) => {
@@ -143,49 +143,49 @@ exports.forgotPasswordCodeExists = async (req) => {
 // };
 
 exports.changePassword = async (req) => {
-  // let { oldPassword, newPassword } = req.body;
-  let providedEmail = req.body[TableFields.email];
+    // let { oldPassword, newPassword } = req.body;
+    let providedEmail = req.body[TableFields.email];
 
-  let { newPassword, confirmPassword } = req.body;
+    let { newPassword, confirmPassword } = req.body;
 
-  if (!providedEmail || !newPassword || !confirmPassword)
-    throw new ValidationError(ValidationMsg.ParametersError);
+    if (!providedEmail || !newPassword || !confirmPassword)
+        throw new ValidationError(ValidationMsg.ParametersError);
 
-  if (newPassword !== confirmPassword) {
-    throw new ValidationError(ValidationMsg.PasswordNotMatched);
-  }
+    if (newPassword !== confirmPassword) {
+        throw new ValidationError(ValidationMsg.PasswordNotMatched);
+    }
 
-  let user = await AdminService.findByEmail(providedEmail)
-    .withBasicInfo()
+    let user = await AdminService.findByEmail(providedEmail)
+        .withBasicInfo()
 
-    .withId()
-    .execute();
+        .withId()
+        .execute();
 
-  if (!user) {
-    throw new ValidationError(ValidationMsg.RecordNotFound);
-  }
+    if (!user) {
+        throw new ValidationError(ValidationMsg.RecordNotFound);
+    }
 
-  if (user) {
-    if (!user.isValidPassword(newPassword))
-      throw new ValidationError(ValidationMsg.PasswordInvalid);
-    const token = user.createAuthToken();
+    if (user) {
+        if (!user.isValidPassword(newPassword))
+            throw new ValidationError(ValidationMsg.PasswordInvalid);
+        const token = user.createAuthToken();
 
-    await AdminService.updatePasswordAndInsertLatestToken(
-      user,
-      newPassword,
-      token
-    );
-    Email.sendChangedPasswordMail(
-      providedEmail,
-      newPassword,
-      user[TableFields.name_]
-    );
-    return { token };
-  } else throw new ValidationError(ValidationMsg.PasswordInvalid);
+        await AdminService.updatePasswordAndInsertLatestToken(
+            user,
+            newPassword,
+            token
+        );
+        Email.sendChangedPasswordMail(
+            providedEmail,
+            newPassword,
+            user[TableFields.name_]
+        );
+        return { token };
+    } else throw new ValidationError(ValidationMsg.PasswordInvalid);
 };
 
 async function createAndStoreAuthToken(userObj) {
-  const token = userObj.createAuthToken(InterfaceType.Admin.AdminWeb);
-  await AdminService.saveAuthToken(userObj[TableFields.ID], token);
-  return token;
+    const token = userObj.createAuthToken(InterfaceType.Admin.AdminWeb);
+    await AdminService.saveAuthToken(userObj[TableFields.ID], token);
+    return token;
 }

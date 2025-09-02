@@ -401,13 +401,6 @@ export default function DynamicService() {
     try {
       if (!serviceId) return console.error("Service ID not found!");
 
-      console.log(
-        "De-assigning service:",
-        serviceId,
-        "for client:  its service Id ",
-        clientId
-      );
-
       const res = await fetch(
         `${ADMIN_END_POINT}/de-assign-service/${serviceId}/${clientId}`,
         {
@@ -438,6 +431,40 @@ export default function DynamicService() {
       console.error("Error de-assigning service:", err);
     }
   };
+
+  const renewService = async (serviceId, clientId, serviceType) => {
+    console.log(serviceType);
+    try {
+      if (!serviceId) return console.error("Service ID not found!");
+      
+      const res = await fetch(
+        `${ADMIN_END_POINT}/renew-service/${serviceId}/${clientId}/${serviceType}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to de-assign service");
+      }
+
+      setClients((prev) =>
+        prev.map((client) =>
+          client._id === clientId
+            ? {
+                ...client,
+                services: client.services.filter((s) => s._id !== serviceId),
+              }
+            : client
+        )
+      );
+      navigate(0);
+    } catch (error) {
+      console.error("Error renew service:", error);
+    }
+  }
 
   const openModal = async (clientId) => {
     setSelectedClient(clientId);
@@ -585,6 +612,19 @@ export default function DynamicService() {
                       }
                     >
                       De-Assign
+                    </button>
+
+                    <button
+                     className={classes.uploadBtn}
+                      onClick={() =>
+                        renewService(
+                          service._id,
+                          client.clientDetail.clientId,
+                          serviceType
+                        )
+                      }
+                    >
+                      Renew Service
                     </button>
                   </li>
                 ))

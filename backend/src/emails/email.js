@@ -156,6 +156,64 @@ exports.sendServiceAssignMail = async (name, emailId, serviceType) => {
   }
 };
 
+exports.sendActDActMail = async (name, emailId, status) => {
+  const invitationTemplate = fs
+    .readFileSync(path.join(customerViewDirPath, "client", "act-deact.hbs"))
+    .toString();
+ 
+  let clientStatus;
+ 
+  if (status === "true") {
+    clientStatus = "Activated";
+  } else {
+    clientStatus = "Deactivated";
+  }
+ 
+  let data = {
+    name: name,
+    status: clientStatus,
+    email: emailId,
+  };
+ 
+  const template = Handlebars.compile(invitationTemplate);
+  try {
+    await sendEmail(
+      emailId,
+      GeneralMessages.ClientActivityStatus,
+      template(data)
+    );
+  } catch (e) {
+    console.log(e);
+  }
+};
+ 
+exports.sendServiceRenewalMail = async (name, emailId, serviceName, serviceEndDate) => {
+  const invitationTemplate = fs
+    .readFileSync(path.join(customerViewDirPath, "client", "service-renewal.hbs"))
+    .toString();
+ 
+ 
+ 
+  let data = {
+    name: name,
+    email: emailId,
+    serviceName: serviceName,
+    serviceEndDate: serviceEndDate
+  };
+ 
+  const template = Handlebars.compile(invitationTemplate);
+  try {
+    await sendEmail(
+      emailId,
+      GeneralMessages.ClientActivityStatus,
+      template(data)
+    );
+  } catch (e) {
+    console.log(e);
+  }
+};
+ 
+
 async function sendEmail(
   receiverEMail,
   subject,
