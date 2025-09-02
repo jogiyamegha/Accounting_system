@@ -2,8 +2,14 @@ const Service = require("../db/models/service");
 const EmailBulk = require("../emails/emailBulk");
 const NotificationController = require("../controllers/admin/NotificationController");
 const { TableFields, DocStatus, DocumentType } = require("../utils/constants");
-const { serviceTypeMap } = require("../../../frontend/src/utils/constants");
 const Document = require("../db/models/document");
+
+const serviceTypeMap = {
+  1: "VATServices",
+  2: "CorporateTaxServices",
+  3: "AccountingServices",
+  4: "AuditAndCompliance",
+};
 
 exports.serviceDeadlineTomorrow = async () => {
   try {
@@ -257,9 +263,7 @@ exports.sendNotificationsBasedOnDB = async () => {
           Math.min(...upcomingServices.map((s) => s.serviceEndDate))
         );
 
-
-        let servType = serviceTypeMap[serviceTypes]
-        
+        let servType = serviceTypeMap[serviceTypes];
 
         const fakeReq = {
           body: {
@@ -281,7 +285,6 @@ exports.sendNotificationsBasedOnDB = async () => {
   }
 };
 
-
 const documentTypeMap = {
   [DocumentType.VATcertificate]: "VATcertificate",
   [DocumentType.CorporateTaxDocument]: "CorporateTaxDocument",
@@ -297,7 +300,6 @@ const documentTypeMap = {
   [DocumentType.Other]: "Other",
   // add more as per your enums
 };
-
 
 // exports.documentStatusNotifications = async () => {
 //   try {
@@ -344,7 +346,6 @@ const documentTypeMap = {
 //   }
 // };
 
-
 exports.documentStatusNotifications = async () => {
   try {
     console.log("📂 Checking for pending/missing documents...");
@@ -368,7 +369,9 @@ exports.documentStatusNotifications = async () => {
 
       if (pendingDocs.length > 0) {
         const docTypes = pendingDocs
-          .map((d) => documentTypeMap[d.documentDetails.documentType] || "Document")
+          .map(
+            (d) => documentTypeMap[d.documentDetails.documentType] || "Document"
+          )
           .join(", ");
 
         if (!clientMap.has(client._id.toString())) {
@@ -390,7 +393,9 @@ exports.documentStatusNotifications = async () => {
         body: {
           email,
           type: "Document Status",
-          message: `You have pending/missing documents: ${Array.from(docTypes).join(", ")}. Please upload/complete them at the earliest.`,
+          message: `You have pending/missing documents: ${Array.from(
+            docTypes
+          ).join(", ")}. Please upload/complete them at the earliest.`,
           expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
         },
       };
@@ -400,5 +405,51 @@ exports.documentStatusNotifications = async () => {
     }
   } catch (err) {
     console.error("❌ Error in documentStatusNotifications:", err);
+  }
+};
+
+exports.setServiceStatusCompleted = async () => {
+  console.log("welcome ");
+  try {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayString = yesterday.toISOString().split("T")[0];
+
+    const yesterdayStart = new Date(`${yesterdayString}T00:00:00.000Z`);
+    const yesterdayEnd = new Date(`${yesterdayString}T23:59:59.999Z`);
+
+    return await Service.updateMany(
+      {
+        [`${TableFields.services}`]: {
+          $elemMatch: {
+            [`${TableFields.serviceEndDate}`]: {
+              $gte: yesterdayStart,
+              $lte: yesterdayEnd,
+            },
+            [`${TableFields.deleted}`]: false,
+            [`${TableFields.serviceStatus}`]: { $ne: 3 }, // optional: skip already completed
+          },
+        },
+      },
+      {
+        $set: {
+          [`${TableFields.services}.$[elem].${TableFields.serviceStatus}`]: 3,
+        },
+      },
+      {
+        arrayFilters: [
+          {
+            [`elem.${TableFields.serviceEndDate}`]: {
+              $gte: yesterdayStart,
+              $lte: yesterdayEnd,
+            },
+            [`elem.${TableFields.deleted}`]: false,
+            [`elem.${TableFields.serviceStatus}`]: { $ne: 3 },
+          },
+        ],
+      }
+    );
+  } catch (error) {
+    console.error("Error in setServiceStatusCompleted:", error);
   }
 };

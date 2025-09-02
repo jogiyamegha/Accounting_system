@@ -111,6 +111,12 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/change-status/:${TableFields.clientId}`)
+.asUPDATE(ClientController.activateDeactivateClient)
+.useAdminAuth()
+.build()
+
+
 .addPath('/documents')
 .asPOST(DocumentController.getDocumentsForAdmin)
 .useAdminAuth()
@@ -151,6 +157,11 @@ const router = API.configRoute("/admin")
 
 .addPath('/assign-service')
 .asPOST(ServiceController.assignService) 
+.useAdminAuth()
+.build()
+
+.addPath(`/de-assign-service/:${TableFields.serviceId}/:${TableFields.clientId}`)
+.asDELETE(ServiceController.deAssignService)
 .useAdminAuth()
 .build()
 
@@ -208,6 +219,11 @@ const router = API.configRoute("/admin")
 
 .addPath('/service/:serviceType')
 .asGET(ServiceController.getClientsAssignedService)
+.useAdminAuth()
+.build()
+
+.addPath(`/service-details/:${TableFields.clientId}`)
+.asGET(ServiceController.getServiceDetail)
 .useAdminAuth()
 .build()
 

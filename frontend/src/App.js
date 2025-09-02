@@ -31,6 +31,7 @@ import VATRegistrationForm from "./components/admin/service/VATRegistrationForm"
 import CalendarManagment from "./components/admin/calendar/CalendarManagement";
 import NotificationManagement from "./components/admin/notification/NotificationManagement";
 import DynamicService from "./components/admin/service/DynamicService";
+import ServiceDetail from "./components/admin/service/ServiceDetail";
 
 function App() {
   return (
@@ -194,6 +195,17 @@ function App() {
             <Layout>
               <ProtectedRoute>
                 <DynamicService />
+              </ProtectedRoute>
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/admin/service-details/:clientId"
+          element={
+            <Layout>
+              <ProtectedRoute>
+                <ServiceDetail />
               </ProtectedRoute>
             </Layout>
           }

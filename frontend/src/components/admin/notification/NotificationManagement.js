@@ -8,8 +8,12 @@ import Sidebar from "../../Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faClock } from "@fortawesome/free-solid-svg-icons";
 import { format } from "date-fns";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 export default function NotificationManagement() {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newNotification, setNewNotification] = useState({
@@ -90,6 +94,8 @@ export default function NotificationManagement() {
       if (!res.ok) {
         throw new Error("Failed to mark notification as read");
       }
+      toast.success("Nootification send Successfully..")
+      navigate(0);
     } catch (err) {
       console.error(err);
     }

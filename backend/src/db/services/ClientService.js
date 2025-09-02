@@ -9,6 +9,7 @@ const {
 const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
 const { MongoUtil } = require("../mongoose");
+const { findById } = require("../models/service");
 
 class ClientService {
   static findByEmail = (email) => {
@@ -28,7 +29,7 @@ class ClientService {
   static totalActiveClients = async () => {
     const clientCounts = await Client.find({
       [TableFields.isActive]: true,
-      [TableFields.deleted]: false
+      [TableFields.deleted]: false,
     }).countDocuments();
 
     return clientCounts;
@@ -177,10 +178,28 @@ class ClientService {
           [TableFields.name_]: clientDetails[TableFields.name_],
           [TableFields.position]: clientDetails[TableFields.position],
           [TableFields.contact]: {
-            [TableFields.phoneCountry]: clientDetails.contact[TableFields.phoneCountry],
+            [TableFields.phoneCountry]:
+              clientDetails.contact[TableFields.phoneCountry],
             [TableFields.phone]: clientDetails.contact[TableFields.phone],
           },
         },
+      }
+    );
+  };
+
+  static changeClientActivation = async (clientId) => {
+    let client = await Client.findById(clientId);
+    let status = client[TableFields.isActive];
+
+    return await Client.findByIdAndUpdate(
+      clientId,
+      {
+        $set: {
+          [TableFields.isActive]: !status,
+        },
+      },
+      {
+        new: true,
       }
     );
   };

@@ -485,3 +485,11 @@ exports.getClientDetails = async (req, res) => {
     invoice,
   });
 };
+
+exports.activateDeactivateClient = async(req) => {
+  let clientId = req.params.clientId;
+  console.log(clientId)
+
+  let client = await ClientService.changeClientActivation(clientId);
+  return client;
+}

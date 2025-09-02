@@ -209,6 +209,38 @@
   transform: translateY(-2px);
 }
 
+.statusButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.activate {
+  background-color: #28a745; /* green */
+  color: white;
+}
+
+.activate:hover {
+  background-color: #218838;
+}
+
+.deactivate {
+  background-color: #dc3545; /* red */
+  color: white;
+}
+
+.deactivate:hover {
+  background-color: #c82333;
+}
+
+
 /* Empty state */
 .noData {
   text-align: center;

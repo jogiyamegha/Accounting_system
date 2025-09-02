@@ -13,8 +13,9 @@ import {
   faPen,
   faPlusCircle,
   faFileInvoice,
-  faPlus
- 
+  faPlus,
+  faCheckCircle,
+  faBan,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function ClientManagement() {
@@ -52,7 +53,7 @@ export default function ClientManagement() {
       setClients(data.records || []);
       setTotalClients(data.total || 0);
     } catch (error) {
-      toast.error("Error fetching clients")
+      toast.error("Error fetching clients");
       console.error("Error fetching clients:", error);
     } finally {
       setLoading(false);
@@ -70,20 +71,42 @@ export default function ClientManagement() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this client?")) {
       try {
-        await fetch(`${ADMIN_END_POINT}/delete-client/${id}`, { method: "DELETE" });
-        toast.success("client deleted suceesfully!")
+        await fetch(`${ADMIN_END_POINT}/delete-client/${id}`, {
+          method: "DELETE",
+        });
+        toast.success("client deleted suceesfully!");
         fetchClients();
       } catch (error) {
-        toast.error("Failed to delete client")
+        toast.error("Failed to delete client");
         console.error("Failed to delete client:", error);
       }
     }
   };
 
-  const handleGenerateInvoice = (id) => navigate(`/admin/generate-invoice/${id}`);
+  const handleGenerateInvoice = (id) =>
+    navigate(`/admin/generate-invoice/${id}`);
 
   const handleAppyService = (id) => navigate(`/admin/service-management`);
 
+  const handleClientStatus = async (id) => {
+    try {
+      let res = await fetch(`${ADMIN_END_POINT}/change-status/${id}`, {
+        method: "PATCH",
+        credentials: "include",
+      });
+      const data = await res.json();
+      
+      if (data.client.isActive === "false") {
+        toast.success("Client is Deactivated  Suceesfully!");
+      } else {
+        toast.success("Client is Activated  Suceesfully!");
+      }
+      navigate(0);
+    } catch (error) {
+      toast.error("Failed to change  client status");
+      console.error("Failed to client status:", error);
+    }
+  };
 
   // Pagination helpers
   const totalPages = Math.ceil(totalClients / limit);
@@ -97,9 +120,11 @@ export default function ClientManagement() {
 
       <main className={styles.content}>
         <header className={styles.header}>
-          <h1><FontAwesomeIcon icon={faUsers} /> Client Management</h1>
+          <h1>
+            <FontAwesomeIcon icon={faUsers} /> Client Management
+          </h1>
           <button className={styles.addClientBtn} onClick={handleAddClient}>
-           <FontAwesomeIcon icon={faPlus} /> Add Client
+            <FontAwesomeIcon icon={faPlus} /> Add Client
           </button>
         </header>
 
@@ -136,14 +161,35 @@ export default function ClientManagement() {
                       <td>{client.email}</td>
                       <td>{client.contact.phone}</td>
                       <td className={styles.actions}>
-                        <button onClick={() => handleView(client._id)}><FontAwesomeIcon icon={faEye} /> View</button>
-                        <button onClick={() => handleEdit(client._id)}><FontAwesomeIcon icon={faPen} /> Edit</button>
-                        <button onClick={() => handleDelete(client._id)}><FontAwesomeIcon icon={faTrash} /> Delete</button>
-                        <button onClick={() => handleGenerateInvoice(client._id)}>
+                        <button onClick={() => handleView(client._id)}>
+                          <FontAwesomeIcon icon={faEye} /> View
+                        </button>
+                        <button onClick={() => handleEdit(client._id)}>
+                          <FontAwesomeIcon icon={faPen} /> Edit
+                        </button>
+                        <button onClick={() => handleDelete(client._id)}>
+                          <FontAwesomeIcon icon={faTrash} /> Delete
+                        </button>
+                        <button
+                          onClick={() => handleGenerateInvoice(client._id)}
+                        >
                           <FontAwesomeIcon icon={faFileInvoice} /> Invoice
                         </button>
                         <button onClick={() => handleAppyService(client._id)}>
                           <FontAwesomeIcon icon={faPlusCircle} /> Service
+                        </button>
+                        <button
+                          onClick={() => handleClientStatus(client._id)}
+                          className={`${styles.statusButton} ${
+                            client.isActive
+                              ? styles.deactivate
+                              : styles.activate
+                          }`}
+                        >
+                          <FontAwesomeIcon
+                            icon={client.isActive ? faBan : faCheckCircle}
+                          />{" "}
+                          {client.isActive ? "Deactivate" : "Activate"}
                         </button>
                       </td>
                     </tr>
@@ -153,7 +199,10 @@ export default function ClientManagement() {
 
               {/* Pagination */}
               <div className={styles.pagination}>
-                <button onClick={() => goToPage(page - 1)} disabled={page === 1}>
+                <button
+                  onClick={() => goToPage(page - 1)}
+                  disabled={page === 1}
+                >
                   Previous
                 </button>
 

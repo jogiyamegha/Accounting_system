@@ -109,8 +109,14 @@ export const notificationIcons = {
 };
 
 export const serviceTypeMap = {
-  1: "VATServices",
-  2: "CorporateTaxServices",
-  3: "AccountingServices",
-  4: "AuditAndCompliance",
+  1: "VAT Services",
+  2: "Corporate Tax Services",
+  3: "Payroll Services",
+  4: "Audit Services",
 };
+
+export const serviceStatusMap = {
+  1: "Not Started",
+  2: "In Progress", 
+  3: "Completed", 
+}

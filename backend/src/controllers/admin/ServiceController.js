@@ -7,65 +7,150 @@ const {
 } = require("../../utils/constants");
 const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
-const Email = require('../../emails/email');
+const Email = require("../../emails/email");
+const DocumentService = require("../../db/services/DocumentService");
 
 exports.assignService = async (req, res) => {
   const reqBody = req.body;
   const clientEmail = reqBody[TableFields.clientEmail];
 
   const clientExists = await ClientService.existsWithEmail(clientEmail);
-  if(!clientExists) { 
+  if (!clientExists) {
     throw new ValidationError(ValidationMsg.ClientNotExists);
   }
-  
-  let client = await ClientService.findByEmail(clientEmail).withBasicInfo().execute()
 
-  const existsService = await ServiceService.serviceExistsWithClient(clientEmail);
+  let client = await ClientService.findByEmail(clientEmail)
+    .withBasicInfo()
+    .execute();
+
+  const existsService = await ServiceService.serviceExistsWithClient(
+    clientEmail
+  );
 
   let data;
 
-  if(!existsService) {
+  if (!existsService) {
     data = await parseAndValidate(
       reqBody,
       client,
       undefined,
       async (updatedFields) => {
-        let records = await ServiceService.insertRecord(updatedFields)
-        await ServiceService.updateServiceDetails(records ,records[TableFields.ID], reqBody, res)
-      
+        let records = await ServiceService.insertRecord(updatedFields);
+        await ServiceService.updateServiceDetails(
+          records,
+          records[TableFields.ID],
+          reqBody,
+          res
+        );
+
         // Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
       }
-    ) 
+    );
   } else {
-    const service = await ServiceService.findByEmail(clientEmail).withBasicInfo().execute();
-    await ServiceService.updateServiceDetails(service, service[TableFields.ID], reqBody, res)
+    const service = await ServiceService.findByEmail(clientEmail)
+      .withBasicInfo()
+      .execute();
+    await ServiceService.updateServiceDetails(
+      service,
+      service[TableFields.ID],
+      reqBody,
+      res
+    );
     // Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
-
   }
-}
+};
 
 exports.getClientsAssignedService = async (req) => {
-  const clients = await ServiceService.getClientsFilterByServiceType(req.params.serviceType).withBasicInfo().execute()
-  return clients
-}
+  const clients = await ServiceService.getClientsFilterByServiceType(
+    req.params.serviceType
+  )
+    .withBasicInfo()
+    .execute();
+  return clients;
+};
 
-async function parseAndValidate (
-  reqBody, 
+exports.getServiceDetail = async (req) => {
+  let clientId = req.params.clientId;
+  // console.log(clientId)
+
+  let clientDetails = await ClientService.getUserById(clientId)
+    .withBasicInfo()
+    .execute();
+  if (!clientDetails) {
+    throw new ValidationError(ValidationMsg.RecordNotFound);
+  }
+
+  let allServices = await ServiceService.getServiceByClientId(clientId)
+    .withBasicInfo()
+    .execute();
+
+  if (!allServices) {
+    throw new ValidationError(ValidationMsg.RecordNotFound);
+  }
+
+  const docs = await DocumentService.getDocsByClientId(clientId)
+    .withBasicInfo()
+    .execute();
+
+  if (!docs) {
+    throw new ValidationError(ValidationMsg.RecordNotFound);
+  }
+
+  return { clientDetails, allServices, docs };
+};
+
+exports.deAssignService = async (req) => {
+  // console.log("in bacj=ke");
+  const serviceId = req.params[TableFields.serviceId];
+  const clientId = req.params[TableFields.clientId];
+
+  const clientExists = await ClientService.userExists(clientId);
+  if (!clientExists) {
+    throw new ValidationError(ValidationMsg.ClientNotExists);
+  }
+
+  const checkClientAssignService =
+    await ServiceService.checkClientAssignService(clientId, serviceId);
+  console.log(checkClientAssignService);
+
+  if (!checkClientAssignService) {
+    throw new ValidationError(ValidationMsg.ClientNotAssignService);
+  }
+
+  const isServiceCompleted = await ServiceService.checkIsServiceCompleted(
+    clientId,
+    serviceId
+  );
+  console.log(isServiceCompleted);
+
+  if (isServiceCompleted) {
+    throw new ValidationError(ValidationMsg.ServiceIsCompleted);
+  }
+
+  await ServiceService.updateDeassign(clientId, serviceId);
+};
+
+async function parseAndValidate(
+  reqBody,
   client,
   existingField = {},
   onValidationCompleted = async (updatedFields) => {}
-){
-  if (isFieldEmpty(reqBody[TableFields.serviceType],existingField[TableFields.serviceType])) {
+) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.serviceType],
+      existingField[TableFields.serviceType]
+    )
+  ) {
     throw new ValidationError(ValidationMsg.ServiceTypeEmpty);
   }
   const response = await onValidationCompleted({
-    [TableFields.clientDetail] : {
-      [TableFields.clientEmail] : reqBody[TableFields.clientEmail],
-      [TableFields.clientId] : client[TableFields.ID],
-      [TableFields.clientName] : client[TableFields.name_]
-    }
-  }
-  )
+    [TableFields.clientDetail]: {
+      [TableFields.clientEmail]: reqBody[TableFields.clientEmail],
+      [TableFields.clientId]: client[TableFields.ID],
+      [TableFields.clientName]: client[TableFields.name_],
+    },
+  });
 }
 
 function isFieldEmpty(providedData, existingField) {
