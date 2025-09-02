@@ -34,23 +34,23 @@ import DynamicService from "./components/admin/service/DynamicService";
 import ServiceDetail from "./components/admin/service/ServiceDetail";
 
 function App() {
-  return (
-    <>
-      <Routes>
-        {/* -------- Public Routes ---------- */}
-        <Route
-          path="/"
-          element={
-            <PublicRoute>
-              <Layout>
-                <HomePage />
-              </Layout>
-            </PublicRoute>
-          }
-        />
+    return (
+        <>
+            <Routes>
+                {/* -------- Public Routes ---------- */}
+                <Route
+                    path="/"
+                    element={
+                        <PublicRoute>
+                            <Layout>
+                                <HomePage />
+                            </Layout>
+                        </PublicRoute>
+                    }
+                />
 
-        {/* -------- Auth (Common for Admin & Client) ---------- */}
-        {/* <Route
+                {/* -------- Auth (Common for Admin & Client) ---------- */}
+                {/* <Route
           path="/:role/signup"
           element={
             <Layout>
@@ -67,231 +67,231 @@ function App() {
             </Layout>
           }
         /> */}
-        <Route
-          path="/:role/signup"
-          element={
-            <Layout>
-              <Signup />
-            </Layout>
-          }
-        />
+                <Route
+                    path="/:role/signup"
+                    element={
+                        <Layout>
+                            <Signup />
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/:role/login"
-          element={
-            <Layout>
-              <Login />
-            </Layout>
-          }
-        />
+                <Route
+                    path="/:role/login"
+                    element={
+                        <Layout>
+                            <Login />
+                        </Layout>
+                    }
+                />
 
-        {/* -------- Admin Routes ---------- */}
-        <Route
-          path="/admin/admin-dashboard"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                {/* -------- Admin Routes ---------- */}
+                <Route
+                    path="/admin/admin-dashboard"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/add-client"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <AddClient />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                <Route
+                    path="/admin/add-client"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <AddClient />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/client-management"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <ClientManagement />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                <Route
+                    path="/admin/client-management"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <ClientManagement />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/client-detail/:clientId"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <ClientDetail />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                <Route
+                    path="/admin/client-detail/:clientId"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <ClientDetail />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/generate-invoice/:clientId"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <GenerateInvoice />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                <Route
+                    path="/admin/generate-invoice/:clientId"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <GenerateInvoice />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/edit-client/:clientId"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <EditClient />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                <Route
+                    path="/admin/edit-client/:clientId"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <EditClient />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/document"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <DocStatusChange />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                <Route
+                    path="/admin/document"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <DocStatusChange />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        {/* -------- Admin Service Routes ---------- */}
+                {/* -------- Admin Service Routes ---------- */}
 
-        <Route
-          path="/admin/service-management"
-          element={
-            <Layout>
-              <ProtectedRoute >
+                <Route
+                    path="/admin/service-management"
+                    element={
+                        <Layout>
+                            <ProtectedRoute >
 
-              <ServiceManagement />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                                <ServiceManagement />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/service-management"
-          element={
-            <Layout>
-              <ProtectedRoute>
+                <Route
+                    path="/admin/service-management"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
 
-              <ServiceManagement />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                                <ServiceManagement />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/service/:serviceType"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <DynamicService />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                <Route
+                    path="/admin/service/:serviceType"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <DynamicService />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/service-details/:clientId"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <ServiceDetail />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                <Route
+                    path="/admin/service-details/:clientId"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <ServiceDetail />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        <Route
-          path="/admin/VAT-registration"
-          element={
-            <Layout>
-              <ProtectedRoute >
-                <VATRegistrationForm />
-              </ ProtectedRoute >
+                <Route
+                    path="/admin/VAT-registration"
+                    element={
+                        <Layout>
+                            <ProtectedRoute >
+                                <VATRegistrationForm />
+                            </ ProtectedRoute >
 
-            </Layout>
-          }
-        />
+                        </Layout>
+                    }
+                />
 
-        {/* -------- Admin Calendar Routes ---------- */}
+                {/* -------- Admin Calendar Routes ---------- */}
 
-        <Route
-          path="/admin/calendar-management"
-          element={
-            <Layout>
-              <ProtectedRoute >
-                <CalendarManagment />
-              </ ProtectedRoute >
+                <Route
+                    path="/admin/calendar-management"
+                    element={
+                        <Layout>
+                            <ProtectedRoute >
+                                <CalendarManagment />
+                            </ ProtectedRoute >
 
-            </Layout>
-          }
-        />
+                        </Layout>
+                    }
+                />
 
-        {/* -------- Admin Document Routes ---------- */}
+                {/* -------- Admin Document Routes ---------- */}
 
-        <Route
-          path="/admin/document-management"
-          element={
-            <Layout>
-              <ProtectedRoute >
-                <DocumentManagement />
-              </ProtectedRoute >
+                <Route
+                    path="/admin/document-management"
+                    element={
+                        <Layout>
+                            <ProtectedRoute >
+                                <DocumentManagement />
+                            </ProtectedRoute >
 
-            </Layout>
-          }
-        />
+                        </Layout>
+                    }
+                />
 
-        {/* -------- Admin Notification Routes ---------- */}
+                {/* -------- Admin Notification Routes ---------- */}
 
-        <Route 
-          path='/admin/notification-management'
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <NotificationManagement />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
+                <Route
+                    path='/admin/notification-management'
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <NotificationManagement />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
 
-        {/* -------- Admin Auth Routes ---------- */}
-        <Route
-          path="/admin/forgot-password"
-          element={
-            <Layout>
-              <AdminForgotPassword />
-            </Layout>
-          }
-        />
-        <Route
-          path="/admin/change-password"
-          element={
-            <Layout>
-              <AdminChangePassword />
-            </Layout>
-          }
-        />
-        <Route
-          path="/admin/verify-otp"
-          element={
-            <Layout>
-              <AdminVerifyOtp />
-            </Layout>
-          }
-        />
+                {/* -------- Admin Auth Routes ---------- */}
+                <Route
+                    path="/admin/forgot-password"
+                    element={
+                        <Layout>
+                            <AdminForgotPassword />
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/admin/change-password"
+                    element={
+                        <Layout>
+                            <AdminChangePassword />
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/admin/verify-otp"
+                    element={
+                        <Layout>
+                            <AdminVerifyOtp />
+                        </Layout>
+                    }
+                />
 
-        {/* -------- Client Routes ---------- */}
-        {/* <Route
+                {/* -------- Client Routes ---------- */}
+                {/* <Route
           path="/client/signup"
           element={
             <Layout>
@@ -299,73 +299,73 @@ function App() {
             </Layout>
           }
         /> */}
-        <Route
-          path="/client/forgot-password"
-          element={
-            <Layout>
-              <ClientForgotPassword />
-            </Layout>
-          }
-        />
-        <Route
-          path="/client/change-password"
-          element={
-            <Layout>
-              <ClientChangePassword />
-            </Layout>
-          }
-        />
-        <Route
-          path="/client/verify-otp"
-          element={
-            <Layout>
-              <ClientVerifyOtp />
-            </Layout>
-          }
-        />
-        <Route
-          path="/client/profile"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <ClientProfilePage />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
-        <Route
-          path="/client/client-profile"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <ProfileUpdate />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
-        <Route
-          path="/client/company-profile"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <CompanyProfile />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
-        <Route
-          path="/client/document"
-          element={
-            <Layout>
-              <ProtectedRoute>
-                <DocumentPage />
-              </ProtectedRoute>
-            </Layout>
-          }
-        />
-      </Routes>
-    </>
-  );
+                <Route
+                    path="/client/forgot-password"
+                    element={
+                        <Layout>
+                            <ClientForgotPassword />
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/client/change-password"
+                    element={
+                        <Layout>
+                            <ClientChangePassword />
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/client/verify-otp"
+                    element={
+                        <Layout>
+                            <ClientVerifyOtp />
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/client/profile"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <ClientProfilePage />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/client/client-profile"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <ProfileUpdate />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/client/company-profile"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <CompanyProfile />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
+                <Route
+                    path="/client/document"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <DocumentPage />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
+            </Routes>
+        </>
+    );
 }
 
 export default App;

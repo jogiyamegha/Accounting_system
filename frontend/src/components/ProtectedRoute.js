@@ -4,165 +4,164 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 
 import { ADMIN_END_POINT, CLIENT_END_POINT } from "../utils/constants";
- 
+
 const USER_CONFIG = {
 
-  admin: {
+    admin: {
 
-    endpoint: `${ADMIN_END_POINT}/admin`,
+        endpoint: `${ADMIN_END_POINT}/admin`,
 
-    loginRoute: "/admin/login",
+        loginRoute: "/admin/login",
 
-    role: "admin",
+        role: "admin",
 
-  },
+    },
 
-  client: {
+    client: {
 
-    endpoint: `${CLIENT_END_POINT}/client`,
+        endpoint: `${CLIENT_END_POINT}/client`,
 
-    loginRoute: "/client/login",
+        loginRoute: "/client/login",
 
-    role: "client",
+        role: "client",
 
-  },
+    },
 
 };
- 
+
 export default function ProtectedRoute({
 
-  children,
+    children,
 
-  userType = null,
+    userType = null,
 
-  allowedRoles = [],
+    allowedRoles = [],
 
-  fallbackRoute = null,
+    fallbackRoute = null,
 
 }) {
 
-  const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
-  const { user, role, loading } = useSelector((state) => state.user);
+    const { user, role, loading } = useSelector((state) => state.user);
 
-  const [authChecked, setAuthChecked] = useState(false);
+    const [authChecked, setAuthChecked] = useState(false);
 
-  const location = useLocation();
- 
-  // auto-detect based on path
+    const location = useLocation();
 
-  const detectedUserType =
+    // auto-detect based on path
 
-    userType ||
+    const detectedUserType =
 
-    (location.pathname.startsWith("/admin")
+        userType ||
 
-      ? "admin"
+        (location.pathname.startsWith("/admin")
 
-      : location.pathname.startsWith("/client")
+            ? "admin"
 
-      ? "client"
+            : location.pathname.startsWith("/client")
 
-      : "client");
- 
-  const config = USER_CONFIG[detectedUserType];
- 
-  const getUser = useCallback(async () => {
+                ? "client"
 
-    try {
+                : "client");
 
-      const response = await fetch(config.endpoint, {
+    const config = USER_CONFIG[detectedUserType];
 
-        method: "GET",
+    const getUser = useCallback(async () => {
 
-        credentials: "include",
+        try {
 
-        headers: { "Content-Type": "application/json" },
+            const response = await fetch(config.endpoint, {
 
-      });
+                method: "GET",
 
-      const data = await response.json();
- 
-      if (response.ok && data.user) {
+                credentials: "include",
 
-        // ✅ Always store role + userType consistently
+                headers: { "Content-Type": "application/json" },
 
-        dispatch(
+            });
 
-          setUser({
+            const data = await response.json();
 
-            user: data.user,
+            if (response.ok && data.user) {
 
-            userType: detectedUserType, // "admin" | "client"
+                // ✅ Always store role + userType consistently
 
-            role: config.role, // "admin" | "client"
+                dispatch(
 
-          })
+                    setUser({
+
+                        user: data.user,
+
+                        userType: detectedUserType, // "admin" | "client"
+
+                        role: config.role, // "admin" | "client"
+
+                    })
+
+                );
+
+            } else {
+
+                dispatch(clearUser());
+
+            }
+
+        } catch (error) {
+
+            console.error(`Auth error for ${detectedUserType}:`, error);
+
+            dispatch(clearUser());
+
+        } finally {
+
+            setAuthChecked(true);
+
+        }
+
+    }, [config.endpoint, config.role, detectedUserType, dispatch]);
+
+    useEffect(() => {
+
+        if (!authChecked) {
+
+            getUser();
+
+        }
+
+    }, [authChecked, getUser]);
+
+    // 🔹 Loading state
+
+    if (loading || !authChecked) {
+
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+
+                Loading...
+            </div>
 
         );
 
-      } else {
+    }
 
-        dispatch(clearUser());
+    // 🔹 If not logged in → redirect to login
 
-      }
+    if (!user) {
 
-    } catch (error) {
-
-      console.error(`Auth error for ${detectedUserType}:`, error);
-
-      dispatch(clearUser());
-
-    } finally {
-
-      setAuthChecked(true);
+        return <Navigate to={fallbackRoute || config.loginRoute} replace />;
 
     }
 
-  }, [config.endpoint, config.role, detectedUserType, dispatch]);
- 
-  useEffect(() => {
+    // 🔹 Role-based access check
 
-    if (!authChecked) {
+    if (allowedRoles.length > 0 && role && !allowedRoles.includes(role)) {
 
-      getUser();
+        return <Navigate to={config.loginRoute} replace />;
 
     }
 
-  }, [authChecked, getUser]);
- 
-  // 🔹 Loading state
-
-  if (loading || !authChecked) {
-
-    return (
-<div className="flex items-center justify-center min-h-screen">
-
-        Loading...
-</div>
-
-    );
-
-  }
- 
-  // 🔹 If not logged in → redirect to login
-
-  if (!user) {
-
-    return <Navigate to={fallbackRoute || config.loginRoute} replace />;
-
-  }
- 
-  // 🔹 Role-based access check
-
-  if (allowedRoles.length > 0 && role && !allowedRoles.includes(role)) {
-
-    return <Navigate to={config.loginRoute} replace />;
-
-  }
- 
-  return children;
+    return children;
 
 }
 
- 
