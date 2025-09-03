@@ -112,9 +112,6 @@ class ServiceService {
     };
 
     static checkIsServiceCompleted = async (clientId, serviceId) => {
-        console.log(clientId);
-        console.log(serviceId);
-
         const mainService = await ServiceService.getServiceByClientId(clientId)
             .withBasicInfo()
             .execute();

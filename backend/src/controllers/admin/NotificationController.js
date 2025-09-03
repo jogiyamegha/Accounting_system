@@ -10,11 +10,9 @@ exports.addNotification = async (req) => {
     let receiverId = client[TableFields.ID];
 
     let existingNotification = await NotificationService.getExistingNotification(receiverId, reqBody.type, reqBody[TableFields.expiresAt] , reqBody.message);
-    // console.log("existingNotification",existingNotification)
 
     if (existingNotification) {
-        console.log(`⚠️ Notification already exists for ${reqBody.email} (expiresAt: ${reqBody.expiresAt})`);
-        return existingNotification; // don’t insert again
+        return existingNotification; 
     }
     const result = await parseAndValidateNotification(
         reqBody,
@@ -34,8 +32,6 @@ exports.getAllNotifications = async (req) => {
     .withBasicInfo()
     .execute()
 
-    // console.log("ntf",notification)
-    
     return notification;
 }
 
@@ -60,8 +56,6 @@ async function parseAndValidateNotification (
         throw new ValidationError(ValidationMsg.NotificationTypeEmpty);
     }
 
-    // console.log("reqbody",reqBody)
-
     let notificationType = reqBody.type;
 
     let notfType = null;
@@ -78,19 +72,14 @@ async function parseAndValidateNotification (
         notfType = notificationTypeMap[notificationType];
     }
 
-    // console.log("fgb",notfType)
-
     const response = await onValidationCompleted({
         [TableFields.receiverId]: receiverId,
         [TableFields.notificationType]: notfType,
         [TableFields.message]: reqBody[TableFields.message],
         [TableFields.expiresAt]: reqBody[TableFields.expiresAt] || null,
     })
-    // console.log("sdxcfvg",response)
     
     return response;
-
-
 }
 
 function isFieldEmpty(existingField) {

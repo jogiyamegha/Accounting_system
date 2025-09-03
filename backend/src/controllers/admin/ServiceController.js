@@ -50,7 +50,6 @@ exports.assignService = async (req, res) => {
         const service = await ServiceService.findByEmail(clientEmail)
             .withBasicInfo()
             .execute();
-        console.log("not exists then", service);
         await ServiceService.updateServiceDetails(
             service,
             service[TableFields.ID],
@@ -67,13 +66,11 @@ exports.getClientsAssignedService = async (req) => {
     )
         .withBasicInfo()
         .execute();
-    console.log(clients);
     return clients;
 };
 
 exports.getServiceDetail = async (req) => {
     let clientId = req.params.clientId;
-    // console.log(clientId)
 
     let clientDetails = await ClientService.getUserById(clientId)
         .withBasicInfo()

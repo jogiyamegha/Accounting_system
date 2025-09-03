@@ -115,13 +115,11 @@ const Builder = class {
                     let response = await executer(req, res);
                     res.status(ResponseStatus.Success).send(response);
                 } catch (e) {
-                    console.log(e);
                     if (e && duplicateErrorHandler) {
                         res.status(ResponseStatus.InternalServerError).send(
                             Util.getErrorMessageFromString(duplicateErrorHandler(e))
                         );
                     } else {
-                        console.log("e", e);
                         if (e && e.name != ValidationError.name) {
                             console.log(e);
                         }

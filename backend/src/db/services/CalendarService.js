@@ -4,12 +4,12 @@ const {
     ServiceType,
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
-const Calender = require("../models/calender");
+const Calendar = require("../models/calendar");
 
-class CalenderService {
+class CalendarService {
     static findById = (id) => {
         return new ProjectionBuilder(async function () {
-            return await Calender.findOne(
+            return await Calendar.findOne(
                 {
                     id,
                 },
@@ -17,6 +17,42 @@ class CalenderService {
             );
         });
     };
+
+    static getAllEventsByDate = () => {
+        return new ProjectionBuilder(async function () {
+            return await Calendar.find({
+                [TableFields.deleted] : false
+            })
+        })
+    }
+
+    static getEventByDateAndDeadlineCategory = (date, deadlineCategory) => {
+        return new ProjectionBuilder(async function() {
+            return await Calendar.findOne({
+                [TableFields.date] : date,
+                [TableFields.deadlineCategory] : deadlineCategory
+            })
+        })
+    }
+
+    static checkEventExists = async (date, deadlineCategory, serviceType)  => {
+        return await Calendar.exists(
+            {
+                [TableFields.date] : date,
+                [TableFields.serviceType] : serviceType,
+                [TableFields.deadlineCategory] : deadlineCategory
+            }
+        )
+    }
+
+    static updateEventField = async (eventId, reqBody) => {
+        return await Calendar.findByIdAndUpdate(
+            eventId,
+            {
+                [TableFields.deadlineCategory] : reqBody[TableFields.deadlineCategory]
+            }
+        )
+    }
 
     static findByServiceType = async (serviceType) => {
         if (typeof serviceType === "string") {
@@ -34,25 +70,25 @@ class CalenderService {
             throw new ValidationError("Invalid Service Type.");
         }
 
-        return await Calender.findOne({
+        return await Calendar.findOne({
             [TableFields.serviceType]: serviceType,
         });
     };
 
-    static insertRecord = async (calenderFields) => {
-        const calender = new Calender(calenderFields);
-        let error = calender.validateSync();
-        let createdCalenderRecord;
+    static insertRecord = async (calendarFields) => {
+        const calendar = new Calendar(calendarFields);
+        let error = calendar.validateSync();
+        let createdCalendarRecord;
 
         if (error) {
             throw error;
         } else {
             try {
-                createdCalenderRecord = await calender.save();
-                return createdCalenderRecord;
+                createdCalendarRecord = await calendar.save();
+                return createdCalendarRecord;
             } catch (e) {
-                if (createdCalenderRecord) {
-                    await createdCalenderRecord.delete();
+                if (createdCalendarRecord) {
+                    await createdCalendarRecord.delete();
                 }
             }
         }
@@ -91,4 +127,4 @@ const ProjectionBuilder = class {
 };
 
 
-module.exports = CalenderService;
+module.exports = CalendarService;

@@ -3,7 +3,7 @@ const AuthController = require('../controllers/admin/AuthController');
 const ClientController = require('../controllers/admin/ClientController');
 const DocumentController = require('../controllers/admin/DocumentController')
 const ServiceController = require('../controllers/admin/ServiceController');
-const VATController = require('../controllers/admin/VATController');
+const CalendarController = require('../controllers/admin/CalendarController');
 const NotificationController = require('../controllers/admin/NotificationController');
 const InvoiceController = require('../controllers/admin/InvoiceController');
 const AdminDashboardController = require('../controllers/admin/AdminDashboardController');
@@ -228,14 +228,24 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
-
-
 .addPath(`/service-details/:${TableFields.clientId}`)
 .asGET(ServiceController.getServiceDetail)
 .useAdminAuth()
 .build()
 
+/**
+ * Calendar routes
+ */
 
+.addPath('/add-calendar-event')
+.asPOST(CalendarController.addEvent)
+.useAdminAuth()
+.build()
+
+.addPath('/all-calendar-events')
+.asGET(CalendarController.getAllEvents)
+.useAdminAuth()
+.build()
 
 .getRouter()
 module.exports = router;

@@ -264,6 +264,19 @@ function App() {
                     }
                 />
 
+                {/*---------Admin Calendar Routes --------------- */}
+
+                <Route 
+                    path="/admin/add-calendar-event"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <CalendarManagment />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
+
                 {/* -------- Admin Auth Routes ---------- */}
                 <Route
                     path="/admin/forgot-password"
@@ -292,13 +305,13 @@ function App() {
 
                 {/* -------- Client Routes ---------- */}
                 {/* <Route
-          path="/client/signup"
-          element={
-            <Layout>
-              <ClientSignup />
-            </Layout>
-          }
-        /> */}
+                    path="/client/signup"
+                    element={
+                        <Layout>
+                        <ClientSignup />
+                        </Layout>
+                    }
+                    /> */}
                 <Route
                     path="/client/forgot-password"
                     element={

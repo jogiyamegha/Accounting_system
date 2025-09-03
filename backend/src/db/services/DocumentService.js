@@ -133,9 +133,6 @@ class DocumentService {
             },
             { upsert: true, new: true }
         );
-
-        // console.log(updatedDoc)
-
         return updatedDoc;
     };
 
@@ -200,7 +197,6 @@ class DocumentService {
     };
 
     static updateDocStatus = async (clientId, documentId, newStatus, comment) => {
-        // console.log("jebhj",documentId)
         if (typeof newStatus === "string") {
             const statusMap = {
                 pending: DocStatus.pending,
@@ -215,8 +211,6 @@ class DocumentService {
         });
 
         let documents = records[TableFields.documents];
-
-        // console.log("3.", documents);
 
         const matchedDoc = documents.find(
             (doc) => doc._id.toString() === documentId
@@ -304,12 +298,8 @@ class DocumentService {
 
     static getWeeklyUploadStats = async () => {
         const startOfWeek = new Date();
-        // console.log(startOfWeek)
-
         startOfWeek.setDate(startOfWeek.getDate() - 6);
         startOfWeek.setHours(0, 0, 0, 0);
-
-        // console.log(startOfWeek)
 
         const docs = await Document.aggregate([
             { $unwind: "$documents" },
@@ -329,8 +319,6 @@ class DocumentService {
                 },
             },
         ]);
-
-        // console.log("doc:",docs)
 
         const daysMap = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

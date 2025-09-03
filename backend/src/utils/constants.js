@@ -25,6 +25,15 @@ const DeadlineCategory = (function () {
     return DeadlineCategory;
 })();
 
+const DeadlineCategoryColor = (function (){
+    function DeadlineCategoryColor() {};
+    DeadlineCategoryColor.VATfiling = '#9ECAD6';
+    DeadlineCategoryColor.corporateTaxReturn = '#748DAE';
+    DeadlineCategoryColor.payroll = '#F5CBCB';
+    DeadlineCategoryColor.audit = '#FFEAEA';
+    return DeadlineCategoryColor;
+})()
+
 const Status = (function () {
     function Status() { }
     Status.notStarted = 1;
@@ -196,6 +205,7 @@ const ValidationMsg = (function () {
     ValidationMsg.ServiceIsCompleted = 'service is already completed, You can not De-assign.';
     ValidationMsg.ServiceIsNotCompleted = 'service is not completed yet, so you can renew it after completion';
     ValidationMsg.DeadlineCategoryEmpty = 'deadline field is required';
+    ValidationMsg.DateEmpty = 'Date required';
 
     return ValidationMsg;
 })();
@@ -230,7 +240,7 @@ const TableNames = (function () {
     TableNames.Client = "clients";
     TableNames.Document = "documents";
     TableNames.Company = "companies";
-    TableNames.Calender = "calenders";
+    TableNames.Calendar = "calendars";
     TableNames.Notification = "notifications";
     TableNames.Service = "services";
     TableNames.ClientService = "clientServices";
@@ -341,7 +351,8 @@ const TableFields = (function () {
     TableFields.startDate = 'startDate';
     TableFields.endDate = 'endDate';
     TableFields.serviceType = "serviceType";
-    TableFields.serviceDuration = "ServiceDuration "
+    TableFields.serviceDuration = "ServiceDuration";
+    TableFields.date = 'date';
 
     return TableFields;
 })();
@@ -402,6 +413,7 @@ module.exports = {
     UserTypes,
     InterfaceType,
     DeadlineCategory,
+    DeadlineCategoryColor,
     Status,
     ServiceStatus,
     DocumentType,

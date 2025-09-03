@@ -76,8 +76,6 @@ class NotificationService {
             message: message,
             deleted: false
         });
-
-        // console.log("22",existingNotification)
         return existingNotification;
     };
 

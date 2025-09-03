@@ -61,9 +61,6 @@ exports.addClientDocument = async (req) => {
     const document = req.file;
     const { clientId } = req.params;
 
-    // console.log("reqBody",reqBody)
-    // console.log("files", files);
-
     // const existsWithClientId = await DocumentService.existsWithClient(clientId);
 
     const result = await parseAndValidateDocuments(
@@ -129,7 +126,6 @@ exports.getAllDocuments = async (req) => {
 exports.getUploadStats = async (req) => {
     try {
         const stats = await DocumentService.getWeeklyUploadStats();
-        // console.log("stats",stats)
         return stats;
     } catch (error) {
         console.error("Error fetching upload stats:", error);
@@ -143,7 +139,6 @@ exports.getClientDocuments = async (req) => {
             clientId,
             serviceType
         );
-        // console.log("1", data);
 
         return data;
     } catch (err) {
@@ -183,7 +178,6 @@ async function parseAndValidateDocuments(
     // for (const file of files) {
     // file.fieldname will be like: "documents[0][file]"
     // const match = file.fieldname.match(/documents\[(\d+)\]\[file\]/);
-    // console.log("match", match)
 
     // if (match) {
     //   const index = match[1];

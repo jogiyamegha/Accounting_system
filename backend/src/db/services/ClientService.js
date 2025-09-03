@@ -174,7 +174,6 @@ class ClientService {
     };
 
     static updateClient = async (clientId, clientDetails) => {
-        // console.log("2",clientDetails)
         return await Client.updateOne(
             {
                 [TableFields.ID]: clientId,

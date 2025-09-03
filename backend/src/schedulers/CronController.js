@@ -120,21 +120,14 @@ exports.setServiceStatusCompleted = async () => {
         const yesterdayStart = new Date(`${yesterdayString}T00:00:00.000Z`);
         const yesterdayEnd = new Date(`${yesterdayString}T23:59:59.999Z`);
 
-        console.log(yesterday);
-        console.log(yesterdayStart);
-
         const allUsers = await Service.find({
             "services.serviceEndDate": {
                 $eq: yesterdayStart,
             },
         });
-        console.log(allUsers);
 
         if (allUsers.length > 0) {
-            // Service.updateOne(
-
-            // )
-            console.log("nino abe");
+        
         }
     } catch (error) { }
 };
@@ -268,15 +261,11 @@ exports.setServiceStatusCompleted = async () => {
 
 exports.sendNotificationsBasedOnDB = async () => {
     try {
-        console.log("Checking for upcoming service deadlines based on DB...");
-
         const now = new Date(); // current datetime
 
         const allUsers = await Service.find({
             "services.serviceEndDate": { $gte: now }, // all future or ongoing services
         });
-
-        // console.log("allUsers", allUsers)
 
         for (const user of allUsers) {
             const upcomingServices = user.services.filter(
@@ -302,9 +291,6 @@ exports.sendNotificationsBasedOnDB = async () => {
                     },
                 };
 
-                console.log(
-                    `📨 Sending notification to: ${user.clientDetail.clientEmail}`
-                );
                 await NotificationController.addNotification(fakeReq);
             }
         }
@@ -332,8 +318,6 @@ const documentTypeMap = {
 
 exports.documentStatusNotifications = async () => {
     try {
-        console.log("📂 Checking for pending/missing documents...");
-
         // Fetch all docs where at least one document is pending
         const docs = await Document.find({
             "documents.documentDetails.docStatus": { $in: [DocStatus.pending] },
@@ -384,7 +368,6 @@ exports.documentStatusNotifications = async () => {
                 },
             };
 
-            console.log(`📨 Sending doc status notification to: ${email}`);
             await NotificationController.addNotification(fakeReq);
         }
     } catch (err) {
@@ -393,7 +376,6 @@ exports.documentStatusNotifications = async () => {
 };
 
 exports.setServiceStatusCompleted = async () => {
-    console.log("welcome ");
     try {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);

@@ -1,18 +1,14 @@
 const mongoose = require("mongoose");
-const { TableFields, TableNames, DeadlineCategory, ValidationMsg, ServiceType } = require('../../utils/constants');
+const { TableFields, TableNames, DeadlineCategory, ValidationMsg, ServiceType, DeadlineCategoryColor } = require('../../utils/constants');
  
 const Schema = mongoose.Schema;
  
-const calenderSchema = new Schema(
+const calendarSchema = new Schema(
     {
-        [TableFields.title]: {
-            type: String,
-            trim: true,
-            required: [true, ValidationMsg.TitleEmpty],
+        [TableFields.date]: {
+            type: Date,
+            required: [true, ValidationMsg.DateEmpty]
         },
-        // [TableFields.description]: {
-        //     type: String,
-        // },
         [TableFields.associatedClients]: [
             {
                 [TableFields.ID]: false,
@@ -29,18 +25,10 @@ const calenderSchema = new Schema(
                 },
             },
         ],
-        [TableFields.serviceType]: {
+        [TableFields.deadlineCategory]: {
             type: Number,
-            enum: Object.values(ServiceType),
-        },
-        [TableFields.deadlineDetails]: {
-            [TableFields.deadlineCategory]: {
-                type: Number,
-                enum: Object.values(DeadlineCategory),
-            },
-            [TableFields.deadline]: {
-                type: Date,
-            },
+            enum: Object.values(DeadlineCategory),
+            required : [true, ValidationMsg.DeadlineCategoryEmpty]  
         },
         // [TableFields.startDate]: {
         //     type: Date,
@@ -54,6 +42,7 @@ const calenderSchema = new Schema(
         // },
         [TableFields.colorCode]: {
             type: String,
+            enum : Object.values(DeadlineCategoryColor)
         },
         [TableFields.isCompleted]: {
             type: Boolean,
@@ -69,7 +58,7 @@ const calenderSchema = new Schema(
     }
 );
  
-const Calender = mongoose.model(TableNames.Calender, calenderSchema);
-module.exports = Calender;
+const Calendar = mongoose.model(TableNames.Calendar, calendarSchema);
+module.exports = Calendar;
  
  
