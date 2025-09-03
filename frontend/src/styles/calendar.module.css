@@ -1,18 +1,18 @@
 :root {
-  --sidebar-width: 240px; /* adjust if your Sidebar width changes */
+  --sidebar-width: 260px; /* adjust if your Sidebar width changes */
 }
 
 .mainCalendarWrapper {
   display: flex;
   background: #e2e4e5;
   min-height: 100vh;
-  margin-left: 260px;
 }
 
 /* Content area sits to the right of Sidebar */
 .contentArea {
   flex: 1;
   padding: 24px 32px;
+   margin-left: var(--sidebar-width);
 }
 
 .title {
@@ -299,7 +299,10 @@
 
 .modalOverlay {
   position: fixed;
-  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  top: 0;
+  left: var(--sidebar-width); /* respect sidebar */
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -318,8 +321,8 @@
   padding: 22px 26px;
   box-shadow: 0 24px 48px rgba(16, 24, 40, 0.28);
 
-  width: 560px; /* wider */
-  max-width: 96vw; /* responsive on small screens */
+  max-width: 96vw; /* responsive width */
+  max-height: 84vh; /* responsive on small screens */
   max-height: 84vh; /* keep within viewport */
   overflow-y: auto; /* scroll if needed */
 }
@@ -362,6 +365,7 @@
   display: flex;
   gap: 10px;
   margin-top: 8px;
+  flex-wrap: wrap;
 }
 .addInput {
   flex: 1;
@@ -369,6 +373,7 @@
   border-radius: 12px;
   border: 1px solid #d1d5db;
   font-size: 14px;
+  min-width: 160px;
 }
 .popupButtons {
   display: flex;
@@ -405,6 +410,10 @@
   .calendarMain {
     grid-template-columns: 1fr;
   }
+  .detailsPopup {
+    width: 480px;
+    padding: 20px;
+  }
 }
 @media (max-width: 768px) {
   .calendarGrid {
@@ -414,7 +423,19 @@
     height: 80px;
   }
   .detailsPopup {
-    width: 300px;
+    width: 90%; /* almost full width */
+    padding: 18px;
+  }
+  .detailsPopup h4 {
+    font-size: 16px;
+  }
+  .addInput {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+  .popupButton {
+    flex: 1; /* stretch buttons */
+    text-align: center;
   }
 }
 @media (max-width: 480px) {
@@ -425,5 +446,24 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+  }
+  .detailsPopup {
+    width: 100%;
+    max-width: 95vw;
+    padding: 16px;
+    border-radius: 12px;
+  }
+  .detailsPopup h4 {
+    font-size: 15px;
+  }
+  .addRow {
+    flex-direction: column; /* stack input + button */
+  }
+  .popupButtons {
+    flex-direction: column; /* stack close + add */
+    align-items: stretch;
+  }
+  .popupButton {
+    width: 100%; /* full-width buttons */
   }
 }

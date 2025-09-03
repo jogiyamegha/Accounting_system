@@ -10,6 +10,7 @@ import {
 import { useRef } from "react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { ADMIN_END_POINT } from "../../../utils/constants";
 
 // Utility: safe parse events as array of objects { title, notes }
 const normalizeEvents = (val) => {
@@ -18,7 +19,7 @@ const normalizeEvents = (val) => {
 };
 
 export default function CalendarManagement() {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const today = useMemo(() => {
     const t = new Date();
@@ -32,6 +33,14 @@ export default function CalendarManagement() {
   const [selectedDay, setSelectedDay] = useState(null);
   const popupRef = useRef(null);
   const [newEventTitle, setNewEventTitle] = useState(""); // Add new state for the input
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const categoryOptions = [
+    { id: 1, label: "VAT Filing" },
+    { id: 2, label: "Corporate Tax Return" },
+    { id: 3, label: "Payroll" },
+    { id: 4, label: "Audit" },
+  ];
 
   // Seed data (can be replaced with API data)
   const [deadlines, setDeadlines] = useState({
@@ -153,20 +162,47 @@ export default function CalendarManagement() {
     return () => document.removeEventListener("keydown", onEscape);
   }, [selectedDay]);
 
-  const handleAddEvent = () => {
-    if (newEventTitle.trim() && selectedDay) {
-      const newEvent = { title: newEventTitle.trim() };
+  const handleAddEvent = async () => {
+    if (selectedDay && selectedCategory) {
+      const categoryLabel = categoryOptions.find(
+        (c) => c.id === parseInt(selectedCategory)
+      )?.label;
 
-      // Update both the main state and the selectedDay state for immediate view
+      const newEvent = {
+        title: categoryLabel, // event title is the category
+        deadlineCategory: selectedCategory,
+        date: selectedDay.key, // or selectedDay.date depending on your data
+      };
+
+      // update UI immediately
       addDeadline(selectedDay.key, newEvent);
       setSelectedDay((prev) => ({
         ...prev,
         events: [...(prev?.events || []), newEvent],
         count: (prev?.count || 0) + 1,
       }));
-      setNewEventTitle(""); // Clear the input field
+
+      console.log("first", newEvent)
+
+      // send to backend
+    //   try {
+    //     const res = await fetch(`${ADMIN_END_POINT}/add-calender-event`, {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify(newEvent),
+    //       credentials: "include",
+    //     });
+
+    //     const data = await res.json();
+    //     console.log("Saved deadline:", data);
+    //   } catch (err) {
+    //     console.error("Error saving deadline:", err);
+    //   }
+
+      setSelectedCategory(""); // reset form
     }
-    // navigate(0)
   };
 
   return (
@@ -343,26 +379,29 @@ export default function CalendarManagement() {
             )}
 
             <div className={styles.addForm}>
-              <label className={styles.addLabel} htmlFor="newEventTitle">
-                Add a new calendar event
+              <label className={styles.addLabel} htmlFor="categorySelect">
+                Register a new deadline
               </label>
               <div className={styles.addRow}>
-                <input
-                  id="newEventTitle"
+                <select
+                  id="categorySelect"
                   className={styles.addInput}
-                  type="text"
-                  placeholder="Event title"
-                  value={newEventTitle}
-                  onChange={(e) => setNewEventTitle(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleAddEvent();
-                  }}
-                />
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="">-- Select Deadline Category --</option>
+                  {categoryOptions.map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+
                 <button
                   className={`${styles.popupButton} ${styles.addButton}`}
                   onClick={handleAddEvent}
                 >
-                  <FontAwesomeIcon icon={faPlus} /> Register Event
+                  <FontAwesomeIcon icon={faPlus} /> Register Deadline
                 </button>
               </div>
             </div>
