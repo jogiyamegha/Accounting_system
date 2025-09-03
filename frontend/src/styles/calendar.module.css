@@ -416,6 +416,10 @@
   }
 }
 @media (max-width: 768px) {
+
+  .contentArea{
+    margin-left: 100px;
+  }
   .calendarGrid {
     gap: 8px;
   }
@@ -439,6 +443,9 @@
   }
 }
 @media (max-width: 480px) {
+  .contentArea{
+    margin-left: 60px;
+  }
   .calendarDay {
     height: 68px;
   }
