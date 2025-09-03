@@ -10,51 +10,50 @@ import {
 import classes from "../../../styles/dynamicService.module.css";
 import Sidebar from "../../Sidebar";
 import { toast } from "react-toastify";
- 
+
 export default function DynamicService() {
   const { serviceType } = useParams();
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
- 
+
   const [showModal, setShowModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
   const [documents, setDocuments] = useState([]);
   const [requiredDocs, setRequiredDocs] = useState([]);
   const [file, setFile] = useState({ type: "", file: null, comments: "" });
- 
- 
-    const fetchClients = async () => {
-      try {
-        const res = await fetch(`${ADMIN_END_POINT}/service/${serviceType}`, {
-          method: "GET",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-        });
- 
-        if (!res.ok) {
-          throw new Error("Failed to fetch clients");
-        }
- 
-        const data = await res.json();
- 
-        console.log("data", data);
-        setClients(data);
-      } catch (err) {
-        console.error("Error fetching clients:", err);
-      } finally {
-        setLoading(false);
+
+  const fetchClients = async () => {
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/service/${serviceType}`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch clients");
       }
-    };
- 
-    useEffect(() => {
+
+      const data = await res.json();
+
+      console.log("data", data);
+      setClients(data);
+    } catch (err) {
+      console.error("Error fetching clients:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchClients();
   }, []);
- 
+
   const deAssignService = async (serviceId, clientId) => {
     try {
       if (!serviceId) return console.error("Service ID not found!");
- 
+
       const res = await fetch(
         `${ADMIN_END_POINT}/de-assign-service/${serviceId}/${clientId}`,
         {
@@ -63,14 +62,14 @@ export default function DynamicService() {
           headers: { "Content-Type": "application/json" },
         }
       );
- 
+
       if (!res.ok) {
         throw new Error("Failed to de-assign service");
       }
- 
+
       const result = await res.json();
       console.log(result);
- 
+
       setClients((prev) =>
         prev.map((client) =>
           client._id === clientId
@@ -88,12 +87,12 @@ export default function DynamicService() {
       console.error("Error de-assigning service:", err);
     }
   };
- 
+
   const renewService = async (serviceId, clientId, serviceType) => {
     console.log(serviceType);
     try {
       if (!serviceId) return console.error("Service ID not found!");
- 
+
       const res = await fetch(
         `${ADMIN_END_POINT}/renew-service/${serviceId}/${clientId}/${serviceType}`,
         {
@@ -102,11 +101,11 @@ export default function DynamicService() {
           headers: { "Content-Type": "application/json" },
         }
       );
- 
+
       if (!res.ok) {
         throw new Error("Failed to de-assign service");
       }
- 
+
       setClients((prev) =>
         prev.map((client) =>
           client._id === clientId
@@ -122,11 +121,11 @@ export default function DynamicService() {
       console.error("Error renew service:", error);
     }
   };
- 
+
   const openModal = async (clientId) => {
     setSelectedClient(clientId);
     setShowModal(true);
- 
+
     try {
       const res = await fetch(
         `${ADMIN_END_POINT}/documents/${clientId}/${serviceType}`,
@@ -134,7 +133,7 @@ export default function DynamicService() {
       );
       if (!res.ok) throw new Error("Failed to fetch documents");
       const data = await res.json();
- 
+
       setDocuments(data.uploadedDocs || []);
       console.log(data.uploadedDocs);
       setRequiredDocs(data.remainingDocs || []);
@@ -143,21 +142,21 @@ export default function DynamicService() {
       console.error("Error fetching documents:", err);
     }
   };
- 
+
   const handleFileUpload = async (e) => {
     e.preventDefault();
     if (!file.type || !file.file) {
       alert("Please select a document type and file");
       return;
     }
- 
+
     // console.log("first", file.file);
- 
+
     const formData = new FormData();
     formData.append("documentType", file.type);
     formData.append("file", file.file);
     if (file.comments) formData.append("comments", file.comments);
- 
+
     try {
       const res = await fetch(
         `${ADMIN_END_POINT}/documents/upload/${selectedClient}/${serviceType}`,
@@ -167,10 +166,10 @@ export default function DynamicService() {
           credentials: "include",
         }
       );
- 
+
       if (!res.ok) throw new Error("Upload failed");
       const data = await res.json();
- 
+
       // refresh documents after upload
       setDocuments((prev) => [...prev, data.documents]);
       setRequiredDocs((prev) =>
@@ -182,20 +181,20 @@ export default function DynamicService() {
       console.error("Upload error:", err);
     }
   };
- 
+
   const handleDetails = async (clientId) => {
     navigate(`/admin/service-details/${clientId}`);
   };
- 
+
   if (loading) {
     return <p>Loading...</p>;
   }
- 
+
   if (clients.length === 0) {
     toast.info("No clients have applied for this service.");
     navigate("/admin/service-management");
   }
- 
+
   return (
     <div className={classes.pageWrapper}>
       <Sidebar />
@@ -203,7 +202,7 @@ export default function DynamicService() {
         <h1 className={classes.pageTitle}>
           {`Service Management - Type ${serviceTypeMap[serviceType]}`}
         </h1>
- 
+
         <div className={classes.card}>
           <h2 className={classes.cardTitle}>Clients Applied</h2>
           <ul className={classes.clientList}>
@@ -237,59 +236,66 @@ export default function DynamicService() {
                         Status: {serviceStatusMap[service.serviceStatus]}
                       </small>
                     </div>
+
                     <button
-                      className={classes.uploadBtn}
+                      className={classes.uploadBtn1}
                       onClick={() =>
                         handleDetails(client.clientDetail.clientId)
                       }
                     >
                       View Details
                     </button>
- 
+
                     <button
-                      className={classes.uploadBtn}
+                      className={classes.uploadBtn2}
                       onClick={() => openModal(client.clientDetail.clientId)}
                     >
                       Manage Documents
                     </button>
- 
-                    <button
-                      className={classes.uploadBtn}
-                      onClick={() =>
-                        deAssignService(
-                          service._id,
-                          client.clientDetail.clientId
-                        )
-                      }
-                    >
-                      De-Assign
-                    </button>
- 
-                    <button
-                      className={classes.uploadBtn}
-                      onClick={() =>
-                        renewService(
-                          service._id,
-                          client.clientDetail.clientId,
-                          serviceType
-                        )
-                      }
-                    >
-                      Renew Service
-                    </button>
+
+                    {service.serviceStatus !== 3 && ( // hide de-assign if completed
+                      <button
+                        className={classes.uploadBtn3}
+                        onClick={() =>
+                          deAssignService(
+                            service._id,
+                            client.clientDetail.clientId
+                          )
+                        }
+                      >
+                        De-Assign
+                      </button>
+                    )}
+
+                    {(service.serviceStatus === 3 || // status completed
+                      (service.serviceEndDate &&
+                        new Date(service.serviceEndDate) < new Date())) && (
+                      <button
+                        className={classes.uploadBtn3}
+                        onClick={() =>
+                          renewService(
+                            service._id,
+                            client.clientDetail.clientId,
+                            serviceType
+                          )
+                        }
+                      >
+                        Renew Service
+                      </button>
+                    )}
                   </li>
                 ))
             )}
           </ul>
         </div>
       </div>
- 
+
       {/* Modal */}
       {showModal && (
         <div className={classes.modalOverlay}>
           <div className={classes.modalContent}>
             <h2>Manage Documents</h2>
- 
+
             {/* Already Uploaded */}
             <h3>Already Uploaded</h3>
             <ul>
@@ -316,7 +322,7 @@ export default function DynamicService() {
                 <li>No documents uploaded yet.</li>
               )}
             </ul>
- 
+
             {/* Required Documents */}
             <h3>Required Documents</h3>
             <ul>
@@ -334,7 +340,7 @@ export default function DynamicService() {
                 <li>All documents uploaded 🎉</li>
               )}
             </ul>
- 
+
             {/* Upload Form */}
             {requiredDocs.length > 0 && (
               <form onSubmit={handleFileUpload}>
@@ -353,7 +359,7 @@ export default function DynamicService() {
                     </option>
                   ))}
                 </select>
- 
+
                 <input
                   type="file"
                   accept="application/pdf,.pdf"
@@ -362,7 +368,7 @@ export default function DynamicService() {
                     setFile((prev) => ({ ...prev, file: e.target.files[0] }))
                   }
                 />
- 
+
                 <input
                   type="text"
                   placeholder="Comments (optional)"
@@ -371,7 +377,7 @@ export default function DynamicService() {
                     setFile((prev) => ({ ...prev, comments: e.target.value }))
                   }
                 />
- 
+
                 <button type="submit">Upload</button>
               </form>
             )}
@@ -382,5 +388,3 @@ export default function DynamicService() {
     </div>
   );
 }
- 
- 

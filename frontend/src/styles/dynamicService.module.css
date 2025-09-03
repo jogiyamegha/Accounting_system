@@ -102,8 +102,8 @@
 }
 
 /* Upload Button */
-.uploadBtn {
-  background: #033c7c;
+.uploadBtn1 {
+  background: #b2b0e8;
   color: #fff;
   margin-top: 0.5rem;
   border: none;
@@ -115,8 +115,59 @@
   transition: background 0.2s ease, transform 0.1s ease;
 }
 
-.uploadBtn:hover {
-  background: #003673;
+.uploadBtn1:hover {
+  background: #9896e6;
+  transform: translateY(-2px);
+}
+.uploadBtn2 {
+  background: #7a85c1;
+  color: #fff;
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.uploadBtn2:hover {
+  background: #5f6bb3;
+  transform: translateY(-2px);
+}
+.uploadBtn3 {
+  background: #3b38a0;
+  color: #fff;
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.uploadBtn3:hover {
+  background: #2d2a9a;
+  transform: translateY(-2px);
+}
+.uploadBtn4 {
+  background: #223187;
+  color: #fff;
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.uploadBtn4:hover {
+  background: #071665;
   transform: translateY(-2px);
 }
 
