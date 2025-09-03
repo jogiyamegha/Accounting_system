@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { ADMIN_END_POINT } from "../../../utils/constants";
+import { toast } from "react-toastify";
 
 const categoryMap = {
     1: "VAT Filing",
@@ -92,6 +93,7 @@ export default function CalendarManagement() {
 
             setDeadlines(mapped);
         } catch (err) {
+            toast.error('Error during fetching deadline')
             console.error("Error fetching deadlines:", err);
         }
     };
@@ -162,10 +164,9 @@ export default function CalendarManagement() {
                     credentials: "include",
                 });
 
-                // Refresh deadlines from DB after adding
+                toast.success('Event added successfully')
                 await fetchDeadlines();
 
-                // Refresh popup with latest events
                 setSelectedDay((prev) =>
                     prev
                         ? {
@@ -175,7 +176,9 @@ export default function CalendarManagement() {
                         }
                         : prev
                 );
+                
             } catch (err) {
+                toast.error('something went wrong in saving deadline')
                 console.error("Error saving deadline:", err);
             }
 
