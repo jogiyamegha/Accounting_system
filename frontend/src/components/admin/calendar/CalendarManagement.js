@@ -2,138 +2,382 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../Sidebar";
 import styles from "../../../styles/calendar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarAlt,
+  faExclamationTriangle,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import { useRef } from "react";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function CalendarManagement({ userRole = "client" }) {
-    const today = new Date();
-    const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-    const [currentYear, setCurrentYear] = useState(today.getFullYear());
-    const [selectedDay, setSelectedDay] = useState(null);
-    const [deadlines, setDeadlines] = useState({
-        "2025-08-05": ["VAT Filing Deadline"],
-        "2025-08-15": ["Client Report Due", "GST Filing"],
-        "2025-09-01": ["Payroll Submission"],
+// Utility: safe parse events as array of objects { title, notes }
+const normalizeEvents = (val) => {
+  if (!val) return [];
+  return val.map((e) => (typeof e === "string" ? { title: e } : e));
+};
+
+export default function CalendarManagement() {
+    const navigate = useNavigate()
+
+  const today = useMemo(() => {
+    const t = new Date();
+    // Normalize to 00:00
+    t.setHours(0, 0, 0, 0);
+    return t;
+  }, []);
+
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [selectedDay, setSelectedDay] = useState(null);
+  const popupRef = useRef(null);
+  const [newEventTitle, setNewEventTitle] = useState(""); // Add new state for the input
+
+  // Seed data (can be replaced with API data)
+  const [deadlines, setDeadlines] = useState({
+    "2025-09-05": ["VAT Filing Deadline"],
+    "2025-09-15": ["Client Report Due", "GST Filing"],
+    "2025-09-01": ["Payroll Submission"],
+  });
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const getDateKey = (y, m, d) =>
+    `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+  const changeMonth = (delta) => {
+    const d = new Date(currentYear, currentMonth + delta, 1);
+    setCurrentMonth(d.getMonth());
+    setCurrentYear(d.getFullYear());
+    setSelectedDay(null);
+  };
+
+  const goToToday = () => {
+    setCurrentMonth(today.getMonth());
+    setCurrentYear(today.getFullYear());
+  };
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  const compareWithToday = (y, m, d) => {
+    const target = new Date(y, m, d);
+    target.setHours(0, 0, 0, 0);
+    if (target.getTime() < today.getTime()) return "past";
+    if (target.getTime() === today.getTime()) return "today";
+    return "upcoming";
+  };
+
+  // Build calendar cells
+  const calendarCells = [];
+  for (let i = 0; i < firstDay; i++)
+    calendarCells.push({ type: "empty", key: `empty-${i}` });
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = getDateKey(currentYear, currentMonth, d);
+    const events = normalizeEvents(deadlines[key]);
+    const hasDeadline = events.length > 0;
+    const status = compareWithToday(currentYear, currentMonth, d); // past | today | upcoming
+    const isToday = status === "today";
+    calendarCells.push({
+      type: "day",
+      day: d,
+      key,
+      hasDeadline,
+      isToday,
+      status,
+      count: events.length,
+      events,
     });
+    // console.log("calendarCells",calendarCells)
+  }
 
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const monthKeyPrefix = `${currentYear}-${String(currentMonth + 1).padStart(
+    2,
+    "0"
+  )}-`;
+  const monthDeadlines = Object.keys(deadlines)
+    .filter((k) => k.startsWith(monthKeyPrefix))
+    .sort();
 
-    const getDateKey = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  const addDeadline = (key, eventObj) =>
+    setDeadlines((prev) => ({
+      ...prev,
+      [key]: [...normalizeEvents(prev[key]), eventObj],
+    }));
 
-    const prevMonth = () => {
-        setCurrentMonth(m => m === 0 ? 11 : m - 1);
-        setCurrentYear(y => currentMonth === 0 ? y - 1 : y);
-        setSelectedDay(null);
+  const handleDayClick = (cell, e) => {
+    e.stopPropagation();
+    console.log("selectedDay", selectedDay);
+    console.log("2", cell.type);
+
+    if (cell.type !== "day") return;
+    // const rect = e.currentTarget.getBoundingClientRect();
+    // const x = rect.left + rect.width / 2;
+    // const y = rect.top + window.scrollY + rect.height + 8; // below cell
+
+    // console.log("x", x);
+    // console.log("y", y);
+    setSelectedDay({ ...cell });
+
+    setNewEventTitle(""); // Clear input when a new day is selected
+  };
+
+  //   useEffect(() => {
+  //     const onDocClick = (ev) => {
+  //       if (popupRef.current && popupRef.current.contains(ev.target)) return;
+  //       setSelectedDay(null);
+  //     };
+  //     document.addEventListener("click", onDocClick);
+  //     return () => document.removeEventListener("click", onDocClick);
+  //   }, []);
+
+  useEffect(() => {
+    if (!selectedDay) return;
+    const onEscape = (ev) => {
+      if (ev.key === "Escape") setSelectedDay(null);
     };
+    document.addEventListener("keydown", onEscape);
+    return () => document.removeEventListener("keydown", onEscape);
+  }, [selectedDay]);
 
-    const nextMonth = () => {
-        setCurrentMonth(m => m === 11 ? 0 : m + 1);
-        setCurrentYear(y => currentMonth === 11 ? y + 1 : y);
-        setSelectedDay(null);
-    };
+  const handleAddEvent = () => {
+    if (newEventTitle.trim() && selectedDay) {
+      const newEvent = { title: newEventTitle.trim() };
 
-    const goToToday = () => {
-        setCurrentMonth(today.getMonth());
-        setCurrentYear(today.getFullYear());
-    };
-
-    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const calendarCells = [];
-
-    for (let i = 0; i < firstDay; i++) calendarCells.push({ type: "empty", key: `empty-${i}` });
-    for (let d = 1; d <= daysInMonth; d++) {
-        const key = getDateKey(currentYear, currentMonth, d);
-        const hasDeadline = deadlines[key]?.length > 0;
-        const isToday = d === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-        calendarCells.push({ type: "day", day: d, key, hasDeadline, isToday, count: deadlines[key]?.length || 0 });
+      // Update both the main state and the selectedDay state for immediate view
+      addDeadline(selectedDay.key, newEvent);
+      setSelectedDay((prev) => ({
+        ...prev,
+        events: [...(prev?.events || []), newEvent],
+        count: (prev?.count || 0) + 1,
+      }));
+      setNewEventTitle(""); // Clear the input field
     }
+    // navigate(0)
+  };
 
-    const monthKeyPrefix = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-`;
-    const monthDeadlines = Object.keys(deadlines).filter(k => k.startsWith(monthKeyPrefix)).sort();
+  return (
+    <div className={styles.mainCalendarWrapper}>
+      <Sidebar />
 
-    const addDeadline = (key, title) => setDeadlines(prev => ({ ...prev, [key]: [...(prev[key] || []), title] }));
+      <div className={styles.contentArea}>
+        <h2 className={styles.title}>
+          <FontAwesomeIcon icon={faCalendarAlt} /> Calendar Management
+        </h2>
 
-    const handleDayClick = (cell, e) => {
-        if (cell.type !== "day") return;
-        setSelectedDay({ ...cell, x: e.clientX, y: e.clientY });
-    };
-
-    useEffect(() => {
-        const onDocClick = ev => {
-            const popup = document.getElementById("calendar-details-popup");
-            if (popup?.contains(ev.target)) return;
-            setSelectedDay(null);
-        };
-        document.addEventListener("click", onDocClick);
-        return () => document.removeEventListener("click", onDocClick);
-    }, []);
-
-    return (
-        <div className={styles.mainCalendarContainer} style={{ display: "flex", backgroundColor: "#e2e4e5" }}>
-            <Sidebar />
-            <h2 className={styles.title}>
-                <FontAwesomeIcon icon={faCalendarAlt} /> Calendar Management
-            </h2>
-            <div className={styles.calendarContainer}>
-                <div className={styles.calendarHeader}>
-                    <div className={styles.monthControls}>
-                        <button className={styles.navButton} onClick={prevMonth}>&lt;</button>
-                        <select className={styles.monthYearSelect} value={currentMonth} onChange={e => setCurrentMonth(parseInt(e.target.value))}>
-                            {monthNames.map((m, i) => <option key={i} value={i}>{m}</option>)}
-                        </select>
-                        <input type="number" value={currentYear} min="2000" max="2100" onChange={e => setCurrentYear(parseInt(e.target.value))} />
-                        <button className={styles.navButton} onClick={nextMonth}>&gt;</button>
-                    </div>
-                    <button className={styles.navButton} onClick={goToToday}>Today</button>
-                </div>
-
-                <div className={styles.calendarMain}>
-                    <div className={styles.calendarGrid}>
-                        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(d => <div key={d} className={styles.dayName}>{d}</div>)}
-                        {calendarCells.map(cell => {
-                            if (cell.type === "empty") return <div key={cell.key} className={`${styles.calendarDay} ${styles.empty}`} />;
-                            return (
-                                <div key={cell.key} className={`${styles.calendarDay} ${cell.isToday ? styles.currentDay : ""}`} onClick={e => handleDayClick(cell, e)}>
-                                    <div className={styles.dayNumber}>{cell.day}</div>
-                                    {cell.hasDeadline && <span className={styles.deadlineDot} />}
-                                    {cell.count > 0 && <span className={styles.eventCount}>{cell.count}</span>}
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    <aside className={styles.agendaPanel}>
-                        <h3>Agenda — {monthNames[currentMonth]} {currentYear}</h3>
-                        {monthDeadlines.length === 0 && <div className={styles.noEvents}>No deadlines this month.</div>}
-                        {monthDeadlines.map(k => (
-                            <div key={k} className={styles.eventItem}>
-                                <strong>{k.split("-").reverse().slice(0, 3).reverse().join("-")}</strong>
-                                <div>{deadlines[k].join(" • ")}</div>
-                            </div>
-                        ))}
-                    </aside>
-                </div>
-
-                {selectedDay && (
-                    <div id="calendar-details-popup" className={styles.detailsPopup} style={{ top: selectedDay.y + 8, left: selectedDay.x - 140 }} onClick={e => e.stopPropagation()}>
-                        <h4>Details — {selectedDay.key}</h4>
-                        {deadlines[selectedDay.key]?.length ? (
-                            <ul>{deadlines[selectedDay.key].map((ev, i) => <li key={i}>{ev}</li>)}</ul>
-                        ) : <div className={styles.noEvents}>No events for this date.</div>}
-
-                        {userRole === "admin" && (
-                            <div className={styles.popupButtons}>
-                                <button className={`${styles.popupButton} ${styles.addButton}`} onClick={() => {
-                                    const title = prompt("Add event title:");
-                                    if (title) addDeadline(selectedDay.key, title);
-                                }}>Add</button>
-                                <button className={`${styles.popupButton} ${styles.closeButton}`} onClick={() => setSelectedDay(null)}>Close</button>
-                            </div>
-                        )}
-                        {userRole !== "admin" && <button className={`${styles.popupButton} ${styles.closeButton}`} onClick={() => setSelectedDay(null)}>Close</button>}
-                    </div>
-                )}
+        <div className={styles.calendarContainer}>
+          <div className={styles.calendarHeader}>
+            <div className={styles.monthControls}>
+              <button
+                className={styles.navButton}
+                onClick={() => changeMonth(-1)}
+                aria-label="Previous month"
+              >
+                &lt;
+              </button>
+              <select
+                className={styles.monthYearSelect}
+                value={currentMonth}
+                onChange={(e) => setCurrentMonth(parseInt(e.target.value))}
+              >
+                {monthNames.map((m, i) => (
+                  <option key={i} value={i}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                value={currentYear}
+                min="2000"
+                max="2100"
+                onChange={(e) => setCurrentYear(parseInt(e.target.value))}
+              />
+              <button
+                className={styles.navButton}
+                onClick={() => changeMonth(1)}
+                aria-label="Next month"
+              >
+                &gt;
+              </button>
             </div>
+            <button className={styles.todayButton} onClick={goToToday}>
+              Today
+            </button>
+          </div>
+
+          <div className={styles.calendarMain}>
+            <div className={styles.calendarGrid}>
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+                <div key={d} className={styles.dayName}>
+                  {d}
+                </div>
+              ))}
+
+              {calendarCells.map((cell) => {
+                if (cell.type === "empty")
+                  return (
+                    <div
+                      key={cell.key}
+                      className={`${styles.calendarDay} ${styles.empty}`}
+                    />
+                  );
+
+                const cellClass = [
+                  styles.calendarDay,
+                  cell.isToday ? styles.currentDay : "",
+                  cell.status === "past" && cell.hasDeadline
+                    ? styles.pastWithEvent
+                    : "",
+                  cell.status === "upcoming" && cell.hasDeadline
+                    ? styles.upcomingWithEvent
+                    : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+
+                return (
+                  <div
+                    key={cell.key}
+                    className={cellClass}
+                    onClick={(e) => handleDayClick(cell, e)}
+                  >
+                    <div className={styles.dayNumber}>{cell.day}</div>
+
+                    {cell.hasDeadline && (
+                      <>
+                        <span
+                          className={`${styles.deadlineDot} ${
+                            cell.status === "past"
+                              ? styles.dotPast
+                              : cell.status === "today"
+                              ? styles.dotToday
+                              : styles.dotUpcoming
+                          }`}
+                        />
+                        <span className={styles.eventCount}>{cell.count}</span>
+                      </>
+                    )}
+
+                    {cell.status === "past" && cell.hasDeadline && (
+                      <span className={styles.overdueBadge}>
+                        <FontAwesomeIcon icon={faExclamationTriangle} /> Overdue
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <aside className={styles.agendaPanel}>
+              <h3>
+                Agenda — {monthNames[currentMonth]} {currentYear}
+              </h3>
+              {monthDeadlines.length === 0 && (
+                <div className={styles.noEvents}>No deadlines this month.</div>
+              )}
+              {monthDeadlines.map((k) => {
+                const events = normalizeEvents(deadlines[k]);
+                return (
+                  <div key={k} className={styles.eventItem}>
+                    <strong>
+                      {k.split("-").reverse().slice(0, 3).reverse().join("-")}
+                    </strong>
+                    <div className={styles.eventListCompact}>
+                      {events.map((e, i) => (
+                        <span key={i} className={styles.eventChip}>
+                          {e.title}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </aside>
+          </div>
         </div>
-    );
+      </div>
+
+      {selectedDay && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setSelectedDay(null)} // clicking overlay closes modal
+        >
+          <div
+            ref={popupRef}
+            id="calendar-details-popup"
+            className={styles.detailsPopup}
+            onClick={(e) => e.stopPropagation()} // clicks inside modal shouldn't close it
+          >
+            {/* Keep your existing content here unchanged */}
+            <h4>
+              Details — {selectedDay.key}{" "}
+              {selectedDay.isToday && (
+                <span className={styles.todayPill}>Today</span>
+              )}
+            </h4>
+
+            {selectedDay.events?.length ? (
+              <ul className={styles.popupEventList}>
+                {selectedDay.events.map((ev, i) => (
+                  <li key={i} className={styles.popupEventItem}>
+                    {ev.title}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className={styles.noEvents}>No events for this date.</div>
+            )}
+
+            <div className={styles.addForm}>
+              <label className={styles.addLabel} htmlFor="newEventTitle">
+                Add a new calendar event
+              </label>
+              <div className={styles.addRow}>
+                <input
+                  id="newEventTitle"
+                  className={styles.addInput}
+                  type="text"
+                  placeholder="Event title"
+                  value={newEventTitle}
+                  onChange={(e) => setNewEventTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleAddEvent();
+                  }}
+                />
+                <button
+                  className={`${styles.popupButton} ${styles.addButton}`}
+                  onClick={handleAddEvent}
+                >
+                  <FontAwesomeIcon icon={faPlus} /> Register Event
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.popupButtons}>
+              <button
+                className={`${styles.popupButton} ${styles.closeButton}`}
+                onClick={() => setSelectedDay(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
