@@ -18,6 +18,33 @@ exports.getAllEvents = async (req) => {
     return events;
 }
 
+exports.editEvent = async (req) => {
+    const reqBody = req.body;
+    const eventId = req.params[TableFields.ID];
+
+    const event = await CalendarService.findById(eventId).withBasicInfo().execute();
+    console.log(event);
+    if(!event) {
+        throw new ValidationError(ValidationMsg.EventNotFound)
+    }
+
+    return await parseAndValidateEvent(reqBody, event, async(updatedFields) => {
+        return await CalendarService.updateEvent(eventId, updatedFields)
+    })
+}
+
+exports.deleteEvent = async (req) => {
+    const eventId = req.params[TableFields.ID];
+    const event = await CalendarService.findById(eventId).withBasicInfo().execute();
+    console.log(event);
+   
+    if(!event) {
+        throw new ValidationError(ValidationMsg.EventNotFound)
+    }
+
+    return await CalendarService.updateDeleteEvent(eventId);
+}
+
 async function parseAndValidateEvent(
     reqBody,
     existingField = {},

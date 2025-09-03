@@ -206,6 +206,7 @@ const ValidationMsg = (function () {
     ValidationMsg.ServiceIsNotCompleted = 'service is not completed yet, so you can renew it after completion';
     ValidationMsg.DeadlineCategoryEmpty = 'deadline field is required';
     ValidationMsg.DateEmpty = 'Date required';
+    ValidationMsg.EventNotFound = 'Event Not Found';
 
     return ValidationMsg;
 })();

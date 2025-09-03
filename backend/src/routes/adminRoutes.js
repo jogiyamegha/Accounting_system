@@ -247,5 +247,15 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/edit-calendar-event/:${TableFields.ID}`)
+.asUPDATE(CalendarController.editEvent)
+// .useAdminAuth()
+.build()
+
+.addPath(`/delete-calendar-event/:${TableFields.ID}`)
+.asDELETE(CalendarController.deleteEvent)
+// .useAdminAuth()
+.build()
+
 .getRouter()
 module.exports = router;

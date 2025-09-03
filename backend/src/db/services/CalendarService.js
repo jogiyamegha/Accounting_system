@@ -5,13 +5,14 @@ const {
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const Calendar = require("../models/calendar");
+const { MongoUtil } = require("../mongoose");
 
 class CalendarService {
     static findById = (id) => {
         return new ProjectionBuilder(async function () {
             return await Calendar.findOne(
                 {
-                    id,
+                    [TableFields.ID] : MongoUtil.toObjectId(id)
                 },
                 this
             );
@@ -54,6 +55,17 @@ class CalendarService {
         )
     }
 
+    static updateEvent = async (eventId, updatedFields = {}) => {
+        return await Calendar.findByIdAndUpdate(
+            { 
+                [TableFields.ID]: MongoUtil.toObjectId(eventId)
+            },
+            updatedFields,
+            { new: true } 
+        );
+    };
+
+
     static findByServiceType = async (serviceType) => {
         if (typeof serviceType === "string") {
             const serviceTypeMap = {
@@ -74,6 +86,17 @@ class CalendarService {
             [TableFields.serviceType]: serviceType,
         });
     };
+
+    static updateDeleteEvent = async (eventId) => {
+        return await Calendar.findByIdAndUpdate(
+            {
+                [TableFields.ID] : eventId
+            },
+            {
+                [TableFields.deleted] : true
+            }
+        )
+    }
 
     static insertRecord = async (calendarFields) => {
         const calendar = new Calendar(calendarFields);
@@ -102,9 +125,7 @@ const ProjectionBuilder = class {
             projection[TableFields.ID] = 1;
             projection[TableFields.title] = 1;
             projection[TableFields.associatedClients] = 1;
-            projection[TableFields.serviceType] = 1;
-            projection[TableFields.deadlineDetails] = 1;
-            projection[TableFields.colorCode] = 1;
+            projection[TableFields.deadlineCategory] = 1;
             projection[TableFields.isCompleted] = 1;
             projection[TableFields.deleted] = 1;
             return this;
