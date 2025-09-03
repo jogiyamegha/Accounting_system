@@ -405,6 +405,108 @@
   background: #f3f4f6;
 }
 
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 15px;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.filterLabel {
+  font-weight: 600;
+  color: #444;
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.filters input[type="date"],
+.filters select {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filters select {
+  width: 50%
+}
+
+.filters input[type="date"]:focus,
+.filters select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0,123,255,0.25);
+}
+
+/* Secondary button (Clear Filters) */
+.filters button {
+  padding: 6px 12px;
+  font-size: 14px;
+  background: #e9ecef;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.filters button:hover {
+  background: #d6d8db;
+}
+
+
+.iconButton {
+  margin-left: 6px;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s ease-in-out;
+}
+
+.iconButton:hover {
+  color: #d9534f; /* red for delete or darker shade */
+}
+.eventItem {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.eventHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.actionIcons {
+  display: flex;
+  gap: 8px;
+}
+
+.iconButton {
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s ease-in-out;
+}
+
+.iconButton:hover {
+  color: #007bff; /* Blue for edit */
+}
+
+.iconButton:last-child:hover {
+  color: #d9534f; /* Red for delete */
+}
+
+
+
 /* Responsive */
 @media (max-width: 1200px) {
   .calendarMain {
