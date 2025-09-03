@@ -39,7 +39,7 @@ class ServiceService {
 
     static getClientsFilterByServiceType = (serviceType) => {
         return new ProjectionBuilder(async function () {
-            return await Service.find({
+            const docs = await Service.find({
                 [TableFields.services]: {
                     $elemMatch: {
                         [TableFields.serviceType]: serviceType,
@@ -47,9 +47,14 @@ class ServiceService {
                     },
                 },
             });
-        });
 
+            return docs.map((doc) => {
+                doc.services = doc.services.filter((s) => !s.deleted);
+                return doc;
+            });
+        });
     };
+
 
     static findByServiceType = async (serviceType) => {
         if (typeof serviceType === "string") {
@@ -128,7 +133,7 @@ class ServiceService {
     };
 
     static updateDeassign = async (clientId, serviceId) => {
-        await Service.updateOne(
+        return await Service.updateOne(
             {
                 [`${TableFields.clientDetail}.${TableFields.clientId}`]: clientId,
                 [`${TableFields.services}.${TableFields.ID}`]: serviceId,
@@ -164,7 +169,6 @@ class ServiceService {
         let serviceType = reqBody[TableFields.serviceType];
 
         if (typeof serviceType === "string") {
-            console.log("here");
             const serviceTypeMap = {
                 "VAT": ServiceType.VAT,
                 "Corporate Tax": ServiceType.CorporateTaxServices,
@@ -239,7 +243,7 @@ class ServiceService {
         endDate.setDate(startDate.getDate() + durationInDays);
 
         mainService[TableFields.services].push({
-            [TableFields.serviceType]: serviceTypeNumber, 
+            [TableFields.serviceType]: serviceTypeNumber,
             [TableFields.serviceStartDate]: startDate,
             [TableFields.serviceEndDate]: endDate,
             [TableFields.serviceStatus]: 2,
@@ -248,7 +252,7 @@ class ServiceService {
 
         let result = await mainService.save();
         return { serviceTypeKey, endDate }
- 
+
     };
 
 

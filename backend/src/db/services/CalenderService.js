@@ -4,12 +4,12 @@ const {
     ServiceType,
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
-const CalenderEvent = require("../models/calenderEvent");
+const Calender = require("../models/calender");
 
-class CalenderEventService {
+class CalenderService {
     static findById = (id) => {
         return new ProjectionBuilder(async function () {
-            return await CalenderEvent.findOne(
+            return await Calender.findOne(
                 {
                     id,
                 },
@@ -34,21 +34,21 @@ class CalenderEventService {
             throw new ValidationError("Invalid Service Type.");
         }
 
-        return await CalenderEvent.findOne({
+        return await Calender.findOne({
             [TableFields.serviceType]: serviceType,
         });
     };
 
-    static insertRecord = async (calenderEventFields) => {
-        const calenderEvent = new CalenderEvent(calenderEventFields);
-        let error = calenderEvent.validateSync();
+    static insertRecord = async (calenderFields) => {
+        const calender = new Calender(calenderFields);
+        let error = calender.validateSync();
         let createdCalenderRecord;
 
         if (error) {
             throw error;
         } else {
             try {
-                createdCalenderRecord = await calenderEvent.save();
+                createdCalenderRecord = await calender.save();
                 return createdCalenderRecord;
             } catch (e) {
                 if (createdCalenderRecord) {
@@ -65,16 +65,12 @@ const ProjectionBuilder = class {
         this.withBasicInfo = () => {
             projection[TableFields.ID] = 1;
             projection[TableFields.title] = 1;
-            projection[TableFields.description] = 1;
             projection[TableFields.associatedClients] = 1;
             projection[TableFields.serviceType] = 1;
             projection[TableFields.deadlineDetails] = 1;
-            projection[TableFields.startDate] = 1;
-            projection[TableFields.endDate] = 1;
-            projection[TableFields.isAllDay] = 1;
             projection[TableFields.colorCode] = 1;
             projection[TableFields.isCompleted] = 1;
-
+            projection[TableFields.deleted] = 1;
             return this;
         };
 
@@ -95,4 +91,4 @@ const ProjectionBuilder = class {
 };
 
 
-module.exports = CalenderEventService;
+module.exports = CalenderService;

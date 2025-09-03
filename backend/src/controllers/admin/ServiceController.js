@@ -122,7 +122,8 @@ exports.deAssignService = async (req) => {
         throw new ValidationError(ValidationMsg.ServiceIsCompleted)
     }
 
-    await ServiceService.updateDeassign(clientId, serviceId);
+    let result = await ServiceService.updateDeassign(clientId, serviceId);
+    return result;
 }
 
 

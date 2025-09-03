@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
-const { TableFields, TableNames, DeadlineCategory } = require('../../utils/constants');
+const { TableFields, TableNames, DeadlineCategory, ValidationMsg, ServiceType } = require('../../utils/constants');
  
 const Schema = mongoose.Schema;
  
-const calenderEventSchema = new Schema(
+const calenderSchema = new Schema(
     {
         [TableFields.title]: {
             type: String,
@@ -31,7 +31,7 @@ const calenderEventSchema = new Schema(
         ],
         [TableFields.serviceType]: {
             type: Number,
-            enum: Object.values(ServiceTypes),
+            enum: Object.values(ServiceType),
         },
         [TableFields.deadlineDetails]: {
             [TableFields.deadlineCategory]: {
@@ -69,7 +69,7 @@ const calenderEventSchema = new Schema(
     }
 );
  
-const CalenderEvent = mongoose.model(TableNames.CalenderEvent, calenderEventSchema);
-module.exports = CalenderEvent;
+const Calender = mongoose.model(TableNames.Calender, calenderSchema);
+module.exports = Calender;
  
  
