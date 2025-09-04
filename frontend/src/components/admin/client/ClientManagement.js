@@ -66,7 +66,7 @@ export default function ClientManagement() {
 
     const handleAddClient = () => navigate("/admin/add-client");
     const handleView = (id) => navigate(`/admin/client-detail/${id}`);
-    const handleEdit = (id) => navigate(`/admin/edit-client/${id}`);
+    // const handleEdit = (id) => navigate(`/admin/edit-client/${id}`);
 
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this client?")) {
@@ -169,7 +169,7 @@ export default function ClientManagement() {
                                         <th className={styles.actionsCol}>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                {/* <tbody>
                                     {clients.map((client) => (
                                         <tr key={client._id}>
                                             <td>{client.name}</td>
@@ -208,7 +208,51 @@ export default function ClientManagement() {
                                             </td>
                                         </tr>
                                     ))}
+                                </tbody> */}
+
+                                <tbody>
+                                    {clients.map((client) => (
+                                        <tr
+                                            key={client._id}
+                                            onClick={() => handleView(client._id)} // navigate when row is clicked
+                                            className={styles.clickableRow} // optional styling for hover effect
+                                        >
+                                            <td>{client.name}</td>
+                                            <td>{client.email}</td>
+                                            <td>{client.contact.phone}</td>
+                                            <td
+                                                className={styles.actions}
+                                                onClick={(e) => e.stopPropagation()} // prevent row click on buttons
+                                            >
+                                                {/* <button onClick={() => handleView(client._id)}>
+                                                    <FontAwesomeIcon icon={faEye} /> View
+                                                </button>
+                                                <button onClick={() => handleEdit(client._id)}>
+                                                    <FontAwesomeIcon icon={faPen} /> Edit
+                                                </button> */}
+                                                <button onClick={() => handleGenerateInvoice(client._id)}>
+                                                    <FontAwesomeIcon icon={faFileInvoice} /> New Invoice
+                                                </button>
+                                                <button onClick={() => handleAppyService(client._id)}>
+                                                    <FontAwesomeIcon icon={faPlusCircle} /> Assign Service
+                                                </button>
+                                                <button onClick={() => handleDelete(client._id)}>
+                                                    <FontAwesomeIcon icon={faTrash} /> Delete
+                                                </button>
+                                                
+                                                {/* <button
+                                                    onClick={() => handleClientStatus(client._id)}
+                                                    className={`${styles.statusButton} ${client.isActive ? styles.deactivate : styles.activate
+                                                        }`}
+                                                >
+                                                    <FontAwesomeIcon icon={client.isActive ? faBan : faCheckCircle} />{" "}
+                                                    {client.isActive ? "Deactivate" : "Activate"}
+                                                </button> */}
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
+
                             </table>
 
                             {/* Pagination */}
