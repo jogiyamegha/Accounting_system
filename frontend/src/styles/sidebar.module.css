@@ -1,7 +1,8 @@
 /* Sidebar wrapper */
 .sidebar {
   width: 280px; /* wider */
-  background-color: #1e293b; /* dark slate */
+  /* background-color: #1e293b;  */
+  background-color: #131c64; 
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -38,7 +39,8 @@
 /* Header title */
 .sidebarHeader {
   padding: 10px;
-  background-color: #192646;
+  /* background-color: #192646; */
+  background-color: #1e293b;
   text-align: center;
 }
 
@@ -62,7 +64,7 @@
 }
 
 .sidebarNav li {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .sidebarNav a {
@@ -73,12 +75,18 @@
   color: #cbd5e1;
   text-decoration: none;
   font-size: 15px;
+  font-weight: 600;
   transition: background 0.3s, color 0.3s;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 2px solid transparent;
 }
 
 .sidebarNav a:hover {
-  background-color: #334155;
+  /* background-color: #fff; */
+  border-color: #fff;
   color: #fff;
+
 }
 
 /* Logout button */
@@ -161,10 +169,16 @@
   font-size: 15px;
   transition: background 0.3s, color 0.3s;
   cursor: pointer;
+
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 2px solid transparent;
 }
 
 .sidebarLinkContent:hover {
-  background-color: #334155;
+  /* background-color: #334155;
+  color: #fff; */
+  border-color: #fff;
   color: #fff;
 }
 
@@ -174,7 +188,7 @@
   top: 0;
   left: 100%; /* Positions the dropdown to the right of the parent li */
   min-width: 200px;
-  background-color: #1e293b; /* Matches the sidebar background */
+  background-color: #263182; /* Matches the sidebar background */
   list-style: none;
   padding: 10px 0;
   margin: 0;

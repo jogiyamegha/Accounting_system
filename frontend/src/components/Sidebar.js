@@ -19,6 +19,7 @@ import {
     faBars,
     faTasks,
     faTimes,
+    faCog,
 } from "@fortawesome/free-solid-svg-icons";
 
 import styles from "../styles/sidebar.module.css";
@@ -112,9 +113,9 @@ export default function Sidebar() {
                     <img src={logo} alt="Logo" className={styles.logoSvg} />
                 </div>
 
-                <div className={styles.sidebarHeader}>
+                {/* <div className={styles.sidebarHeader}>
                     <h2>Admin Panel</h2>
-                </div>
+                </div> */}
 
                 <nav className={styles.sidebarNav}>
                     <ul>
@@ -174,6 +175,13 @@ export default function Sidebar() {
                                 <FontAwesomeIcon icon={faPenSquare} /> CMS Management
                             </a>
                         </li>
+
+                        <li>
+                            <a href="/settings">
+                                <FontAwesomeIcon icon={faCog} /> Settings
+                            </a>
+                        </li>
+
                         <li className={styles.logout}>
                             <button onClick={handleLogout}>
                                 <FontAwesomeIcon icon={faSignOutAlt} /> Logout

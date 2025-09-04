@@ -64,67 +64,76 @@ function Login() {
         }
     }
 
-    return (
-        <div className={styles.loginContainer}>
-            <h2>{isAdmin ? "Admin Login" : "Client Login"}</h2>
-            <form onSubmit={submitHandler} className={styles.loginForm}>
-                <div className={styles.formGroup}>
-                    <label htmlFor="email">Email</label>
-                    <input type="email" id="email" ref={emailInputRef} required />
-                </div>
+   return (
+  <div className={styles.loginContainer}>
+    {/* Left: Form Section */}
+    <div className={styles.formSection}>
+        <div className={styles.formCard}>
 
-                <div className={styles.formGroup}>
-                    <label htmlFor="password">Password</label>
-                    <div className={styles.passwordInputWrapper}>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            ref={passwordInputRef}
-                            required
-                        />
-
-                        <span
-                            className={styles.eyeIcon}
-                            onClick={() => setShowPassword((prev) => !prev)}
-                        >
-                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                        </span>
-                    </div>
-                </div>
-
-                <button type="submit" className={styles.loginButton}>
-                    Login
-                </button>
-
-                <a
-                    href={isAdmin ? "/admin/forgot-password" : "/client/forgot-password"}
-                    className={styles.forgotLink}
-                >
-                    Forgot Password?
-                </a>
-
-                {isAdmin ? (
-                    <>
-                        <Link className={styles.clientLink} to="/client/login">
-                            Login as Client
-                        </Link>
-                        <Link className={styles.clientLink} to="/admin/signup">
-                            Sign Up as Admin
-                        </Link>
-                    </>
-                ) : (
-                    <>
-                        <Link className={styles.adminLink} to="/admin/login">
-                            Login as Admin
-                        </Link>
-                        <Link className={styles.adminLink} to="/client/signup">
-                            Sign Up as Client
-                        </Link>
-                    </>
-                )}
-            </form>
+      <h2 className={styles.formTitle}>{isAdmin ? "Admin Login" : "Client Login"}</h2>
+      <form onSubmit={submitHandler} className={styles.loginForm}>
+        <div className={styles.formGroup}>
+          <label htmlFor="email">Email</label>
+          <input type="email" id="email" ref={emailInputRef} required />
         </div>
-    );
+
+        <div className={styles.formGroup}>
+          <label htmlFor="password">Password</label>
+          <div className={styles.passwordInputWrapper}>
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              ref={passwordInputRef}
+              required
+            />
+            <span
+              className={styles.eyeIcon}
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </span>
+          </div>
+        </div>
+
+        <button type="submit" className={styles.loginButton}>
+          Login
+        </button>
+
+        <a
+          href={isAdmin ? "/admin/forgot-password" : "/client/forgot-password"}
+          className={styles.forgotLink}
+        >
+          Forgot Password?
+        </a>
+
+        {isAdmin ? (
+          <>
+            <Link className={styles.clientLink} to="/client/login">
+              Login as Client
+            </Link>
+            <Link className={styles.clientLink} to="/admin/signup">
+              Sign Up as Admin
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link className={styles.adminLink} to="/admin/login">
+              Login as Admin
+            </Link>
+            <Link className={styles.adminLink} to="/client/signup">
+              Sign Up as Client
+            </Link>
+          </>
+        )}
+      </form>
+      </div>
+    </div>
+
+    {/* Right: Image Section */}
+    <div className={styles.imageSection}></div>
+  </div>
+);
+
 }
 
 export default Login;
