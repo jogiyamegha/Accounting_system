@@ -176,6 +176,11 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+
+.addPath('/fetch-clients')
+.asGET(ClientController.getAllClients)
+.useAdminAuth()
+.build()
 /** 
  * Assign service to client
  */

@@ -181,11 +181,15 @@ exports.deleteClient = async (req) => {
 
 exports.getAllClients = async (req) => {
     // nalytics code here
-    return await ClientService.listClients({
+    const clients = await ClientService.listClients({
         ...req.query,
     })
         .withBasicInfo()
         .execute();
+    
+        // console.log(clients);
+    console.log(clients.records);
+    return clients.records;
 };
 
 async function parseAndValidateClient(

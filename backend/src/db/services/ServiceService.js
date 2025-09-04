@@ -17,7 +17,8 @@ class ServiceService {
 
     static serviceExists = async (serviceName) => {
         return await Service.exists({
-            [TableFields.serviceName] : serviceName
+            [TableFields.serviceName] : serviceName,
+            [TableFields.deleted] : false
         })
     }
     static findById = (id) => {
