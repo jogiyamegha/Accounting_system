@@ -249,12 +249,12 @@ const router = API.configRoute("/admin")
 
 .addPath(`/edit-calendar-event/:${TableFields.ID}`)
 .asUPDATE(CalendarController.editEvent)
-// .useAdminAuth()
+.useAdminAuth()
 .build()
 
 .addPath(`/delete-calendar-event/:${TableFields.ID}`)
 .asDELETE(CalendarController.deleteEvent)
-// .useAdminAuth()
+.useAdminAuth()
 .build()
 
 .getRouter()
