@@ -522,7 +522,7 @@ export default function EditClient() {
                 <div style={{ width: "100%" }} className={classes.buttonContainer} >
                     <button type="submit" disabled={loading} className={classes.submitBtn}>
 
-                        {loading ? "Updating..." : "Update Client"}
+                        {loading ? "Updating..." : "SAVE"}
                     </button>
                 </div>
             </form>

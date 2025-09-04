@@ -99,88 +99,103 @@ export default function Signup() {
     };
 
     return (
-        <div className={styles.signupContainer}>
-            <h2>{role === "admin" ? "Admin Signup" : "Client Signup"}</h2>
+  <div className={styles.signupContainer}>
+    {/* Left: Form Section */}
+    <div className={styles.formSection}>
+      <div className={styles.formCard}>
+        <h2 className={styles.formTitle}>
+          {role === "admin" ? "Admin Signup" : "Client Signup"}
+        </h2>
 
-            <form onSubmit={handleSubmit} className={styles.signupForm}>
-                {error && <p className={styles.errorMessage}>{error}</p>}
+        <form onSubmit={handleSubmit} className={styles.signupForm}>
+          {error && <p className={styles.errorMessage}>{error}</p>}
 
-                <div className={styles.formGroup}>
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="Full Name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-                <div className={styles.formGroup}>
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Email Address"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+          <div className={styles.formGroup}>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-                <div className={styles.formGroup}>
-                    <div className={styles.passwordInputWrapper}>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder="Password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                        />
-                        <span
-                            className={styles.eyeIcon}
-                            onClick={() => setShowPassword((prev) => !prev)}
-                        >
-                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                        </span>
-                    </div>
-                </div>
+          <div className={styles.formGroup}>
+            <div className={styles.passwordInputWrapper}>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <span
+                className={styles.eyeIcon}
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
+            </div>
+          </div>
 
-                {role === "client" && (
-                    <div className={styles.formGroup}>
-                        <div className={styles.passwordInputWrapper}>
-                            <input
-                                type={showConfirmPassword ? "text" : "password"}
-                                name="confirmPassword"
-                                placeholder="Confirm Password"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                required
-                            />
-                            <span
-                                className={styles.eyeIcon}
-                                onClick={() => setShowConfirmPassword((prev) => !prev)}
-                            >
-                                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </span>
-                        </div>
-                    </div>
-                )}
+          {role === "client" && (
+            <div className={styles.formGroup}>
+              <div className={styles.passwordInputWrapper}>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+                <span
+                  className={styles.eyeIcon}
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                >
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </span>
+              </div>
+            </div>
+          )}
 
-                <button type="submit" disabled={loading} className={styles.signupButton}>
-                    {loading ? "Signing up..." : "Sign Up"}
-                </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className={styles.signupButton}
+          >
+            {loading ? "Signing up..." : "Sign Up"}
+          </button>
 
-                <Link className={styles.loginLink} to={`/${role}/login`}>
-                    Already Registered? Login
-                </Link>
+          <Link className={styles.loginLink} to={`/${role}/login`}>
+            Already Registered? Login
+          </Link>
 
-                {role === "admin" && (
-                    <Link className={styles.clientLink} to="/client/signup">
-                        Sign Up as Client
-                    </Link>
-                )}
-            </form>
-        </div>
-    );
+          {role === "admin" && (
+            <Link className={styles.clientLink} to="/client/signup">
+              Sign Up as Client
+            </Link>
+          )}
+        </form>
+      </div>
+    </div>
+
+    {/* Right: Image Section */}
+    <div className={styles.imageSection}></div>
+  </div>
+);
+
 }

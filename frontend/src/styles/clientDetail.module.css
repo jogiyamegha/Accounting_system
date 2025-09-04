@@ -1,12 +1,12 @@
-/* ========== Layout ========== */
+/* Page wrapper */
 .clientDetailPage {
-  margin-left: 280px; /* aligned with sidebar */
-  padding: 2rem;
-  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: #f5f7fa;
   min-height: 100vh;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #1f2937;
-  transition: margin-left 0.3s ease, padding 0.3s ease;
+  margin-left: 280px;
 }
 
 .adjustment {
@@ -17,7 +17,6 @@
   gap: 12px;
   margin-bottom: 1.5rem;
 }
-
 .pageTitle {
   font-size: 1.8rem;
   font-weight: 700;
@@ -25,350 +24,386 @@
   letter-spacing: 0.3px;
 }
 
-/* Action button */
-.gtBtn {
-  padding: 10px 18px;
-  background-color: #2563eb;
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.gtBtn:hover {
-  background: #1d4ed8;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
-}
-
-/* ========== Cards ========== */
-.clientCard {
-  background-color: #ffffff;
+/* Profile card at the top */
+.profileCard {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 20px;
   border-radius: 14px;
-  padding: 1.6rem 1.8rem;
-  margin-bottom: 1.8rem;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.clientCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
 }
 
-.clientCardTitle {
-  font-size: 18px;
+.profileLeft {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profileIcon {
+  font-size: 60px;
+  color: #64748b;
+}
+
+.profileName {
+  font-size: 22px;
   font-weight: 600;
-  margin-bottom: 1rem;
-  color: #1f2937;
+  margin: 0;
 }
 
-/* Reuse client info grid styling for company info */
-/* Container Grid for Info */
+.profileRole {
+  font-size: 16px;
+  font-weight: 600;
+
+  color: #64748b;
+}
+
+.profileLocation {
+  font-size: 15px;
+  color: #94a3b8;
+}
+
+/* General card style */
+.clientCard {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.cardHeader h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Info grid inside cards */
 .infoGrid {
   display: grid;
-  grid-template-columns: max-content 1fr; /* label adjusts to content, value takes rest */
-  gap: 12px 20px; /* row gap 12px, column gap 20px */
-  padding-top: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px 20px;
 }
 
-/* Each row styled as a flex block with background and spacing */
 .infoRow {
-  display: contents; /* allow grid to manage placement */
-}
-
-.infoLabel {
-  font-weight: 600;
-  color: #475569;
-  text-align: left;
-  font-size: 14px;
-  align-self: center;
-  padding-right: 10px;
-}
-
-.infoValue {
-  font-weight: 500;
-  color: #111827;
-  font-size: 14px;
-  word-break: break-word;
-  padding: 8px 12px;
-  background-color: #f1f5f9;
-  border-radius: 8px;
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-
-.infoValue:hover {
-  background-color: #e2e8f0;
-  transform: translateY(-1px);
-}
-
-/* Optional subtle separator lines */
-.infoRow + .infoRow .infoValue {
-  margin-top: 4px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .infoGrid {
-    grid-template-columns: 1fr; /* stack label & value vertically */
-  }
-
-  .infoLabel {
-    text-align: left;
-    padding-right: 0;
-    margin-bottom: 4px;
-  }
-
-  .infoValue {
-    width: 100%;
-  }
-}
-
-/* Documents List */
-.documentList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr; /* stack by default */
-  gap: 1rem;
-}
-
-.documentItem {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 1rem 1.2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  align-items: start;
-  transition: all 0.3s ease;
-}
-
-.documentItem:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  background-color: #f9fafb;
-}
-
-/* Labels & values inside docAction */
-.docAction {
   display: flex;
   flex-direction: column;
 }
 
-.docLabel {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #475569;
-}
-
-/* Inputs & Selects */
-.docInput,
-.docSelect {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 14px;
-  background: #f9fafb;
-  transition: all 0.25s ease;
-}
-
-.docInput:focus,
-.docSelect:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-  background: #ffffff;
-  outline: none;
-}
-
-/* Update button */
-.docUpdateBtn {
-  padding: 8px 16px;
-  margin-top: 24px;
-  background: #2563eb;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.docUpdateBtn:hover {
-  background: #1d4ed8;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-}
-
-/* View Link */
-.viewLink {
-  font-size: 13px;
-  color: #2563eb;
+.infoLabel {
+  font-size: 15px;
+  color: #64748b;
+  margin-bottom: 4px;
   font-weight: 500;
-  text-decoration: none;
-  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.viewLink:hover {
-  color: #1d4ed8;
-  text-decoration: underline;
-  transform: translateX(2px);
+.infoValue {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
 }
 
-/* Filter bar */
+/* Edit button */
+.editBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 14px;
+  padding: 6px 8px;
+  font-size: 15px;
+  cursor: pointer;
+  color: #334155;
+  transition: 0.2s ease-in-out;
+}
+
+.editBtn:hover {
+  background: #e2e8f0;
+}
+
+/* Filters */
+/* Filters */
 .filterBar {
   display: flex;
-  gap: 12px;
-  margin-bottom: 1.5rem;
   flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .filterInput {
   padding: 8px 12px;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background-color: #f9fafb;
+  border-radius: 10px;
   font-size: 14px;
-  color: #374151;
-  outline: none;
-  transition: border 0.2s ease, box-shadow 0.2s ease;
+  color: #334155;
+  background: #fff;
+  transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .filterInput:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-  background-color: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  outline: none;
 }
 
-/* Empty state */
-.emptyText {
-  font-size: 14px;
-  color: #6b7280;
-  font-style: italic;
-  margin-top: 0.5rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .documentItem {
-    grid-template-columns: 1fr; /* stack items vertically on mobile */
-  }
-  .docAction {
-    width: 100%;
-  }
-}
-
-
-/* ========== Invoices Table ========== */
-.invoiceTable {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+/* Document list */
+/* .documentList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   overflow: hidden;
+} */
+
+/* Each item as a row */
+/* .documentItem {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 0.8fr 1.2fr; 
+  align-items: center;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background 0.2s ease-in-out;
+}
+
+.documentItem:last-child {
+  border-bottom: none;
+}
+
+.documentItem:hover {
+  background: #f8fafc;
+} */
+
+/* Strong text */
+/* .documentItem strong {
+  color: #1e293b;
+  font-weight: 600;
+} */
+
+/* View link */
+/* .viewLink {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.viewLink:hover {
+  text-decoration: underline;
+} */
+
+/* Actions */
+/* .docAction {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.docLabel {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.docInput,
+.docSelect {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+
+.docInput:focus,
+.docSelect:focus {
+  border-color: #3b82f6;
+}
+
+.docUpdateBtn {
+  margin-left: 1rem;
+  margin-top: 1rem;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.docUpdateBtn:hover {
+  background: #2563eb;
+} */
+
+.documentTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.documentTable th,
+.documentTable td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.documentTable th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.documentTable tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+.documentTable tr:hover {
+  background: #f1f5f9;
+}
+
+.viewLink {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.viewLink:hover {
+  text-decoration: underline;
+}
+
+.docInput,
+.docSelect {
+  width: 90%;
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+
+.docInput:focus,
+.docSelect:focus {
+  border-color: #3b82f6;
+}
+
+.docUpdateBtn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.docUpdateBtn:hover {
+  background: #2563eb;
+}
+
+
+
+
+/* Invoice section */
+.invoiceTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.invoiceTable th,
+.invoiceTable td {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 15px;
+  text-align: left;
 }
 
 .invoiceTable th {
-  background: #f1f5f9;
-  padding: 12px;
-  font-size: 14px;
+  background: #f8fafc;
   font-weight: 600;
-  color: #475569;
-  text-align: center;
-  border-bottom: 2px solid #e5e7eb;
+  color: #1e293b;
 }
 
-.invoiceTable td {
-  padding: 12px;
-  font-size: 14px;
-  color: #374151;
-  text-align: center;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.invoiceRow:hover {
+.invoiceRow:nth-child(even) {
   background: #f9fafb;
 }
 
 .invoiceButtons {
   display: flex;
   gap: 8px;
-  justify-content: center;
 }
 
 .invoiceLink {
-  padding: 6px 12px;
-  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 15px;
   text-decoration: none;
-  font-size: 13px;
   font-weight: 500;
-  transition: all 0.2s ease;
 }
+
 .invoiceLink.view {
-  background: #2563eb;
-  color: #fff;
+  background: #e0f2fe;
+  color: #0284c7;
 }
+
 .invoiceLink.download {
-  background: #22c55e;
-  color: #fff;
+  background: #dcfce7;
+  color: #15803d;
 }
+
 .invoiceLink:hover {
   opacity: 0.9;
-  transform: translateY(-2px);
 }
 
-/* ========== Links & Messages ========== */
-.viewLink {
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: 500;
-}
-.viewLink:hover {
-  text-decoration: underline;
-  color: #1d4ed8;
-}
-
-.loadingText,
-.errorText,
-.emptyText {
-  font-size: 1rem;
-  margin: 1rem 0;
-  font-weight: 500;
-}
-.loadingText {
-  color: #6b7280;
-}
-.errorText {
-  color: #dc2626;
-}
-.emptyText {
-  color: #6b7280;
-  font-style: italic;
+/* Generate Invoice button */
+.gtBtn {
+  background: #3b82f6;
+  color: #fff;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
 }
 
-/* ========== Responsive ========== */
-@media (max-width: 1024px) {
-  .clientDetailPage {
-    margin-left: 220px;
-    padding: 1.5rem;
-  }
+.gtBtn:hover {
+  background: #2563eb;
 }
-@media (max-width: 768px) {
-  .clientDetailPage {
-    margin-left: 0;
-    padding: 1rem;
-  }
-  .adjustment {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .documentItem {
-    grid-template-columns: 1fr;
-  }
+
+/* States */
+.loading-text,
+.error-text,
+.empty-text {
+  text-align: center;
+  font-size: 15px;
+  margin-top: 20px;
+}
+
+.error-text {
+  color: #ef4444;
+}
+
+.empty-text {
+  color: #64748b;
 }

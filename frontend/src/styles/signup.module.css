@@ -1,88 +1,87 @@
-/* Container */
+/* === Container === */
 .signupContainer {
-  max-width: 420px;
-  margin: 60px auto;
-  padding: 30px 35px;
-  background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.12);
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #eef2f7, #dbeafe);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
-/* Fade in animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* === Left: Form Section === */
+.formSection {
+  flex: 0.7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
 }
 
-/* Title */
-.signupContainer h2 {
+.formCard {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 35px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px);
+  animation: slideUp 0.6s ease;
+}
+
+.formTitle {
   text-align: center;
-  color: #2d2d2d;
+  color: #1e293b;
   margin-bottom: 25px;
-  font-size: 1.9rem;
+  font-size: 2rem;
   font-weight: 600;
 }
 
-/* Form */
+/* === Form === */
 .signupForm {
   display: flex;
   flex-direction: column;
-}
-
-/* Form groups */
-.formGroup {
-  margin-bottom: 18px;
+  gap: 18px;
 }
 
 .formGroup input {
-  width: 93%;
+  width: 90%;
   padding: 12px 14px;
-  border: 1px solid #959494;
-  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
   font-size: 15px;
+  background: #f8fafc;
   transition: all 0.3s ease;
-  background: #fafafa;
 }
 
 .formGroup input:focus {
-  border-color: #04438b;
+  border-color: #2563eb;
   outline: none;
-  box-shadow: 0px 0px 6px rgba(9, 2, 141, 0.3);
+  box-shadow: 0px 0px 6px rgba(37, 99, 235, 0.3);
   background: #fff;
 }
 
-/* Password input wrapper */
+/* Password wrapper */
 .passwordInputWrapper {
   position: relative;
-  display: flex;
-  align-items: center;
+  width: 92%;
 }
 
 .passwordInputWrapper input {
-  width: 100%;
   padding-right: 45px;
 }
 
 .eyeIcon {
   position: absolute;
-  right: 12px;
+  right: 0px;
+  top: 50%;
+  transform: translateY(-50%);
   cursor: pointer;
-  color: #777;
-  display: flex;
-  align-items: center;
+  color: #64748b;
   transition: color 0.3s ease;
 }
 
 .eyeIcon:hover {
-  color: #333;
+  color: #1e293b;
 }
 
 /* Error message */
@@ -93,15 +92,15 @@
   text-align: center;
 }
 
-/* Signup button */
+/* Button */
 .signupButton {
   padding: 12px;
   background: linear-gradient(135deg, #04438b, #033b7c);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -109,6 +108,7 @@
 .signupButton:hover {
   background: linear-gradient(135deg, #013066, #062f5f);
   transform: translateY(-2px);
+  box-shadow: 0px 4px 12px rgba(29, 78, 216, 0.35);
 }
 
 /* Links */
@@ -117,7 +117,7 @@
   display: block;
   text-align: center;
   margin-top: 15px;
-  color: #04438b;
+  color: #2563eb;
   font-size: 14px;
   text-decoration: none;
   transition: color 0.3s ease;
@@ -125,14 +125,51 @@
 
 .loginLink:hover,
 .clientLink:hover {
-  color: #013066;
+  color: #1e3a8a;
   text-decoration: underline;
 }
 
-/* Responsive */
-@media (max-width: 500px) {
+/* === Right: Image Section === */
+.imageSection {
+  flex: 1.2;
+  background: url("../assets/card1.png") no-repeat center center;
+  background-size: cover;
+}
+
+/* === Animations === */
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === Responsive === */
+@media (max-width: 786px) {
   .signupContainer {
-    margin: 30px 15px;
-    padding: 22px;
+    flex-direction: column;
+  }
+  .imageSection {
+    height: 280px;
+    background-size: contain;
+  }
+}
+
+@media (max-width: 600px) {
+  .imageSection {
+    display: none;
+  }
+  .formCard {
+    padding: 30px 25px;
+  }
+  .formTitle {
+    font-size: 1.6rem;
+  }
+  .signupButton {
+    font-size: 15px;
   }
 }

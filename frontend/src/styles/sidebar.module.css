@@ -1,8 +1,8 @@
 /* Sidebar wrapper */
 .sidebar {
   width: 280px; /* wider */
-  /* background-color: #1e293b;  */
-  background-color: #131c64; 
+  background-color: #1e293b; 
+  /* background-color: #131c64;  */
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -169,7 +169,7 @@
   font-size: 15px;
   transition: background 0.3s, color 0.3s;
   cursor: pointer;
-
+  font-weight: 600;
   box-sizing: border-box;
   border-radius: 10px;
   border: 2px solid transparent;
@@ -188,7 +188,7 @@
   top: 0;
   left: 100%; /* Positions the dropdown to the right of the parent li */
   min-width: 200px;
-  background-color: #263182; /* Matches the sidebar background */
+  background-color: #1e293b; 
   list-style: none;
   padding: 10px 0;
   margin: 0;
