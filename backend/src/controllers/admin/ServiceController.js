@@ -27,6 +27,37 @@ exports.addService = async (req) => {
     );
 }
 
+exports.editService = async (req) => {
+    const reqBody = req.body;
+    const serviceId = req.params[TableFields.ID];
+    const serviceExists = await ServiceService.serviceExists(serviceId);
+    if(!serviceExists) {
+        throw new ValidationError(ValidationMsg.ServiceNotExists)
+    }
+
+    const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+
+    return await parseAndValidate(
+        reqBody,
+        service,
+        async (updatedFields) => {
+            return await ServiceService.updateServiceDetails(serviceId, updatedFields);
+        }
+    )
+
+}
+
+exports.deleteService = async (req) => {
+    const serviceId = req.params[TableFields.ID];
+    const serviceExists = await ServiceService.serviceExistsWithId(serviceId);
+    if(!serviceExists) {
+        throw new ValidationError(ValidationMsg.ServiceNotExists)
+    }
+
+    return await ServiceService.deleteService(serviceId);
+}
+
+
 exports.assignService = async (req, res) => {
     const reqBody = req.body;
     const clientEmail = reqBody[TableFields.clientEmail];

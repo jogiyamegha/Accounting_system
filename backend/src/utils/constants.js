@@ -210,6 +210,7 @@ const ValidationMsg = (function () {
     ValidationMsg.ServiceNameEmpty = 'ServiceName required!';
     ValidationMsg.ServiceDurationEmpty = 'Service Duration required!';
     ValidationMsg.ServiceAlreadyExists = 'Service Already Exists';
+    ValidationMsg.ServiceNotExists = 'Service not exists';
 
     return ValidationMsg;
 })();

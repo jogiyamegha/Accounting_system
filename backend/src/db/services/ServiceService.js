@@ -9,6 +9,12 @@ const Service = require("../models/service");
 const { MongoUtil } = require("../mongoose");
 
 class ServiceService {
+    static serviceExistsWithId = async (serviceId) => {
+        return Service.exists({
+            [TableFields.ID] : MongoUtil.toObjectId(serviceId)
+        })
+    }
+
     static serviceExists = async (serviceName) => {
         return await Service.exists({
             [TableFields.serviceName] : serviceName
@@ -96,6 +102,17 @@ class ServiceService {
                     .sort({ [sortKey]: parseInt(sortOrder) }),
             ]).then(([total, records]) => ({ total, records }));
         });
+    }
+
+    static deleteService = async (serviceId) => {
+        return await Service.findByIdAndUpdate(
+            {
+                [TableFields.ID] : MongoUtil.toObjectId(serviceId)
+            },
+            {
+                [TableFields.deleted] : true
+            }
+        )
     }
 
     static findByServiceType = async (serviceType) => {
@@ -204,55 +221,50 @@ class ServiceService {
         }
     };
 
-    static updateServiceDetails = async (service, id, reqBody, res) => {
-        let serviceType = reqBody[TableFields.serviceType];
+    static updateServiceDetails = async (serviceId, updatedFields) => {
+        // let serviceType = reqBody[TableFields.serviceType];
 
-        if (typeof serviceType === "string") {
-            const serviceTypeMap = {
-                "VAT": ServiceType.VAT,
-                "Corporate Tax": ServiceType.CorporateTaxServices,
-                "Payroll": ServiceType.Payroll,
-                "Audit": ServiceType.AuditAndCompliance,
-            };
+        // if (typeof serviceType === "string") {
+        //     const serviceTypeMap = {
+        //         "VAT": ServiceType.VAT,
+        //         "Corporate Tax": ServiceType.CorporateTaxServices,
+        //         "Payroll": ServiceType.Payroll,
+        //         "Audit": ServiceType.AuditAndCompliance,
+        //     };
 
-            serviceType = serviceTypeMap[serviceType];
-        }
+        //     serviceType = serviceTypeMap[serviceType];
+        // }
 
-        const services = service[TableFields.services];
-        for (let s of services) {
-            if (s[TableFields.serviceType] === serviceType && s[TableFields.serviceStatus] === 2 && s[TableFields.deleted] === false) {
-                return res.status(400).json({
-                    message: "This service is running! please wait until completion..",
-                });
-            }
-        }
+        // const services = service[TableFields.services];
+        // for (let s of services) {
+        //     if (s[TableFields.serviceType] === serviceType && s[TableFields.serviceStatus] === 2 && s[TableFields.deleted] === false) {
+        //         return res.status(400).json({
+        //             message: "This service is running! please wait until completion..",
+        //         });
+        //     }
+        // }
 
-        // calculate end date based on duration
-        const durationInDays =
-            ServiceDuration[
-            Object.keys(ServiceDuration).find(
-                (key) => ServiceType[key] === serviceType
-            )
-            ];
+        // // calculate end date based on duration
+        // const durationInDays =
+        //     ServiceDuration[
+        //     Object.keys(ServiceDuration).find(
+        //         (key) => ServiceType[key] === serviceType
+        //     )
+        //     ];
 
-        const startDate = new Date();
-        const endDate = new Date(startDate);
-        if (durationInDays) {
-            endDate.setDate(startDate.getDate() + durationInDays);
-        }
+        // const startDate = new Date();
+        // const endDate = new Date(startDate);
+        // if (durationInDays) {
+        //     endDate.setDate(startDate.getDate() + durationInDays);
+        // }
 
         return await Service.findByIdAndUpdate(
-            id,
             {
-                $push: {
-                    [TableFields.services]: {
-                        [TableFields.serviceType]: serviceType,
-
-                        [TableFields.serviceStartDate]: startDate,
-                        [TableFields.serviceEndDate]: endDate,
-                        [TableFields.serviceStatus]: 2,
-                    },
-                },
+                [TableFields.ID] : MongoUtil.toObjectId(serviceId)
+            },
+            {
+                [TableFields.serviceName] : updatedFields[TableFields.serviceName],
+                [TableFields.serviceDuration] : updatedFields[TableFields.serviceDuration]
             },
             { new: true, runValidators: true }
         );
@@ -335,8 +347,8 @@ const ProjectionBuilder = class {
         const projection = {};
         this.withBasicInfo = () => {
             projection[TableFields.ID] = 1;
-            projection[TableFields.clientDetail] = 1;
-            projection[TableFields.services] = 1;
+            projection[TableFields.serviceName] = 1;
+            projection[TableFields.serviceDuration] = 1;
             return this;
         };
 

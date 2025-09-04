@@ -166,6 +166,16 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/edit-service/:${TableFields.ID}`)
+.asUPDATE(ServiceController.editService)
+.useAdminAuth()
+.build()
+
+.addPath(`/delete-service/:${TableFields.ID}`)
+.asDELETE(ServiceController.deleteService)
+.useAdminAuth()
+.build()
+
 /** 
  * Assign service to client
  */
