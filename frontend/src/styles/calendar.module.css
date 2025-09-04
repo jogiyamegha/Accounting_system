@@ -4,7 +4,7 @@
 
 .mainCalendarWrapper {
   display: flex;
-  background: #e2e4e5;
+  background-color: #f8fafc;
   min-height: 100vh;
 }
 
@@ -30,7 +30,7 @@
   padding: 20px;
   background: #ffffff;
   border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .calendarHeader {
@@ -520,7 +520,7 @@
 @media (max-width: 768px) {
 
   .contentArea{
-    margin-left: 100px;
+    margin-left: 50px;
   }
   .calendarGrid {
     gap: 8px;
@@ -546,7 +546,7 @@
 }
 @media (max-width: 480px) {
   .contentArea{
-    margin-left: 60px;
+    margin-left: 15px;
   }
   .calendarDay {
     height: 68px;

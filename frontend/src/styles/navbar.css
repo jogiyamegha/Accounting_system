@@ -2,9 +2,9 @@
 
 .navbar {
 
-  background: #92d6ebe0;
+  background: #fff;
 
-  color: #fff;
+  color: #333;
 
   padding: 0.8rem 1.5rem;
 
@@ -20,9 +20,9 @@
  
 .navbar-container {
 
-  max-width: 1200px;
+  /* min-width: 1400px; */
 
-  margin: 0 auto;
+  margin: 0 ;
 
   display: flex;
 
@@ -55,6 +55,7 @@
 }
  
 .nav-link {
+
 
   text-decoration: none;
 

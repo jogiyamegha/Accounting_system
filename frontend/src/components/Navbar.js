@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { clearUser } from "../redux/features/userSlice";
 
 import { ADMIN_END_POINT, CLIENT_END_POINT } from "../utils/constants";
-import logo from '../assets/logo.svg'
+import logo from '../assets/al-asr-logo.svg'
 
 import "../styles/navbar.css";
 
@@ -54,7 +54,9 @@ export default function Navbar() {
                 <div className="navbar-container">
                     <div className="navbar-logo">
                         {/* Example SVG logo */}
-                        <img src={logo} alt="Logo" className="logo-svg" />
+                        <Link to="/">
+                            <img src={logo} alt="Logo" className="logo-svg" />
+                        </Link>
                     </div>
 
                     <div className="navbar-links">
@@ -94,31 +96,7 @@ export default function Navbar() {
                 </div>
             </nav>
 
-            {/* Sidebar (below navbar) */}
-            <aside className="sidebar">
-                <ul>
-                    <li>
-                        <Link to="/" className="sidebar-link">
-                            🏠 Home
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/about" className="sidebar-link">
-                            ℹ️ About
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/services" className="sidebar-link">
-                            ⚙️ Services
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/contact" className="sidebar-link">
-                            📞 Contact
-                        </Link>
-                    </li>
-                </ul>
-            </aside>
+            
         </>
     );
 }

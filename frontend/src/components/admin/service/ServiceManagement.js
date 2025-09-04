@@ -281,321 +281,411 @@ import styles from "../../../styles/serviceManagement.module.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faTools,
-    faEdit,
-    faTrash,
-    faPlus,
-    faSave,
-    faTimes,
+  faTools,
+  faEdit,
+  faTrash,
+  faPlus,
+  faSave,
+  faTimes,
+  faUserPlus
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import Sidebar from "../../Sidebar";
 
 export default function ServiceManagement() {
-    const navigate = useNavigate();
-    const [services, setServices] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState({
-        serviceName: "",
-        serviceDuration: "",
+  const navigate = useNavigate();
+  const [services, setServices] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    serviceName: "",
+    serviceDuration: "",
+  });
+
+  const [clients, setClients] = useState([]);
+  const [selectedService, setSelectedService] = useState(null);
+  const [selectedClient, setSelectedClient] = useState("");
+  const [showAssignModal, setShowAssignModal] = useState(false);
+
+  const [editId, setEditId] = useState(null);
+  const [editData, setEditData] = useState({
+    serviceName: "",
+    serviceDuration: "",
+  });
+
+  useEffect(() => {
+    fetchServices();
+    fetchClients();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/service-management`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch services");
+      setServices(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load services");
+    }
+  };
+
+  const fetchClients = async () => {
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/fetch-clients`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      console.log(data);
+      if (!res.ok) throw new Error(data.message || "Failed to fetch clients");
+      console.log(clients);
+      setClients(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load clients");
+    }
+  };
+
+  const filteredServices = services.filter((s) =>
+    s.serviceName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/add-service`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to add service");
+
+      toast.success("Service added successfully!");
+      setShowModal(false);
+      setFormData({ serviceName: "", serviceDuration: "" });
+      fetchServices();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleAssign = (service) => {
+    setSelectedService(service);
+    setShowAssignModal(true);
+    setSelectedClient(""); // reset previous selection
+  };
+
+  const handleAssignSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedClient) {
+      toast.error("Please select a client");
+      return;
+    }
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/assign-service`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          serviceId: selectedService._id,
+          clientEmail: selectedClient,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to assign service");
+
+      toast.success("Service assigned successfully!");
+      setShowAssignModal(false);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  // Enable editing for a row
+  const handleEdit = (service) => {
+    setEditId(service._id);
+    setEditData({
+      serviceName: service.serviceName,
+      serviceDuration: service.serviceDuration,
     });
+  };
 
-    const [editId, setEditId] = useState(null);
-    const [editData, setEditData] = useState({
-        serviceName: "",
-        serviceDuration: "",
-    });
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setEditId(null);
+    setEditData({ serviceName: "", serviceDuration: "" });
+  };
 
-    useEffect(() => {
-        fetchServices();
-    }, []);
+  // Save updated service (only changed fields)
+  const handleSaveEdit = async (id) => {
+    const original = services.find((s) => s._id === id);
+    const updatedFields = {};
 
-    const fetchServices = async () => {
-        try {
-            const res = await fetch(`${ADMIN_END_POINT}/service-management`, {
-                credentials: "include",
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to fetch services");
-            setServices(data);
-        } catch (err) {
-            console.error(err);
-            toast.error("Failed to load services");
-        }
-    };
-
-    const filteredServices = services.filter((s) =>
-        s.serviceName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const handleChange = (e) => {
-        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await fetch(`${ADMIN_END_POINT}/add-service`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(formData),
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to add service");
-
-            toast.success("Service added successfully!");
-            setShowModal(false);
-            setFormData({ serviceName: "", serviceDuration: "" });
-            fetchServices();
-        } catch (err) {
-            toast.error(err.message);
-        }
-    };
-
-    const handleAssign = (service) => {
-        
+    if (editData.serviceName !== original.serviceName) {
+      updatedFields.serviceName = editData.serviceName;
+    }
+    if (editData.serviceDuration !== original.serviceDuration) {
+      updatedFields.serviceDuration = editData.serviceDuration;
     }
 
-    // Enable editing for a row
-    const handleEdit = (service) => {
-        setEditId(service._id);
-        setEditData({
-            serviceName: service.serviceName,
-            serviceDuration: service.serviceDuration,
-        });
-    };
+    if (Object.keys(updatedFields).length === 0) {
+      toast.info("No changes detected");
+      setEditId(null);
+      return;
+    }
 
-    // Cancel editing
-    const handleCancelEdit = () => {
-        setEditId(null);
-        setEditData({ serviceName: "", serviceDuration: "" });
-    };
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/edit-service/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(updatedFields),
+      });
 
-    // Save updated service (only changed fields)
-    const handleSaveEdit = async (id) => {
-        const original = services.find((s) => s._id === id);
-        const updatedFields = {};
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update service");
 
-        if (editData.serviceName !== original.serviceName) {
-            updatedFields.serviceName = editData.serviceName;
-        }
-        if (editData.serviceDuration !== original.serviceDuration) {
-            updatedFields.serviceDuration = editData.serviceDuration;
-        }
+      toast.success("Service updated successfully!");
 
-        if (Object.keys(updatedFields).length === 0) {
-            toast.info("No changes detected");
-            setEditId(null);
-            return;
-        }
+      // Optimistically update UI without refetch
+      setServices((prev) =>
+        prev.map((s) => (s._id === id ? { ...s, ...updatedFields } : s))
+      );
 
-        try {
-            const res = await fetch(`${ADMIN_END_POINT}/edit-service/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(updatedFields),
-            });
+      setEditId(null);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to update service");
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this service?"))
+      return;
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/delete-service/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to delete service");
 
-            toast.success("Service updated successfully!");
+      toast.success("Service deleted successfully!");
+      setServices((prev) => prev.filter((s) => s._id !== id));
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
-            // Optimistically update UI without refetch
-            setServices((prev) =>
-                prev.map((s) =>
-                    s._id === id ? { ...s, ...updatedFields } : s
-                )
-            );
+  return (
+    <div className={styles.container}>
+      <Sidebar />
+      <div className={styles.content}>
+        <h1 className={styles.title}>
+          <FontAwesomeIcon icon={faTools} /> Service Management
+        </h1>
 
-            setEditId(null);
-        } catch (err) {
-            toast.error(err.message);
-        }
-    };
+        {/* Search + Add Button */}
+        <div className={styles.topBar}>
+          <input
+            type="text"
+            placeholder="Search services..."
+            className={styles.searchBar}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button className={styles.addBtn} onClick={() => setShowModal(true)}>
+            <FontAwesomeIcon icon={faPlus} /> Add Service
+          </button>
+        </div>
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this service?")) return;
-        try {
-            const res = await fetch(`${ADMIN_END_POINT}/delete-service/${id}`, {
-                method: "DELETE",
-                credentials: "include",
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to delete service");
-
-            toast.success("Service deleted successfully!");
-            setServices((prev) => prev.filter((s) => s._id !== id));
-        } catch (err) {
-            toast.error(err.message);
-        }
-    };
-
-    return (
-        <div className={styles.container}>
-            <Sidebar />
-            <div className={styles.content}>
-                <h1 className={styles.title}>
-                    <FontAwesomeIcon icon={faTools} /> Service Management
-                </h1>
-
-                {/* Search + Add Button */}
-                <div className={styles.topBar}>
-                    <input
+        {/* Table */}
+        {filteredServices.length > 0 ? (
+          <table className={styles.serviceTable}>
+            <thead>
+              <tr>
+                <th>Service Name</th>
+                <th>Duration (months)</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredServices.map((service) => (
+                <tr key={service._id}>
+                  <td>
+                    {editId === service._id ? (
+                      <input
                         type="text"
-                        placeholder="Search services..."
-                        className={styles.searchBar}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <button className={styles.addBtn} onClick={() => setShowModal(true)}>
-                        <FontAwesomeIcon icon={faPlus} /> Add Service
-                    </button>
+                        value={editData.serviceName}
+                        onChange={(e) =>
+                          setEditData((prev) => ({
+                            ...prev,
+                            serviceName: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      service.serviceName
+                    )}
+                  </td>
+                  <td>
+                    {editId === service._id ? (
+                      <input
+                        type="number"
+                        value={editData.serviceDuration}
+                        onChange={(e) =>
+                          setEditData((prev) => ({
+                            ...prev,
+                            serviceDuration: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      service.serviceDuration
+                    )}
+                  </td>
+                  <td className={styles.actions}>
+                    {editId === service._id ? (
+                      <>
+                        <button
+                          className={styles.saveBtn}
+                          onClick={() => handleSaveEdit(service._id)}
+                        >
+                          <FontAwesomeIcon icon={faSave} /> Save
+                        </button>
+                        <button
+                          className={styles.cancelBtn}
+                          onClick={handleCancelEdit}
+                        >
+                          <FontAwesomeIcon icon={faTimes} /> Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          className={styles.assignBtn}
+                          onClick={() => handleAssign(service)}
+                        >
+                          <FontAwesomeIcon icon={faUserPlus} /> Assign
+                        </button>
+                        <button
+                          className={styles.editBtn}
+                          onClick={() => handleEdit(service)}
+                        >
+                          <FontAwesomeIcon icon={faEdit} />
+                        </button>
+                        <button
+                          className={styles.deleteBtn}
+                          onClick={() => handleDelete(service._id)}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className={styles.noData}>No services found</p>
+        )}
+
+        {showAssignModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <h2 className={styles.modalTitle}>
+                Assign Service: {selectedService?.serviceName}
+              </h2>
+              <form onSubmit={handleAssignSubmit}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="clientSelect">Select Client:</label>
+                  <select
+                    id="clientSelect"
+                    value={selectedClient}
+                    onChange={(e) => setSelectedClient(e.target.value)}
+                    required
+                    className={styles.dropdown}
+                  >
+                    <option value="">-- Select Client Email --</option>
+                    {clients.map((client) => (
+                      <option key={client._id} value={client.email}>
+                        {client.email}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles.modalButtons}>
+                  <button
+                    type="button"
+                    className={styles.cancelBtn}
+                    onClick={() => setShowAssignModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className={styles.submitBtn}>
+                    Assign
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Add Service Modal */}
+        {showModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <h2 className={styles.modalTitle}>Add Service</h2>
+              <form onSubmit={handleSubmit}>
+                <div className={styles.formGroup}>
+                  <label>Service Name:</label>
+                  <input
+                    type="text"
+                    name="serviceName"
+                    value={formData.serviceName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Service Duration:</label>
+                  <input
+                    type="number"
+                    name="serviceDuration"
+                    value={formData.serviceDuration}
+                    onChange={handleChange}
+                    placeholder="e.g., 6 months"
+                    required
+                  />
                 </div>
 
-                {/* Table */}
-                {filteredServices.length > 0 ? (
-                    <table className={styles.serviceTable}>
-                        <thead>
-                            <tr>
-                                <th>Service Name</th>
-                                <th>Duration (months)</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredServices.map((service) => (
-                                <tr key={service._id}>
-                                    <td>
-                                        {editId === service._id ? (
-                                            <input
-                                                type="text"
-                                                value={editData.serviceName}
-                                                onChange={(e) =>
-                                                    setEditData((prev) => ({
-                                                        ...prev,
-                                                        serviceName: e.target.value,
-                                                    }))
-                                                }
-                                            />
-                                        ) : (
-                                            service.serviceName
-                                        )}
-                                    </td>
-                                    <td>
-                                        {editId === service._id ? (
-                                            <input
-                                                type="number"
-                                                value={editData.serviceDuration}
-                                                onChange={(e) =>
-                                                    setEditData((prev) => ({
-                                                        ...prev,
-                                                        serviceDuration: e.target.value,
-                                                    }))
-                                                }
-                                            />
-                                        ) : (
-                                            service.serviceDuration
-                                        )}
-                                    </td>
-                                    <td className={styles.actions}>
-                                        {editId === service._id ? (
-                                            <>
-                                                <button
-                                                    className={styles.saveBtn}
-                                                    onClick={() => handleSaveEdit(service._id)}
-                                                >
-                                                    <FontAwesomeIcon icon={faSave} /> Save
-                                                </button>
-                                                <button
-                                                    className={styles.cancelBtn}
-                                                    onClick={handleCancelEdit}
-                                                >
-                                                    <FontAwesomeIcon icon={faTimes} /> Cancel
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <button
-                                                    className={styles.assignBtn}
-                                                    onClick={() => handleAssign(service)}
-                                                >
-                                                    <FontAwesomeIcon icon={faTrash} />
-                                                </button>
-                                                <button
-                                                    className={styles.editBtn}
-                                                    onClick={() => handleEdit(service)}
-                                                >
-                                                    <FontAwesomeIcon icon={faEdit} />
-                                                </button>
-                                                <button
-                                                    className={styles.deleteBtn}
-                                                    onClick={() => handleDelete(service._id)}
-                                                >
-                                                    <FontAwesomeIcon icon={faTrash} />
-                                                </button>
-                                                
-                                            </>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p className={styles.noData}>No services found</p>
-                )}
-
-                {/* Add Service Modal */}
-                {showModal && (
-                    <div className={styles.modalOverlay}>
-                        <div className={styles.modalContent}>
-                            <h2 className={styles.modalTitle}>Add Service</h2>
-                            <form onSubmit={handleSubmit}>
-                                <div className={styles.formGroup}>
-                                    <label>Service Name:</label>
-                                    <input
-                                        type="text"
-                                        name="serviceName"
-                                        value={formData.serviceName}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label>Service Duration:</label>
-                                    <input
-                                        type="number"
-                                        name="serviceDuration"
-                                        value={formData.serviceDuration}
-                                        onChange={handleChange}
-                                        placeholder="e.g., 6 months"
-                                        required
-                                    />
-                                </div>
-
-                                <div className={styles.modalButtons}>
-                                    <button
-                                        type="button"
-                                        className={styles.cancelBtn}
-                                        onClick={() => setShowModal(false)}
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button type="submit" className={styles.submitBtn}>
-                                        Add
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
+                <div className={styles.modalButtons}>
+                  <button
+                    type="button"
+                    className={styles.cancelBtn}
+                    onClick={() => setShowModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className={styles.submitBtn}>
+                    Add
+                  </button>
+                </div>
+              </form>
             </div>
-        </div>
-    );
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
-

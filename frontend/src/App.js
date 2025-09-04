@@ -32,6 +32,9 @@ import CalendarManagment from "./components/admin/calendar/CalendarManagement";
 import NotificationManagement from "./components/admin/notification/NotificationManagement";
 import DynamicService from "./components/admin/service/DynamicService";
 import ServiceDetail from "./components/admin/service/ServiceDetail";
+import Navbar from "./components/Navbar";
+
+
 
 function App() {
     return (
@@ -71,6 +74,7 @@ function App() {
                     path="/:role/signup"
                     element={
                         <Layout>
+                            <Navbar />
                             <Signup />
                         </Layout>
                     }
@@ -80,6 +84,7 @@ function App() {
                     path="/:role/login"
                     element={
                         <Layout>
+                            <Navbar />
                             <Login />
                         </Layout>
                     }
