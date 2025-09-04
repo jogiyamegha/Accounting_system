@@ -152,6 +152,20 @@ const router = API.configRoute("/admin")
 // .useAdminAuth()
 // .build()
 
+/**
+ * Service - management
+ */
+
+.addPath('/service-management')
+.asGET(ServiceController.getAllServices)
+.useAdminAuth()
+.build()
+
+.addPath('/add-service')
+.asPOST(ServiceController.addService)
+.useAdminAuth()
+.build()
+
 /** 
  * Assign service to client
  */

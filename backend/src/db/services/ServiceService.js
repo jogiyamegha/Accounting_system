@@ -9,6 +9,11 @@ const Service = require("../models/service");
 const { MongoUtil } = require("../mongoose");
 
 class ServiceService {
+    static serviceExists = async (serviceName) => {
+        return await Service.exists({
+            [TableFields.serviceName] : serviceName
+        })
+    }
     static findById = (id) => {
         return new ProjectionBuilder(async function () {
             return await Service.findOne(
@@ -49,12 +54,49 @@ class ServiceService {
             });
 
             return docs.map((doc) => {
-                doc.services = doc.services.filter((s) => !s.deleted);
+                doc.services = doc?.services.filter((s) => !s.deleted);
                 return doc;
             });
         });
     };
 
+    static listAllService = (filter = {}) => {
+        return new ProjectionBuilder(async function () {
+            let limit = filter.limit || 0;
+            let skip = filter.skip || 0;
+            let sortKey = filter.sortKey || TableFields._createdAt;
+            let sortOrder = filter.sortOrder || 1;
+            let needCount = Util.parseBoolean(filter.needCount);
+            let searchQuery = {};
+
+            let searchTerm = filter.searchTerm;
+            if (searchTerm) {
+                searchQuery = {
+                    $or: [
+                        {
+                            [TableFields.serviceName]: {
+                                $regex: Util.wrapWithRegexQry(searchTerm),
+                                $options: "i",
+                            },
+                        },
+                    ],
+                };
+            }
+
+            let baseQuery = {
+                [TableFields.deleted]: false,
+                ...searchQuery,
+            };
+
+            return await Promise.all([
+                needCount ? Service.countDocuments(baseQuery) : undefined,
+                Service.find(baseQuery)
+                    .limit(parseInt(limit))
+                    .skip(parseInt(skip))
+                    .sort({ [sortKey]: parseInt(sortOrder) }),
+            ]).then(([total, records]) => ({ total, records }));
+        });
+    }
 
     static findByServiceType = async (serviceType) => {
         if (typeof serviceType === "string") {

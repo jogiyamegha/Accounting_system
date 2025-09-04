@@ -207,6 +207,9 @@ const ValidationMsg = (function () {
     ValidationMsg.DeadlineCategoryEmpty = 'deadline field is required';
     ValidationMsg.DateEmpty = 'Date required';
     ValidationMsg.EventNotFound = 'Event Not Found';
+    ValidationMsg.ServiceNameEmpty = 'ServiceName required!';
+    ValidationMsg.ServiceDurationEmpty = 'Service Duration required!';
+    ValidationMsg.ServiceAlreadyExists = 'Service Already Exists';
 
     return ValidationMsg;
 })();
@@ -304,6 +307,7 @@ const TableFields = (function () {
     TableFields.clientDetail = "clientDetail";
     TableFields.clientName = "clientName";
     TableFields.serviceType = "serviceType";
+    TableFields.serviceName = 'serviceName';
     TableFields.serviceDuration = 'serviceDuration';
     TableFields.deadlineDetails = "deadlineDetails";
     TableFields.deadlineCategory = "deadlineCategory";
@@ -352,7 +356,6 @@ const TableFields = (function () {
     TableFields.startDate = 'startDate';
     TableFields.endDate = 'endDate';
     TableFields.serviceType = "serviceType";
-    TableFields.serviceDuration = "ServiceDuration";
     TableFields.date = 'date';
 
     return TableFields;

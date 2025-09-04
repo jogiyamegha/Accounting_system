@@ -1,206 +1,291 @@
-/* Main container */
+/* ====== Layout ====== */
 .container {
   display: flex;
-  min-height: 100vh;
-  background-color: #e2e4e5;
-  transition: margin-left 0.3s ease;
+  width: 100%;
 }
 
 .content {
   flex: 1;
-  padding: 30px 40px;
-  margin-left: 280px; /* sidebar width */
-  transition: margin-left 0.3s ease;
+  margin-left: 280px;
+  padding: 28px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  transition: margin 0.3s ease;
 }
 
-@media (max-width: 992px) {
+/* ====== Title / Header ====== */
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* ====== Top Bar ====== */
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.searchBar {
+  flex: 1;
+  max-width: 450px;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #fff;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.searchBar:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+}
+
+.addBtn:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+/* ====== Table Section ====== */
+.serviceTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+  font-size: 0.95rem;
+}
+
+.serviceTable th {
+  background: #f9fafb;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #475569;
+  /* text-transform: uppercase; */
+  padding: 14px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  letter-spacing: 0.5px;
+}
+
+.serviceTable td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  transition: background 0.2s ease;
+}
+
+.serviceTable tbody tr {
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.serviceTable tbody tr:hover {
+  background: #f8fafc;
+  transform: scale(1.002);
+  cursor: pointer;
+}
+
+/* ====== Actions ====== */
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.editBtn,
+.deleteBtn {
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  font-size: 1rem;
+}
+
+.editBtn {
+  color: #2563eb;
+  border: 1px solid #cbd5e1;
+}
+
+.editBtn:hover {
+  background: #e2e8f0;
+  color: #1d4ed8;
+}
+
+.deleteBtn {
+  color: #dc2626;
+  background: none;
+}
+
+.deleteBtn:hover {
+  transform: scale(1.1);
+  background: rgba(220, 38, 38, 0.08);
+  color: #b91c1c;
+}
+
+/* ====== No Data ====== */
+.noData {
+  margin-top: 20px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+/* ====== Modal ====== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: #fff;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  animation: fadeIn 0.3s ease;
+}
+
+.modalTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.formGroup label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.formGroup input {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.formGroup input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cancelBtn,
+.submitBtn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cancelBtn {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.cancelBtn:hover {
+  background: #e5e7eb;
+}
+
+.submitBtn {
+  background: #2563eb;
+  color: #fff;
+}
+
+.submitBtn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* ====== Animation ====== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
   .content {
     margin-left: 0;
     padding: 20px;
   }
-}
 
-/* Page title */
-.title {
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 25px;
-  color: #1f2937;
-}
-
-/* Service cards */
-.serviceCards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  justify-content: flex-start;
-}
-
-.serviceCard {
-  background: #fff;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  padding: 30px 25px;
-  width: 280px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-}
-.serviceCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
-}
-
-.serviceCard h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #111827;
-}
-
-.serviceCard p {
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: #4b5563;
-}
-
-/* Assign button */
-.assignBtn {
-  padding: 10px 16px;
-  background-color: #3e5881;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-.assignBtn:hover {
-  background-color: #2b3e68;
-  transform: translateY(-1px);
-}
-.assignBtn:active {
-  transform: scale(0.97);
-}
-
-.viewBtn{
-  padding: 10px 16px;
-  margin-left:10px;
-  background-color: #1b3660;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-.viewBtn:hover{
-  background-color: #082667;
-  transform: translateY(-1px);
-}
-.viewBtn:active{
-  transform: scale(0.97);
-}
-
-
-
-/* Modal overlay */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.35);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-/* Modal content */
-.modalContent {
-  background: #fff;
-  padding: 30px 25px;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
-
-/* Modal title */
-.modalTitle {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #111827;
-}
-
-/* Form */
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
-}
-.formGroup label {
-  font-size: 14px;
-  color: #374151;
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-.formGroup input {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.2s ease;
-}
-.formGroup input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 5px rgba(59, 130, 246, 0.4);
-}
-
-/* Modal buttons */
-.modalButtons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 15px;
-}
-
-.cancelBtn {
-  padding: 8px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.cancelBtn:hover {
-  background-color: #f3f4f6;
-}
-
-.submitBtn {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  background-color: #1e293b;
-  color: #fff;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-.submitBtn:hover {
-  background-color: #111827;
-  transform: translateY(-1px);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .serviceCards {
-    justify-content: center;
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
   }
-  .serviceCard {
-    width: 100%;
-    max-width: 350px;
+
+  .serviceTable td,
+  .serviceTable th {
+    padding: 12px;
+    font-size: 0.85rem;
   }
 }

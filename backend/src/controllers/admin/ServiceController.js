@@ -10,6 +10,23 @@ const ValidationError = require("../../utils/ValidationError");
 const Email = require("../../emails/email");
 const DocumentService = require("../../db/services/DocumentService");
 
+exports.addService = async (req) => {
+    const reqBody = req.body;
+    const serviceExists = await ServiceService.serviceExists(reqBody[TableFields.serviceName]);
+
+    if (serviceExists) {
+        throw new ValidationError(ValidationMsg.ServiceAlreadyExists);
+    }
+
+    return await parseAndValidate(
+        reqBody, 
+        undefined, 
+        async (updatedFields) => {
+            return await ServiceService.insertRecord(updatedFields);
+        }
+    );
+}
+
 exports.assignService = async (req, res) => {
     const reqBody = req.body;
     const clientEmail = reqBody[TableFields.clientEmail];
@@ -59,6 +76,15 @@ exports.assignService = async (req, res) => {
         // Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
     }
 };
+
+exports.getAllServices = async (req) => {
+    const services = await ServiceService.listAllService({
+        ...req.query
+    })
+    .withBasicInfo()
+    .execute();
+    return services.records;
+}
 
 exports.getClientsAssignedService = async (req) => {
     const clients = await ServiceService.getClientsFilterByServiceType(
@@ -123,7 +149,6 @@ exports.deAssignService = async (req) => {
     return result;
 }
 
-
 exports.renewService = async (req) => {
     const serviceId = req.params[TableFields.serviceId];
     const clientId = req.params[TableFields.clientId];
@@ -152,25 +177,22 @@ exports.renewService = async (req) => {
 
 async function parseAndValidate(
     reqBody,
-    client,
     existingField = {},
     onValidationCompleted = async (updatedFields) => { }
 ) {
-    if (
-        isFieldEmpty(
-            reqBody[TableFields.serviceType],
-            existingField[TableFields.serviceType]
-        )
-    ) {
-        throw new ValidationError(ValidationMsg.ServiceTypeEmpty);
+    if (isFieldEmpty(reqBody[TableFields.serviceName],existingField[TableFields.serviceName])) {
+        throw new ValidationError(ValidationMsg.ServiceNameEmpty);
     }
+   
+    if (isFieldEmpty(reqBody.serviceDuration, existingField.serviceDuration)) {
+        throw new ValidationError(ValidationMsg.ServiceDurationEmpty);
+    }
+
     const response = await onValidationCompleted({
-        [TableFields.clientDetail]: {
-            [TableFields.clientEmail]: reqBody[TableFields.clientEmail],
-            [TableFields.clientId]: client[TableFields.ID],
-            [TableFields.clientName]: client[TableFields.name_],
-        },
+        [TableFields.serviceName] : reqBody[TableFields.serviceName],
+        [TableFields.serviceDuration] : reqBody[TableFields.serviceDuration]
     });
+    return response;
 }
 
 function isFieldEmpty(providedData, existingField) {

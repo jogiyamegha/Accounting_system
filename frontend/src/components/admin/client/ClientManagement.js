@@ -166,50 +166,9 @@ export default function ClientManagement() {
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Phone</th>
-                                        <th className={styles.actionsCol}>Actions</th>
+                                        <th className={styles.actionsCol}></th>
                                     </tr>
                                 </thead>
-                                {/* <tbody>
-                                    {clients.map((client) => (
-                                        <tr key={client._id}>
-                                            <td>{client.name}</td>
-                                            <td>{client.email}</td>
-                                            <td>{client.contact.phone}</td>
-                                            <td className={styles.actions}>
-                                                <button onClick={() => handleView(client._id)}>
-                                                    <FontAwesomeIcon icon={faEye} /> View
-                                                </button>
-                                                <button onClick={() => handleEdit(client._id)}>
-                                                    <FontAwesomeIcon icon={faPen} /> Edit
-                                                </button>
-                                                <button onClick={() => handleDelete(client._id)}>
-                                                    <FontAwesomeIcon icon={faTrash} /> Delete
-                                                </button>
-                                                <button
-                                                    onClick={() => handleGenerateInvoice(client._id)}
-                                                >
-                                                    <FontAwesomeIcon icon={faFileInvoice} /> Invoice
-                                                </button>
-                                                <button onClick={() => handleAppyService(client._id)}>
-                                                    <FontAwesomeIcon icon={faPlusCircle} /> Service
-                                                </button>
-                                                <button
-                                                    onClick={() => handleClientStatus(client._id)}
-                                                    className={`${styles.statusButton} ${client.isActive
-                                                            ? styles.deactivate
-                                                            : styles.activate
-                                                        }`}
-                                                >
-                                                    <FontAwesomeIcon
-                                                        icon={client.isActive ? faBan : faCheckCircle}
-                                                    />{" "}
-                                                    {client.isActive ? "Deactivate" : "Activate"}
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody> */}
-
                                 <tbody>
                                     {clients.map((client) => (
                                         <tr
@@ -236,8 +195,8 @@ export default function ClientManagement() {
                                                 <button onClick={() => handleAppyService(client._id)}>
                                                     <FontAwesomeIcon icon={faPlusCircle} /> Assign Service
                                                 </button>
-                                                <button onClick={() => handleDelete(client._id)}>
-                                                    <FontAwesomeIcon icon={faTrash} /> Delete
+                                                <button className={styles.deleteBtn} onClick={() => handleDelete(client._id)}>
+                                                    <FontAwesomeIcon icon={faTrash} /> 
                                                 </button>
                                                 
                                                 {/* <button

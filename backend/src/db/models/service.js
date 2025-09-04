@@ -4,52 +4,19 @@ const Schema = mongoose.Schema;
 
 const serviceSchema = new Schema(
     {
-        [TableFields.clientDetail] : {
-
-            [TableFields.clientEmail]: {
-                type: String,
-                trim: true
-            },
-            [TableFields.clientId] : {
-                type : mongoose.Schema.Types.ObjectId,
-                ref: TableNames.Client,
-                required : [true, ValidationMsg.ClientIdEmpty]
-            },
-            [TableFields.clientName] : {
-                type : String,
-                trim : true
-            }
+        [TableFields.serviceName] : {
+            type: String,
+            trim: true,
+            required: [true, ValidationMsg.ServiceNameEmpty]
         },
-
-        [TableFields.services] : [
-            {
-                [TableFields.serviceType] : {
-                    type: Number,
-                    enum: Object.values(ServiceType),
-                    required: [true, ValidationMsg.ServiceTypeEmpty],
-                },
-                [TableFields.serviceDuration] : {
-                    type: Number,
-                    enum : Object.values(ServiceDuration)
-                },
-                [TableFields.serviceStartDate] : {
-                    type : Date,
-                    default : Date.now()
-                },
-                [TableFields.serviceEndDate] : {
-                    type : Date
-                },
-                [TableFields.serviceStatus] : {
-                    type: Number,
-                    enum : Object.values(ServiceStatus),
-                    default : 1
-                },
-                [TableFields.deleted] : {
-                    type: Boolean,
-                    default: false
-                }
-            }
-        ]
+        [TableFields.serviceDuration] : {
+            type : Number,
+            required: [true, ValidationMsg.ServiceDurationEmpty]
+        },
+        [TableFields.deleted] : {
+            type : Boolean,
+            default: false
+        }
     },
     {
         timeStamps: true,
