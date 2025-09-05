@@ -28,12 +28,78 @@ class ClientService {
 
     static getAllClientsRelatedService = (serviceId) => {
         return new ProjectionBuilder(async function (){
-            return Client.find(
-                {
-                    [`${TableFields.services}.${TableFields.serviceId}`] : serviceId,
+            return Client.find({
+                [TableFields.services]: {
+                    $elemMatch: { [TableFields.serviceId]: serviceId }
                 }
-            )
+            })
         })
+    }
+
+    static checkClientAssignService = async (clientId, serviceId) => {
+        const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+        const services = client[TableFields.services];
+
+        for(let service of services) {
+            if(service[TableFields.serviceId].toString() === serviceId.toString()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static checkIsServiceCompleted = async (clientId, serviceId) => {
+        const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+        const services = client[TableFields.services];
+        for(let service of services) {
+            console.log(service[TableFields.serviceId].toString() === serviceId.toString() && service[TableFields.serviceStatus] == 3);
+            if(service[TableFields.serviceId].toString() === serviceId.toString() && service[TableFields.serviceStatus] == 3){
+                return true;
+            }
+        }
+        return false;
+    }
+
+   static updateDeassign = async (clientId, serviceId) => {
+        return await Client.findOneAndUpdate(
+            {
+                _id: clientId,
+                [`${TableFields.services}.${TableFields.serviceId}`]: serviceId,
+            },
+            {
+                $set: {
+                    [`${TableFields.services}.$.${TableFields.deleted}`]: true,
+                },
+            },
+            { new: true }
+        );
+    };
+
+    static addRenewService = async (clientId, serviceId) => {
+        const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+
+        const todayDate = new Date();
+        const endDate = new Date(todayDate);
+        endDate.setDate(endDate.getDate() + service[TableFields.serviceDuration]);
+
+        console.log("Start Date:", todayDate);
+        console.log("End Date:", endDate);
+
+        return await Client.updateOne(
+            {
+                [TableFields.ID]: clientId
+            },
+            {
+                $push: {
+                    [TableFields.services]: {
+                        [TableFields.serviceId]: serviceId,
+                        [TableFields.serviceStartDate]: todayDate,
+                        [TableFields.endDate]: endDate,
+                        [TableFields.serviceStatus]: 2
+                    }
+                }
+            }
+        );
     }
 
     static totalRegisteredClients = async () => {
@@ -148,7 +214,7 @@ class ClientService {
         console.log("Start Date:", todayDate);
         console.log("End Date:", endDate);
 
-        const a = await Client.updateOne(
+        return await Client.updateOne(
             {
                 [TableFields.email]: clientEmail
             },
@@ -163,12 +229,7 @@ class ClientService {
                 }
             }
         );
-
-        console.log(a);
-        return a;
     };
-
-
 
     static insertRecord = async (clientFields) => {
         const client = new Client(clientFields);

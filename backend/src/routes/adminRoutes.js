@@ -200,7 +200,7 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
-.addPath(`/renew-service/:${TableFields.serviceId}/:${TableFields.clientId}/:${TableFields.serviceType}`)
+.addPath(`/renew-service/:${TableFields.serviceId}/:${TableFields.clientId}`)
 .asPOST(ServiceController.renewService)
 .useAdminAuth()
 .build()

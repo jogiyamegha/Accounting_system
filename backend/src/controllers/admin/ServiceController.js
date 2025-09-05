@@ -136,50 +136,59 @@ exports.deAssignService = async (req) => {
     const serviceId = req.params[TableFields.serviceId];
     const clientId = req.params[TableFields.clientId];
 
+    console.log(serviceId);
+    console.log(clientId);
+
     const clientExists = await ClientService.userExists(clientId);
     if (!clientExists) {
         throw new ValidationError(ValidationMsg.ClientNotExists);
     }
 
-    const checkClientAssignService = await ServiceService.checkClientAssignService(clientId, serviceId);
+    const checkClientAssignService = await ClientService.checkClientAssignService(clientId, serviceId);
 
     if (!checkClientAssignService) {
         throw new ValidationError(ValidationMsg.ClientNotAssignService);
     }
 
-    const isServiceCompleted = await ServiceService.checkIsServiceCompleted(clientId, serviceId);
+    const isServiceCompleted = await ClientService.checkIsServiceCompleted(clientId, serviceId);
 
     if (isServiceCompleted) {
         throw new ValidationError(ValidationMsg.ServiceIsCompleted)
     }
 
-    let result = await ServiceService.updateDeassign(clientId, serviceId);
+    let result = await ClientService.updateDeassign(clientId, serviceId);
     return result;
 }
 
 exports.renewService = async (req) => {
     const serviceId = req.params[TableFields.serviceId];
     const clientId = req.params[TableFields.clientId];
-    const serviceType = req.params[TableFields.serviceType];
     const reqBody = req.body;
+        console.log("backend");
 
     const clientExists = await ClientService.userExists(clientId);
     if (!clientExists) {
         throw new ValidationError(ValidationMsg.ClientNotExists);
     }
 
-    const isServiceCompleted = await ServiceService.checkIsServiceCompleted(clientId, serviceId);
+    const checkClientAssignService = await ClientService.checkClientAssignService(clientId, serviceId);
+
+    if (!checkClientAssignService) {
+        throw new ValidationError(ValidationMsg.ClientNotAssignService);
+    }
+
+    const isServiceCompleted = await ClientService.checkIsServiceCompleted(clientId, serviceId);
+    console.log(isServiceCompleted);
 
     if (!isServiceCompleted) {
         throw new ValidationError(ValidationMsg.ServiceIsNotCompleted)
     }
 
-    const mainService = await ServiceService.getServiceByClientId(clientId).withBasicInfo().execute();
+    await ClientService.addRenewService(clientId, serviceId )
 
-    let { serviceTypeKey, endDate } = await ServiceService.updateServiceArrayAsRenewService(mainService, serviceType)
-    let client = await ClientService.getUserById(clientId).withBasicInfo().execute()
-    
-    Email.sendServiceRenewalMail(client[TableFields.name_], client[TableFields.email], serviceTypeKey, endDate)
+    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+
+    // Email.sendServiceRenewalMail(client[TableFields.name_], client[TableFields.email], endDate)
  
 }
 

@@ -104,6 +104,10 @@ const clientSchema = new Schema(
                 [TableFields.serviceStatus] : {
                     type : Number,
                     enum : Object.values(ServiceStatus)
+                },
+                [TableFields.deleted] : {
+                    type: Boolean,
+                    default : false
                 }
             }
         ]
