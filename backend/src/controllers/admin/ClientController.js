@@ -187,7 +187,7 @@ exports.getAllClients = async (req) => {
         .withBasicInfo()
         .execute();
     
-    return clients.records;
+    return clients;
 };
 
 async function parseAndValidateClient(

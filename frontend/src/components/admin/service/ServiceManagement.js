@@ -338,9 +338,7 @@ export default function ServiceManagement() {
                 credentials: "include",
             });
             const data = await res.json();
-            console.log(data);
             if (!res.ok) throw new Error(data.message || "Failed to fetch clients");
-            console.log(clients);
             setClients(data);
         } catch (err) {
             console.error(err);
@@ -618,7 +616,7 @@ export default function ServiceManagement() {
                                         className={styles.dropdown}
                                     >
                                         <option value="">-- Select Client Email --</option>
-                                        {clients.map((client) => (
+                                        {clients.records.map((client) => (
                                             <option key={client._id} value={client.email}>
                                                 {client.email}
                                             </option>
