@@ -3,6 +3,7 @@ import { ADMIN_END_POINT } from "../../utils/constants";
 import InvoicePDF from "./InvoicePDF";
 import { useNavigate } from "react-router-dom";
 import classes from './InvoicePreview.module.css'
+import { toast } from "react-toastify";
 
 export default function InvoicePreview({ data }) {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function InvoicePreview({ data }) {
       );
 
       if (!res.ok) {
-        throw new Error("Failed to send invoice");
+        toast.error("Failed to send invoice");
       }
 
       // const result = await res.json();

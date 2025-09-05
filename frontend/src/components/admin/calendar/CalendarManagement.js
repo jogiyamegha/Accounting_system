@@ -43,7 +43,6 @@ export default function CalendarManagement() {
   const [editingDateKey, setEditingDateKey] = useState(null);
   const [editingEvents, setEditingEvents] = useState([]); // array of events
 
-
   const monthNames = [
     "January",
     "February",
@@ -166,12 +165,17 @@ export default function CalendarManagement() {
       };
 
       try {
-        await fetch(`${ADMIN_END_POINT}/add-calendar-event`, {
+        let response = await fetch(`${ADMIN_END_POINT}/add-calendar-event`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newEvent),
           credentials: "include",
         });
+
+        if (!response.ok) {
+          let errorData = await response.json();
+          toast.error(errorData.error || "Unable to set Event");
+        }
 
         toast.success("Event added successfully");
         await fetchDeadlines();

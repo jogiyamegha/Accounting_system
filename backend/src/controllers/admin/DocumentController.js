@@ -155,7 +155,7 @@ exports.deleteDocument = async (req) => {
         .execute();
 
     if (document) {
-        await DocumentService.deleteDocFromArray(
+        return await DocumentService.deleteDocFromArray(
             clientId,
             documentId,
             document[TableFields.documents]

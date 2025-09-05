@@ -64,7 +64,7 @@ export default function Navbar() {
                             Home
                         </Link>
 
-                        {!role && (
+                        {/* {!role && ( */}
                             <>
                                 <Link to="/admin/signup" className="nav-link">
                                     Register
@@ -73,25 +73,25 @@ export default function Navbar() {
                                     Login
                                 </Link>
                             </>
-                        )}
+                        {/* )} */}
 
-                        {role === "client" && (
+                        {/* {role === "client" && (
                             <Link to="/client/profile" className="nav-link">
                                 Profile
                             </Link>
-                        )}
+                        )} */}
 
-                        {role === "admin" && (
+                        {/* {role === "admin" && (
                             <Link to="/admin/dashboard" className="nav-link">
                                 Dashboard
                             </Link>
-                        )}
+                        )} */}
 
-                        {role && (
+                        {/* {role && (
                             <button onClick={handleLogout} className="nav-link button">
                                 Logout
                             </button>
-                        )}
+                        )} */}
                     </div>
                 </div>
             </nav>

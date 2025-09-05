@@ -35,9 +35,11 @@ export default function AdminVerifyOtp() {
             });
 
             if (!response.ok) {
-                toast.error("Invalid OTP");
+                const errorData = await response.json();
 
-                throw new Error("Invalid OTP");
+                toast.error(errorData.error || "Invalid OTP");
+
+                // throw new Error("Invalid OTP");
             }
 
             toast.success("OTP Verified Successfully");
@@ -58,7 +60,7 @@ export default function AdminVerifyOtp() {
                         Please enter the OTP sent to <strong>{email}</strong>
                     </p>
 
-                    {error && <p className={styles.error}>{error}</p>}
+                    {/* {error && <p className={styles.error}>{error}</p>} */}
 
                     <div className={styles.formGroup}>
                         <label htmlFor="otp">OTP</label>

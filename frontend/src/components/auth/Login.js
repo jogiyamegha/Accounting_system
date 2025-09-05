@@ -54,8 +54,10 @@ function Login() {
           replace: true,
         });
       } else {
-        dispatch(setError("Login failed"));
-        toast.error("Credentials Invalid, Login Failed !!");
+        const errorMsg = data.error || "Login failed";
+       
+        dispatch(setError(errorMsg));
+        toast.error(errorMsg);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -79,7 +81,7 @@ function Login() {
                 type="email"
                 id="email"
                 ref={emailInputRef}
-                autoComplete="email"
+                autocomplete="username"
                 required
               />
             </div>
@@ -91,6 +93,7 @@ function Login() {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   ref={passwordInputRef}
+                  autocomplete="current-password"
                   required
                 />
                 <span

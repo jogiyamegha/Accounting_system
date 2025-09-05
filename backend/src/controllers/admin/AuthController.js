@@ -56,7 +56,7 @@ exports.login = async (req, res) => {
 
         return res.json({ role: "admin", user });;
     } else {
-        throw new ValidationError(ValidationMsg.UnableToLogin);
+        throw new ValidationError(ValidationMsg.InvalidCredentials);
     }
 };
 

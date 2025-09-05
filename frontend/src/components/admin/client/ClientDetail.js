@@ -562,8 +562,9 @@ export default function ClientDetail() {
         );
 
         if (!res.ok) {
-          toast.error("Failed to fetch client details");
-          throw new Error("Failed to fetch client details");
+          let errorData = await res.json();
+          toast.error(errorData.error || "Failed to fetch client details");
+          // throw new Error("Failed to fetch client details");
         }
 
         const result = await res.json();
@@ -586,6 +587,9 @@ export default function ClientDetail() {
         if (res.ok) {
           const result = await res.json();
           setInvoices(result.invoice);
+        } else{
+          let errorData = await res.json();
+          toast.error(errorData.error || "Error fetching invoices")
         }
       } catch (err) {
         toast.error("Error fetching invoices");
@@ -670,7 +674,7 @@ export default function ClientDetail() {
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.message || "Failed to update document status");
+        toast.error(errData.error || "Failed to update document status");
       }
 
       setDocuments((prevDocs) =>

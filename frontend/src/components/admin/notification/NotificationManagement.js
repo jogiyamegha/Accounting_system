@@ -26,16 +26,23 @@ export default function NotificationManagement() {
     // Fetch all client notifications
     useEffect(() => {
         const fetchNotifications = async () => {
+            let data;
             try {
                 const res = await fetch(`${ADMIN_END_POINT}/notification-management`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                     credentials: "include",
                 });
-                const data = await res.json();
+                data = await res.json();
+
+                if(!res.ok){
+                    let errorData = data.error || "Error fetching notifications";
+                    toast.error(errorData);
+                }
                 // console.log("first", data)
                 setNotifications(data);
             } catch (err) {
+                toast.error("Error fetching notifications")
                 console.error("Error fetching notifications:", err);
             }
         };

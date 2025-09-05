@@ -23,6 +23,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import styles from "../styles/sidebar.module.css";
+import { toast } from "react-toastify";
 
 export default function Sidebar() {
     const { role } = useSelector((state) => state.user);
@@ -83,7 +84,10 @@ export default function Sidebar() {
 
             if (res.ok) {
                 console.log("Logout success");
+                toast.success("Logout success")
             } else {
+                let errorData = await res.json();
+                toast.error(errorData.error || "Backend logout failed");
                 console.warn("Backend logout failed, but local state cleared");
             }
 

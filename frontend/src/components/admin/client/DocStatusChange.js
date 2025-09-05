@@ -469,7 +469,7 @@ export default function DocStatusChange() {
 
             if (!response.ok) {
                 const errData = await response.json();
-                throw new Error(errData.message || "Failed to fetch documents");
+                toast.error(errData.error || "Failed to fetch documents");
             }
 
             const data = await response.json();
@@ -525,7 +525,7 @@ export default function DocStatusChange() {
 
             if (!response.ok) {
                 const errData = await response.json();
-                throw new Error(errData.message || "Failed to update document status");
+                toast.error(errData.error || "Failed to update document status");
             }
 
             setDocuments((prevDocs) =>
@@ -555,7 +555,7 @@ export default function DocStatusChange() {
         <div className="form-container">
             <h2 className="form-title">Admin: Client Document Status</h2>
 
-            {error && <p className="error-message">{error}</p>}
+            {/* {error && <p className="error-message">{error}</p>} */}
 
             {/* Search by email */}
             <div className="form-group1">

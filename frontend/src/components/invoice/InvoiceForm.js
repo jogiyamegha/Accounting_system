@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./InvoiceForm.module.css";
 import { ADMIN_END_POINT, generateInvoiceNumber } from "../../utils/constants";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 const InvoiceForm = ({ onSubmit }) => {
@@ -119,10 +120,13 @@ const InvoiceForm = ({ onSubmit }) => {
             headers: { "Content-Type": "application/json" },
           }
         );
-
-        if (!res.ok) throw new Error("Failed to fetch client details");
-
         const result = await res.json();
+
+        if (!res.ok){
+          let errorData = result.error;
+          toast.error(errorData || "Failed to fetch client details");
+        }
+
         setData(result);
 
         // pre-fill formData with client + company info

@@ -24,22 +24,30 @@ const Util = class {
     static isExcelFile(fileOriginalName) {
         return fileOriginalName.toLocaleLowerCase().match(/\.(xlsx|xls)$/) == undefined ? false : true;
     }
+
+
     static getErrorMessage(mongooseException) {
         try {
             const mainJSONKeys = Object.keys(mongooseException.errors);
             if (mongooseException.errors[mainJSONKeys[0]].errors) {
                 const jsonKeys = Object.keys(mongooseException.errors[mainJSONKeys[0]].errors);
+                console.log("here1")
+
                 return {
                     error: mongooseException.errors[mainJSONKeys[0]].errors[jsonKeys[0]].properties.message,
                 };
             } else {
+                console.log("here2")
                 return {
                     error: mongooseException.errors[mainJSONKeys[0]].message,
                 };
             }
         } catch (e) {
+                console.log("here3")
+                console.log("error",mongooseException.message)
+
             return {
-                error: mongooseException.message,
+                error: mongooseException.message || "Something went wrong, please try again later.",
             };
         }
     }

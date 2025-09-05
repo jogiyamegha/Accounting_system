@@ -168,6 +168,7 @@ const ValidationMsg = (function () {
     ValidationMsg.DocumentTypeEmpty = "DocumentType required";
     ValidationMsg.NotAllowed = "Not Allowed!";
     ValidationMsg.UnableToLogin = "Unable To Login!";
+    ValidationMsg.InvalidCredentials = "Invalid Credentials!";
     ValidationMsg.DuplicateEmail = "email already exists!";
     ValidationMsg.LicenseIssueDateEmpty = "licenseIssueDate required!";
     ValidationMsg.CompanyNameEmpty = "CompanyName required!";

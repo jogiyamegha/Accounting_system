@@ -27,9 +27,9 @@ export default function AdminForgotPassword() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                toast.error("Failed to send OTP");
+                toast.error(errorData.error || "Failed to send OTP");
 
-                throw new Error(errorData.message || "Failed to send OTP");
+                // throw new Error(errorData.message || "Failed to send OTP");
             }
             toast.success(
                 `OTP sent successfully to your ${enteredEmail}, please enter OTP and verify..`
@@ -52,7 +52,7 @@ export default function AdminForgotPassword() {
                     Enter your registered email to receive an OTP
                 </p>
 
-                {error && <p className={styles.errorMessage}>{error}</p>}
+                {/* {error && <p className={styles.errorMessage}>{error}</p>} */}
 
                 <div className={styles.formGroup}>
                     <label htmlFor="email">Email Address</label>
