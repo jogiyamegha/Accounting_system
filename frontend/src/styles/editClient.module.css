@@ -12,7 +12,7 @@
 /* Adjust when sidebar collapses */
 @media (max-width: 768px) {
   .addClientContainer {
-    margin-left: 0;
+    margin-left: 280;
     padding: 15px;
   }
 }

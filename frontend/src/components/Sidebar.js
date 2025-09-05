@@ -53,7 +53,7 @@ export default function Sidebar() {
     // 🔹 Handle resizing logic
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 568) {
                 setIsMobile(true);
                 setIsOpen(false); // sidebar hidden on mobile by default
             } else {

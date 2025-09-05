@@ -215,7 +215,7 @@
 
 @media (max-width: 768px) {
   .dashboardContent {
-    margin-left: 0; /* Sidebar collapses */
+    margin-left: 280px; /* Sidebar collapses */
     padding: 16px;
   }
 
