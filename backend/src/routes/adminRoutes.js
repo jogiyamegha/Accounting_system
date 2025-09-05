@@ -185,8 +185,13 @@ const router = API.configRoute("/admin")
  * Assign service to client
  */
 
-.addPath('/assign-service')
+.addPath(`/assign-service/:${TableFields.ID}`)
 .asPOST(ServiceController.assignService) 
+.useAdminAuth()
+.build()
+
+.addPath(`/service/:${TableFields.ID}`)
+.asGET(ClientController.getClientsByService)
 .useAdminAuth()
 .build()
 

@@ -10,6 +10,8 @@ const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
 const { MongoUtil } = require("../mongoose");
 const { findById } = require("../models/service");
+const { serviceExistsWithId } = require("./ServiceService");
+const ServiceService = require("./ServiceService");
 
 class ClientService {
     static userExists = (id) => {
@@ -23,6 +25,16 @@ class ClientService {
             return await Client.findOne({ email }, this);
         });
     };
+
+    static getAllClientsRelatedService = (serviceId) => {
+        return new ProjectionBuilder(async function (){
+            return Client.find(
+                {
+                    [`${TableFields.services}.${TableFields.serviceId}`] : serviceId,
+                }
+            )
+        })
+    }
 
     static totalRegisteredClients = async () => {
         const clientCounts = await Client.find({
@@ -115,6 +127,48 @@ class ClientService {
             }
         );
     };
+
+    static serviceExists = async (serviceId, clientEmail) => {
+        const client = await ClientService.findByEmail(clientEmail).withBasicInfo().execute();
+        const services = client?.[TableFields.services] || [];
+        return services.some(
+            (service) =>
+                service[TableFields.serviceId].toString() === serviceId.toString() &&
+                service[TableFields.serviceStatus] === 3
+        );
+    };
+
+    static addServiceInArray = async (client, clientEmail, serviceId) => {
+        const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+
+        const todayDate = new Date();
+        const endDate = new Date(todayDate);
+        endDate.setDate(endDate.getDate() + service[TableFields.serviceDuration]);
+
+        console.log("Start Date:", todayDate);
+        console.log("End Date:", endDate);
+
+        const a = await Client.updateOne(
+            {
+                [TableFields.email]: clientEmail
+            },
+            {
+                $push: {
+                    [TableFields.services]: {
+                        [TableFields.serviceId]: serviceId,
+                        [TableFields.serviceStartDate]: todayDate,
+                        [TableFields.endDate]: endDate,
+                        [TableFields.serviceStatus]: 2
+                    }
+                }
+            }
+        );
+
+        console.log(a);
+        return a;
+    };
+
+
 
     static insertRecord = async (clientFields) => {
         const client = new Client(clientFields);
@@ -407,6 +461,7 @@ const ProjectionBuilder = class {
             projection[TableFields.contact] = 1;
             projection[TableFields.companyId] = 1;
             projection[TableFields.position] = 1;
+            projection[TableFields.services] = 1;
 
             return this;
         };

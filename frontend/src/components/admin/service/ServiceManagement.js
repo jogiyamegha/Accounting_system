@@ -313,6 +313,7 @@ export default function ServiceManagement() {
         serviceDuration: "",
     });
 
+    //5250 10625 -1424
     useEffect(() => {
         fetchServices();
         fetchClients();
@@ -378,18 +379,21 @@ export default function ServiceManagement() {
 
     const handleAssign = (service) => {
         setSelectedService(service);
+        setSelectedClient(""); // reset dropdown
         setShowAssignModal(true);
-        setSelectedClient(""); // reset previous selection
+        console.log(service);
     };
 
     const handleAssignSubmit = async (e) => {
         e.preventDefault();
+
         if (!selectedClient) {
             toast.error("Please select a client");
             return;
         }
+
         try {
-            const res = await fetch(`${ADMIN_END_POINT}/assign-service`, {
+            const res = await fetch(`${ADMIN_END_POINT}/assign-service/${selectedService._id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
@@ -409,7 +413,6 @@ export default function ServiceManagement() {
         }
     };
 
-    // Enable editing for a row
     const handleEdit = (service) => {
         setEditId(service._id);
         setEditData({
@@ -418,13 +421,11 @@ export default function ServiceManagement() {
         });
     };
 
-    // Cancel editing
     const handleCancelEdit = () => {
         setEditId(null);
         setEditData({ serviceName: "", serviceDuration: "" });
     };
 
-    // Save updated service (only changed fields)
     const handleSaveEdit = async (id) => {
         const original = services.find((s) => s._id === id);
         const updatedFields = {};
@@ -451,12 +452,11 @@ export default function ServiceManagement() {
             });
 
             const data = await res.json();
-            console.log(data);
             if (!res.ok) throw new Error(data.message || "Failed to update service");
 
             toast.success("Service updated successfully!");
 
-            // Optimistically update UI without refetch
+            // Optimistically update UI
             setServices((prev) =>
                 prev.map((s) => (s._id === id ? { ...s, ...updatedFields } : s))
             );
@@ -468,8 +468,7 @@ export default function ServiceManagement() {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this service?"))
-            return;
+        if (!window.confirm("Are you sure you want to delete this service?")) return;
         try {
             const res = await fetch(`${ADMIN_END_POINT}/delete-service/${id}`, {
                 method: "DELETE",
@@ -519,12 +518,17 @@ export default function ServiceManagement() {
                         </thead>
                         <tbody>
                             {filteredServices.map((service) => (
-                                <tr key={service._id}>
+                                <tr
+                                    key={service._id}
+                                    className={styles.tableRow}
+                                    onClick={() => navigate(`/admin/service/${service._id}`)}
+                                >
                                     <td>
                                         {editId === service._id ? (
                                             <input
                                                 type="text"
                                                 value={editData.serviceName}
+                                                onClick={(e) => e.stopPropagation()} // prevent navigation
                                                 onChange={(e) =>
                                                     setEditData((prev) => ({
                                                         ...prev,
@@ -541,6 +545,7 @@ export default function ServiceManagement() {
                                             <input
                                                 type="number"
                                                 value={editData.serviceDuration}
+                                                onClick={(e) => e.stopPropagation()} // prevent navigation
                                                 onChange={(e) =>
                                                     setEditData((prev) => ({
                                                         ...prev,
@@ -552,7 +557,7 @@ export default function ServiceManagement() {
                                             service.serviceDuration
                                         )}
                                     </td>
-                                    <td className={styles.actions}>
+                                    <td className={styles.actions} onClick={(e) => e.stopPropagation()}>
                                         {editId === service._id ? (
                                             <>
                                                 <button
@@ -572,19 +577,28 @@ export default function ServiceManagement() {
                                             <>
                                                 <button
                                                     className={styles.assignBtn}
-                                                    onClick={() => handleAssign(service)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleAssign(service);
+                                                    }}
                                                 >
                                                     <FontAwesomeIcon icon={faUserPlus} /> Assign
                                                 </button>
                                                 <button
                                                     className={styles.editBtn}
-                                                    onClick={() => handleEdit(service)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleEdit(service);
+                                                    }}
                                                 >
                                                     <FontAwesomeIcon icon={faEdit} />
                                                 </button>
                                                 <button
                                                     className={styles.deleteBtn}
-                                                    onClick={() => handleDelete(service._id)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDelete(service._id);
+                                                    }}
                                                 >
                                                     <FontAwesomeIcon icon={faTrash} />
                                                 </button>
@@ -594,11 +608,13 @@ export default function ServiceManagement() {
                                 </tr>
                             ))}
                         </tbody>
+
                     </table>
                 ) : (
                     <p className={styles.noData}>No services found</p>
                 )}
 
+                {/* Assign Service Modal */}
                 {showAssignModal && (
                     <div className={styles.modalOverlay}>
                         <div className={styles.modalContent}>
@@ -616,7 +632,7 @@ export default function ServiceManagement() {
                                         className={styles.dropdown}
                                     >
                                         <option value="">-- Select Client Email --</option>
-                                        {clients.records.map((client) => (
+                                        {clients.records?.map((client) => (
                                             <option key={client._id} value={client.email}>
                                                 {client.email}
                                             </option>

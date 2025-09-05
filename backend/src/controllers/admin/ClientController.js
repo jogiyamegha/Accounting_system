@@ -179,6 +179,14 @@ exports.deleteClient = async (req) => {
     await ServiceManager.cascadeDelete(TableNames.Company, companyId);
 };
 
+exports.getClientsByService = async (req) => {
+    const serviceId = req.params[TableFields.ID];
+
+    const a = await ClientService.getAllClientsRelatedService(serviceId).withBasicInfo().execute();
+    console.log(a);
+    return a;
+}
+
 exports.getAllClients = async (req) => {
     // nalytics code here
     const clients = await ClientService.listClients({

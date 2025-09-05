@@ -195,7 +195,7 @@ function App() {
                 />
 
                 <Route
-                    path="/admin/service/:serviceType"
+                    path="/admin/service/:id"
                     element={
                         <Layout>
                             <ProtectedRoute>

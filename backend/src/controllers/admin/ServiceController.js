@@ -57,9 +57,11 @@ exports.deleteService = async (req) => {
     return await ServiceService.deleteService(serviceId);
 }
 
-
 exports.assignService = async (req, res) => {
     const reqBody = req.body;
+    const serviceId = req.params[TableFields.ID];
+    console.log("serviceId", serviceId);
+
     const clientEmail = reqBody[TableFields.clientEmail];
 
     const clientExists = await ClientService.existsWithEmail(clientEmail);
@@ -71,41 +73,16 @@ exports.assignService = async (req, res) => {
         .withBasicInfo()
         .execute();
 
-    const existsService = await ServiceService.serviceExistsWithClient(
+    const existsService = await ClientService.serviceExists(
+        serviceId,
         clientEmail
     );
+    console.log("existsService",existsService);
 
-    let data;
-
-    if (!existsService) {
-        data = await parseAndValidate(
-            reqBody,
-            client,
-            undefined,
-            async (updatedFields) => {
-                let records = await ServiceService.insertRecord(updatedFields);
-                await ServiceService.updateServiceDetails(
-                    records,
-                    records[TableFields.ID],
-                    reqBody,
-                    res
-                );
-
-                // Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
-            }
-        );
-    } else {
-        const service = await ServiceService.findByEmail(clientEmail)
-            .withBasicInfo()
-            .execute();
-        await ServiceService.updateServiceDetails(
-            service,
-            service[TableFields.ID],
-            reqBody,
-            res
-        );
-        // Email.sendServiceAssignMail(client[TableFields.name_], clientEmail, reqBody.serviceType )
-    }
+    if (existsService) {
+        throw new ValidationError(ValidationMsg.ServiceAlreadyExists);
+    } 
+    return await ClientService.addServiceInArray(client,clientEmail ,serviceId);
 };
 
 exports.getAllServices = async (req) => {
