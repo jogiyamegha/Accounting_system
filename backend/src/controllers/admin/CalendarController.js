@@ -12,9 +12,7 @@ exports.addEvent = async (req) => {
 }
 
 exports.getAllEvents = async (req) => {
-    // console.log("object");
     const events = await CalendarService.getAllEventsByDate().withBasicInfo().execute();
-    // console.log(events);
     return events;
 }
 
@@ -22,10 +20,8 @@ exports.editEvent = async (req) => {
     const reqBody = req.body;
     const eventId = req.params[TableFields.ID];
 
-    // console.log("reqBody",reqBody)
 
     const event = await CalendarService.findById(eventId).withBasicInfo().execute();
-    // console.log(event);
     if(!event) {
         throw new ValidationError(ValidationMsg.EventNotFound)
     }

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
-const { TableFields, TableNames, InterfaceType, ValidationMsg, UserTypes } = require('../../utils/constants');
+const { TableFields, TableNames, InterfaceType, ValidationMsg, UserTypes, ServiceStatus } = require('../../utils/constants');
 const Util = require('../../utils/util');
 const Schema = mongoose.Schema;
 
@@ -87,6 +87,26 @@ const clientSchema = new Schema(
                 },
             },
         ],
+
+        [TableFields.services] : [
+            {
+                [TableFields.serviceId] : {
+                    type : mongoose.Schema.Types.ObjectId,
+                    ref : TableNames.Service
+                },
+                [TableFields.serviceStartDate] : {
+                    type : Date,
+                    default : Date.now() 
+                },
+                [TableFields.endDate] : {
+                    type : Date
+                },
+                [TableFields.serviceStatus] : {
+                    type : Number,
+                    enum : Object.values(ServiceStatus)
+                }
+            }
+        ]
     },
     {
         timeStamps: true,

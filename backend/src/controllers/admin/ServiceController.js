@@ -30,7 +30,7 @@ exports.addService = async (req) => {
 exports.editService = async (req) => {
     const reqBody = req.body;
     const serviceId = req.params[TableFields.ID];
-    const serviceExists = await ServiceService.serviceExists(serviceId);
+    const serviceExists = await ServiceService.serviceExistsWithId(serviceId);
     if(!serviceExists) {
         throw new ValidationError(ValidationMsg.ServiceNotExists)
     }

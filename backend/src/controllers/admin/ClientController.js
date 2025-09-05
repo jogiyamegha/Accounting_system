@@ -187,8 +187,6 @@ exports.getAllClients = async (req) => {
         .withBasicInfo()
         .execute();
     
-        // console.log(clients);
-    console.log(clients.records);
     return clients.records;
 };
 
