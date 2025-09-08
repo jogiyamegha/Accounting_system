@@ -96,52 +96,52 @@ exports.addClient = async (req) => {
 
 exports.editClient = async (req) => {
     let reqBody = req.body;
+    console.log(reqBody);
+    // let files = req.files;
+    // const clientId = req.params[TableFields.clientId];
 
-    let files = req.files;
-    const clientId = req.params[TableFields.clientId];
+    // const client = await ClientService.getUserById(clientId)
+    //     .withBasicInfo()
+    //     .execute();
+    // if (!client) {
+    //     throw new ValidationError(ValidationMsg.RecordNotFound);
+    // }
 
-    const client = await ClientService.getUserById(clientId)
-        .withBasicInfo()
-        .execute();
-    if (!client) {
-        throw new ValidationError(ValidationMsg.RecordNotFound);
-    }
+    // let records;
+    // let data = await parseAndValidateClient(reqBody, async (updatedFields) => {
+    //     records = await ClientService.updateClient(clientId, updatedFields);
+    // });
 
-    let records;
-    let data = await parseAndValidateClient(reqBody, async (updatedFields) => {
-        records = await ClientService.updateClient(clientId, updatedFields);
-    });
+    // let existingCompany = await CompanyService.getCompanyById(
+    //     client[TableFields.companyId]
+    // )
+    //     .withBasicInfo()
+    //     .execute();
 
-    let existingCompany = await CompanyService.getCompanyById(
-        client[TableFields.companyId]
-    )
-        .withBasicInfo()
-        .execute();
+    // let company = await parseAndValidateCompany(
+    //     reqBody,
+    //     undefined,
+    //     async (updatedFields) => {
+    //         let companyRecords = await CompanyService.updateRecord(
+    //             existingCompany[TableFields.ID],
+    //             updatedFields
+    //         );
+    //     }
+    // );
 
-    let company = await parseAndValidateCompany(
-        reqBody,
-        undefined,
-        async (updatedFields) => {
-            let companyRecords = await CompanyService.updateRecord(
-                existingCompany[TableFields.ID],
-                updatedFields
-            );
-        }
-    );
+    // const existsWithClientId = await DocumentService.existsWithClient(clientId);
 
-    const existsWithClientId = await DocumentService.existsWithClient(clientId);
-
-    const result = await parseAndValidateEditDocuments(
-        reqBody,
-        clientId,
-        files,
-        async function (payload) {
-            return await DocumentService.updateManyDocumentsForClient(
-                clientId,
-                payload.documents
-            );
-        }
-    );
+    // const result = await parseAndValidateEditDocuments(
+    //     reqBody,
+    //     clientId,
+    //     files,
+    //     async function (payload) {
+    //         return await DocumentService.updateManyDocumentsForClient(
+    //             clientId,
+    //             payload.documents
+    //         );
+    //     }
+    // );
 };
 
 exports.deleteClient = async (req) => {

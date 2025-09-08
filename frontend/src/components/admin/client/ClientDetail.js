@@ -333,8 +333,8 @@ export default function ClientDetail() {
           <h3>Personal Information</h3>
           <button
             className={styles.editBtn}
-            // onClick={() => navigate(`/admin/edit-client/${client._id}`)}
-            onClick={() => setIsEditing((prev) => !prev)}
+            onClick={() => navigate(`/admin/edit-client/${client._id}`)}
+            // onClick={() => setIsEditing((prev) => !prev)}
           >
             <FontAwesomeIcon icon={isEditing ? faTimes : faUserEdit} />{" "}
             {isEditing ? "Cancel" : "Edit"}
