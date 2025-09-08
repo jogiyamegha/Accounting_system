@@ -27,7 +27,7 @@ class ClientService {
     };
 
     static getAllClientsRelatedService = (serviceId) => {
-        return new ProjectionBuilder(async function (){
+        return new ProjectionBuilder(async function () {
             return Client.find({
                 [TableFields.services]: {
                     $elemMatch: { [TableFields.serviceId]: serviceId }
@@ -40,8 +40,8 @@ class ClientService {
         const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
         const services = client[TableFields.services];
 
-        for(let service of services) {
-            if(service[TableFields.serviceId].toString() === serviceId.toString()) {
+        for (let service of services) {
+            if (service[TableFields.serviceId].toString() === serviceId.toString()) {
                 return true;
             }
         }
@@ -51,16 +51,16 @@ class ClientService {
     static checkIsServiceCompleted = async (clientId, serviceId) => {
         const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
         const services = client[TableFields.services];
-        for(let service of services) {
+        for (let service of services) {
             console.log(service[TableFields.serviceId].toString() === serviceId.toString() && service[TableFields.serviceStatus] == 3);
-            if(service[TableFields.serviceId].toString() === serviceId.toString() && service[TableFields.serviceStatus] == 3){
+            if (service[TableFields.serviceId].toString() === serviceId.toString() && service[TableFields.serviceStatus] == 3) {
                 return true;
             }
         }
         return false;
     }
 
-   static updateDeassign = async (clientId, serviceId) => {
+    static updateDeassign = async (clientId, serviceId) => {
         return await Client.findOneAndUpdate(
             {
                 _id: clientId,
@@ -288,22 +288,38 @@ class ClientService {
         }
     };
 
-    static updateClient = async (clientId, clientDetails) => {
+    static updateClient = async (clientId, reqBody, existingClient) => {
+        let updateFields = {};
+
+        if (reqBody[TableFields.name_]) {
+            updateFields[TableFields.name_] = reqBody[TableFields.name_];
+        }
+
+        if (reqBody[TableFields.position]) {
+            updateFields[TableFields.position] = reqBody[TableFields.position];
+        }
+
+        let contactUpdate = {};
+        if (reqBody?.contact?.[TableFields.phoneCountry]) {
+            contactUpdate[TableFields.phoneCountry] = reqBody.contact[TableFields.phoneCountry];
+        } else {
+            contactUpdate[TableFields.phoneCountry] = existingClient.contact[TableFields.phoneCountry];
+        }
+
+        if (reqBody?.contact?.[TableFields.phone]) {
+            contactUpdate[TableFields.phone] = reqBody.contact[TableFields.phone];
+        } else {
+            contactUpdate[TableFields.phone] = existingClient.contact[TableFields.phone];
+        }
+
+        // Only add contact if we have any updates or keep original
+        if (Object.keys(contactUpdate).length > 0) {
+            updateFields[TableFields.contact] = contactUpdate;
+        }
+
         return await Client.updateOne(
-            {
-                [TableFields.ID]: clientId,
-            },
-            {
-                $set: {
-                    [TableFields.name_]: clientDetails[TableFields.name_],
-                    [TableFields.position]: clientDetails[TableFields.position],
-                    [TableFields.contact]: {
-                        [TableFields.phoneCountry]:
-                            clientDetails.contact[TableFields.phoneCountry],
-                        [TableFields.phone]: clientDetails.contact[TableFields.phone],
-                    },
-                },
-            }
+            { [TableFields.ID]: clientId },
+            { $set: updateFields }
         );
     };
 

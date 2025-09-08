@@ -94,6 +94,24 @@ exports.addClient = async (req) => {
     );
 };
 
+
+exports.editClientProfileData = async (req) => {
+    let reqBody = req.body;
+    console.log(reqBody);
+
+    const clientId = req.params[TableFields.clientId];
+
+    const client = await ClientService.getUserById(clientId)
+        .withBasicInfo()
+        .execute();
+    if (!client) {
+        throw new ValidationError(ValidationMsg.RecordNotFound);
+    }
+
+    return await ClientService.updateClient(clientId, reqBody, client);
+};
+
+
 exports.editClient = async (req) => {
     let reqBody = req.body;
     console.log(reqBody);

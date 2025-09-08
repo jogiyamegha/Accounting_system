@@ -1,6 +1,7 @@
 const API = require("../utils/apiBuilder");
 const AuthController = require('../controllers/admin/AuthController');
 const ClientController = require('../controllers/admin/ClientController');
+const CompanyController = require('../controllers/admin/CompanyController');
 const DocumentController = require('../controllers/admin/DocumentController')
 const ServiceController = require('../controllers/admin/ServiceController');
 const CalendarController = require('../controllers/admin/CalendarController');
@@ -90,20 +91,38 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
-// .addPath(`/edit-client/:${TableFields.clientId}`)
-// .GET(ClientController.getClientDetails)
-// .useAdminAuth()
-// .build()
+/**
+ * 
+ * Edit client details Routes
+ */
 
-.addPath(`/edit-client/:${TableFields.clientId}`)
-.asUPDATE(ClientController.editClient)
+
+.addPath(`/edit-client-profile-data/:${TableFields.clientId}`)
+.asUPDATE(ClientController.editClientProfileData)
+.useAdminAuth()
+.build()
+
+.addPath(`/edit-client-company-data/:${TableFields.clientId}`)
+.asUPDATE(CompanyController.editClientCompanyData)
+.useAdminAuth()
+.build()
+
+.addPath(`/edit-client-document-data/:${TableFields.clientId}`)
+.asUPDATE(ClientController.editClientDocumentData)
 .userMiddlewares(PDFHandler.uploadAnyPDF())
 .useAdminAuth()
 .build()
+
+
+// .addPath(`/edit-client/:${TableFields.clientId}`)
+// .asUPDATE(ClientController.editClient)
+// .userMiddlewares(PDFHandler.uploadAnyPDF())
+// .useAdminAuth()
+// .build()
  
 .addPath(`/delete-client/:${TableFields.clientId}`)
 .asDELETE(ClientController.deleteClient)
-// .useAdminAuth()
+.useAdminAuth()
 .build()
 
 
