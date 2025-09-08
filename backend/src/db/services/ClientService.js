@@ -291,6 +291,8 @@ class ClientService {
     static updateClient = async (clientId, reqBody, existingClient) => {
         let updateFields = {};
 
+        console.log(reqBody);
+
         if (reqBody[TableFields.name_]) {
             updateFields[TableFields.name_] = reqBody[TableFields.name_];
         }
@@ -317,10 +319,13 @@ class ClientService {
             updateFields[TableFields.contact] = contactUpdate;
         }
 
-        return await Client.updateOne(
+        let data =  await Client.updateOne(
             { [TableFields.ID]: clientId },
             { $set: updateFields }
         );
+        // console.log("data",data);
+        
+        return data;
     };
 
     static changeClientActivation = async (clientId) => {

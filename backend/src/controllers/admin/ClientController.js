@@ -95,9 +95,36 @@ exports.addClient = async (req) => {
 };
 
 
-exports.editClientProfileData = async (req) => {
+exports.editClientProfileData = async (req, res) => {
+    try {
+        const reqBody = req.body;
+        console.log("reqBody", reqBody);
+
+        const clientId = req.params[TableFields.clientId];
+
+        const client = await ClientService.getUserById(clientId)
+            .withBasicInfo()
+            .execute();
+
+        if (!client) {
+            return res.status(404).json({ message: ValidationMsg.RecordNotFound });
+        }
+
+        const updatedClient = await ClientService.updateClient(clientId, reqBody, client);
+
+        return updatedClient;
+    } catch (error) {
+        console.log("in catch");
+        console.log(error);
+
+        return res.status(500).json({ message: error.message || "Internal Server Error" });
+    }
+};
+
+
+exports.editClientProfileData2 = async (req) => {
     let reqBody = req.body;
-    console.log(reqBody);
+    console.log("reqBody", reqBody);
 
     const clientId = req.params[TableFields.clientId];
 
@@ -109,6 +136,30 @@ exports.editClientProfileData = async (req) => {
     }
 
     return await ClientService.updateClient(clientId, reqBody, client);
+};
+
+
+exports.editClientDocumentData = async (req) => {
+    let reqBody = req.body;
+    // console.log(reqBody);
+    let files = req.files;
+    // console.log("first", files);
+    const clientId = req.params[TableFields.clientId];
+
+    const result = await parseAndValidateEditedClientsDocuments(
+        reqBody,
+        clientId,
+        files,
+        async function (payload) {
+            return await DocumentService.updateManyClientsDocumentsForClient(
+                clientId,
+                payload.editedDocs,
+                payload.newDocs
+            );
+        }
+    );
+
+    return result;
 };
 
 
@@ -212,7 +263,7 @@ exports.getAllClients = async (req) => {
     })
         .withBasicInfo()
         .execute();
-    
+
     return clients;
 };
 
@@ -395,6 +446,142 @@ async function parseAndValidateDocuments(
 
     return await onValidationCompleted(payload);
 }
+
+async function parseAndValidateEditedClientsDocuments(
+    reqBody,
+    clientId,
+    files,
+    onValidationCompleted = async () => { }
+) {
+    if (!clientId) {
+        throw new ValidationError(ValidationMsg.ClientIdEmpty);
+    }
+
+    // 1️⃣ Fetch existing docs
+    const existingDocRecord = await DocumentService.getDocsByClientId(clientId)
+        .withBasicInfo()
+        .execute();
+    let existingDocs = existingDocRecord
+        ? existingDocRecord[TableFields.documents] || []
+        : [];
+
+    let editedDocs = [];
+    let newDocs = [];
+
+
+    console.log("reqBody",reqBody);
+
+    // ---- Parse editedDocs
+    for (const existingDoc of existingDocs) {
+        const docId = existingDoc._id.toString();
+
+        // Try to find a matching index in reqBody (safe access)
+        const index = reqBody.editedDocs?.findIndex(
+            (d) => d.docId === docId
+        );
+
+        if (index === -1) continue; // This doc was not edited
+
+        const editedReq = reqBody.editedDocs[index];
+
+        const documentType = editedReq.documentType || existingDoc.documentDetails?.documentType || null;
+        const comments = editedReq.comments || existingDoc.documentDetails?.comments || "";
+        const status = editedReq.status || existingDoc.documentDetails?.docStatus || "pending";
+
+        // 🔑 Check if there is a new uploaded file for this doc
+        const file = files.find((f) =>
+            f.fieldname === `editedDocs[${index}][file]`
+        );
+
+        let documentUrl = existingDoc.documentDetails?.document; // default keep old file
+        if (file) {
+            documentUrl = await addPdfFile(
+                Folders.ClientDocument,
+                file.originalname,
+                file.buffer
+            );
+        }
+
+        editedDocs.push({
+            _id: docId,
+            [TableFields.documentDetails]: {
+                [TableFields.docStatus]: DocStatus[status] || DocStatus.pending,
+                [TableFields.documentType]: documentType,
+                [TableFields.document]: documentUrl, // ✅ only replaced if new file uploaded
+                [TableFields.comments]: comments,
+                [TableFields.uploadedAt]: Date.now(),
+            },
+        });
+    }
+    
+
+    // ---- Parse newDocs
+    for (const file of files) {
+        const match = file.fieldname.match(/newDocs\[(\d+)\]\[file\]/);
+
+        if (match) {
+             const index = parseInt(match[1], 10);
+
+        // ✅ SAFE ACCESS
+        const documentType =
+            reqBody?.newDocs?.[index]?.documentType ??
+            reqBody[`newDocs[${index}][documentType]`] ??
+            null;
+
+        const comments =
+            reqBody?.newDocs?.[index]?.comments ??
+            reqBody[`newDocs[${index}][comments]`] ??
+            "";
+
+        console.log("Parsed documentType:", documentType);
+
+            let docType = null;
+            if (typeof documentType === "string" || typeof documentType === "number") {
+                const docTypeMap = {
+                    1: DocumentType.VATcertificate,
+                    2: DocumentType.CorporateTaxDocument,
+                    3: DocumentType.BankStatement,
+                    4: DocumentType.Invoice,
+                    5: DocumentType.auditFiles,
+                    6: DocumentType.TradeLicense,
+                    7: DocumentType.passport,
+                    8: DocumentType.FinancialStatements,
+                    9: DocumentType.BalanceSheet,
+                    10: DocumentType.Payroll,
+                    11: DocumentType.WPSReport,
+                    12: DocumentType.ExpenseReciept,
+                };
+                docType = docTypeMap[documentType];
+            }
+
+            let persistedFileKey = await addPdfFile(
+                Folders.ClientDocument,
+                file.originalname,
+                file.buffer
+            );
+
+            newDocs.push({
+                [TableFields.documentDetails]: {
+                    [TableFields.docStatus]: DocStatus.pending,
+                    [TableFields.documentType]: docType,
+                    [TableFields.document]: persistedFileKey,
+                    [TableFields.comments]: comments,
+                    [TableFields.uploadedAt]: Date.now(),
+                },
+            });
+        }
+    }
+
+    const payload = {
+        [TableFields.clientId]: clientId,
+        editedDocs,
+        newDocs,
+    };
+
+    return await onValidationCompleted(payload);
+}
+
+
 
 async function parseAndValidateEditDocuments(
     reqBody,

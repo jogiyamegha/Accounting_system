@@ -296,6 +296,58 @@ class DocumentService {
         });
     };
 
+    static updateManyClientsDocumentsForClient = async (
+    clientId,
+    editedDocs = [],
+    newDocs = []
+) => {
+    console.log("kjhgf",editedDocs);
+    const existingDocRecord = await Document.findOne({
+        [TableFields.clientId]: clientId,
+    });
+
+    let existingDocs = existingDocRecord
+        ? existingDocRecord[TableFields.documents] || []
+        : [];
+
+    // 1️⃣ Update existing documents (merge instead of replace)
+    for (const updated of editedDocs) {
+        const docId = updated._id;
+        if (!docId) continue;
+
+        const index = existingDocs.findIndex(
+            (d) => d._id.toString() === docId.toString()
+        );
+
+        if (index >= 0) {
+            existingDocs[index] = {
+                ...existingDocs[index],
+                ...updated,
+                [TableFields.documentDetails]: {
+                    ...existingDocs[index][TableFields.documentDetails],
+                    ...updated[TableFields.documentDetails],
+                },
+            };
+        }
+    }
+
+    // 2️⃣ Add new documents
+    if (newDocs.length > 0) {
+        existingDocs.push(...newDocs);
+    }
+
+    // 3️⃣ Save back
+    const updatedRecord = await Document.findOneAndUpdate(
+        { [TableFields.clientId]: clientId },
+        { $set: { [TableFields.documents]: existingDocs } },
+        { upsert: true, new: true }
+    );
+
+    return updatedRecord;
+};
+
+
+
     static getWeeklyUploadStats = async () => {
         const startOfWeek = new Date();
         startOfWeek.setDate(startOfWeek.getDate() - 6);
