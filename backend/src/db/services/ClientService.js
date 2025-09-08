@@ -30,7 +30,10 @@ class ClientService {
         return new ProjectionBuilder(async function () {
             return Client.find({
                 [TableFields.services]: {
-                    $elemMatch: { [TableFields.serviceId]: serviceId }
+                    $elemMatch: { 
+                        [TableFields.serviceId]: serviceId,
+                        [TableFields.deleted]: false
+                     }
                 }
             })
         })

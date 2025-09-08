@@ -86,11 +86,11 @@ class CompanyService {
         }
 
         if (reqBody?.address?.[TableFields.addressLine2]) {
-            console.log("in 2");
+            // console.log("in 2");
             addressUpdate[TableFields.addressLine2] = reqBody.address[TableFields.addressLine2];
         } else {
             addressUpdate[TableFields.addressLine2] = existingCompany.address[TableFields.addressLine2];
-            console.log(addressUpdate);
+            // console.log(addressUpdate);
         }
 
         if (reqBody?.address?.[TableFields.street]) {
@@ -130,6 +130,7 @@ class CompanyService {
 
         let licenseDetailsUpdate = {};
         if (reqBody?.licenseDetails?.[TableFields.licenseType]) {
+            // console.log("first", reqBody?.licenseDetails?.[TableFields.licenseType])
             licenseDetailsUpdate[TableFields.licenseType] = reqBody.licenseDetails[TableFields.licenseType];
         } else {
             licenseDetailsUpdate[TableFields.licenseType] = existingCompany.licenseDetails[TableFields.licenseType];
@@ -198,6 +199,11 @@ class CompanyService {
         // if (Object.keys(contactPersonUpdate).length > 0) {
         //     updatedFields[TableFields.contact] = contactPersonUpdate;
         // }
+        if (Object.keys(licenseDetailsUpdate).length > 0) {
+            updatedFields[TableFields.licenseDetails] = licenseDetailsUpdate;
+        }
+ 
+        
 
         return await Company.updateOne(
             { [TableFields.ID]: companyId },
