@@ -114,8 +114,13 @@
   color: #1e293b;
 }
 
+.btnGrid{
+  display: flex;
+  gap: 4px;
+}
+
 /* Edit button */
-.editBtn {
+.editBtn, .saveBtn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -129,7 +134,7 @@
   transition: 0.2s ease-in-out;
 }
 
-.editBtn:hover {
+.editBtn:hover, .saveBtn:hover {
   background: #e2e8f0;
 }
 
@@ -318,6 +323,109 @@
 }
 
 
+.newDocsSection{
+  margin-top: 0.4rem;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.newDocsSection h4{
+  grid-column: 1 / -1;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.newDocsSection label {
+  margin-left: 0.8rem;
+  margin-top: 0.5rem;
+  font-size: 16px;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: -8px;
+}
+
+.newDocsSection input{
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 90%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.newDocsSection select{
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.newDocsSection input:focus,
+.newDocsSection select:focus {
+  outline: none;
+  border-color: #033c7c;
+  box-shadow: 0 0 5px rgba(3, 60, 124, 0.3);
+}
+
+.btnAddDocument {
+  grid-column: 1 / -1;
+  background-color: #0369a1;
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btnAddDocument:hover {
+  background-color: #075985;
+  transform: translateY(-1px);
+}
+
+
+.documentBlock {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+}
+
+.documentBlock select {
+  flex: 1;
+  min-width: 150px;
+}
+
+.documentBlock input[type="file"] {
+  flex: 2;
+  min-width: 220px;
+}
+
+.addBtn {
+  background-color: #ef4444;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.addBtn:hover {
+  background-color: #b91c1c;
+}
 
 
 /* Invoice section */

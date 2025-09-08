@@ -15,6 +15,7 @@ import {
   faClipboardList,
   faTimes,
   faUserEdit,
+  faSave,
 } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "../../Sidebar";
 import { toast } from "react-toastify";
@@ -42,8 +43,12 @@ export default function ClientDetail() {
   const [searchType, setSearchType] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [editedDocs, setEditedDocs] = useState({});
+  const [newDocs, setNewDocs] = useState([]);
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing1, setIsEditing1] = useState(false);
+  const [isEditing2, setIsEditing2] = useState(false);
+  const [isEditing3, setIsEditing3] = useState(false);
+  const [isEditing4, setIsEditing4] = useState(false);
   const [clientData, setClientData] = useState(null);
   const [companyData, setCompanyData] = useState(null);
 
@@ -183,6 +188,20 @@ export default function ClientDetail() {
     }));
   };
 
+  const handleAddDocument = () => {
+    setNewDocs([...newDocs, { documentType: "", file: null }]);
+  };
+
+  const handleRemoveDocument = (index) => {
+    setNewDocs(newDocs.filter((_, i) => i !== index));
+  };
+
+  const handleNewDocChange = (index, field, value) => {
+    const updated = [...newDocs];
+    updated[index][field] = value;
+    setNewDocs(updated);
+  };
+
   const handleUpdate = async (docId) => {
     try {
       if (!clientId) return;
@@ -233,27 +252,34 @@ export default function ClientDetail() {
       setLoading(true);
 
       // merge client + company
-      const mergedData = { ...clientData, ...companyData };
+      // const mergedData = { ...clientData, ...companyData };
 
       const formData = new FormData();
-      for (const [key, value] of Object.entries(mergedData)) {
-        formData.append(key, value ?? "");
-      }
+      // for (const [key, value] of Object.entries(mergedData)) {
+      //   formData.append(key, value ?? "");
+      // }
 
-      documents.forEach((doc, index) => {
-        if (doc.file) {
-          formData.append(`documents[${index}][file]`, doc.file);
+      Object.entries(editedDocs).forEach(([docId, values], index) => {
+        if (values.newDocument) {
+          console.log("1", values.newDocument);
+          formData.append(`documents[${index}][file]`, values.newDocument);
         }
-        if (doc.documentType) {
+        if (values.documentType) {
           formData.append(
             `documents[${index}][documentType]`,
-            doc.documentType
+            values.documentType
           );
+        }
+        if (values.comments) {
+          formData.append(`documents[${index}][comments]`, values.comments);
+        }
+        if (values.status) {
+          formData.append(`documents[${index}][status]`, values.status);
         }
       });
 
       const response = await fetch(
-        `${ADMIN_END_POINT}/edit-client/${clientId}`,
+        `${ADMIN_END_POINT}/edit-client-document-data/${clientId}`,
         {
           method: "PATCH",
           body: formData,
@@ -268,7 +294,89 @@ export default function ClientDetail() {
       }
 
       toast.success("Client updated successfully!");
-      setIsEditing(false);
+      // setIsEditing1(false);
+      // setIsEditing2(false);
+      // setIsEditing3(false);
+      setIsEditing4(false);
+      navigate(`/admin/client-detail/${clientId}`);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit1 = async () => {
+    try {
+      if (!clientId) return;
+      setError("");
+      setLoading(true);
+
+      const mergeData = { ...clientData };
+
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(mergeData)) {
+        formData.append(key, value ?? "");
+      }
+
+      const response = await fetch(
+        `${ADMIN_END_POINT}/edit-client-profile-data/${clientId}`,
+        {
+          method: "PATCH",
+          body: formData,
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        toast.error(errorText || "Failed to update client");
+        return;
+      }
+
+      toast.success("Personal Information updated successfully!");
+      setIsEditing1(false);
+      navigate(`/admin/client-detail/${clientId}`);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit2 = async () => {
+    try {
+      if (!clientId) return;
+      setError("");
+      setLoading(true);
+
+      const mergedData = { ...companyData };
+
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(mergedData)) {
+        formData.append(key, value ?? "");
+      }
+
+      const response = await fetch(
+        `${ADMIN_END_POINT}/edit-client-company-data/${clientId}`,
+        {
+          method: "PATCH",
+          body: formData,
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        toast.error(errorText || "Failed to update company");
+        return;
+      }
+
+      toast.success("Client updated successfully!");
+      setIsEditing2(false);
+      setIsEditing3(false);
       navigate(`/admin/client-detail/${clientId}`);
     } catch (err) {
       console.error(err);
@@ -315,13 +423,9 @@ export default function ClientDetail() {
                 {company?.address?.country}
               </p> */}
 
-              {client.contact && (
-                <div className={styles.infoRow}>
-                  <span className={styles.infoValue}>
-                    Mobile: {client.contact.phoneCountry} {client.contact.phone}
-                  </span>
-                </div>
-              )}
+              <div className={styles.infoRow}>
+                <span className={styles.infoValue}>Email: {client.email}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -331,42 +435,56 @@ export default function ClientDetail() {
       <div className={styles.clientCard}>
         <div className={styles.cardHeader}>
           <h3>Personal Information</h3>
-          <button
-            className={styles.editBtn}
-            onClick={() => navigate(`/admin/edit-client/${client._id}`)}
-            // onClick={() => setIsEditing((prev) => !prev)}
-          >
-            <FontAwesomeIcon icon={isEditing ? faTimes : faUserEdit} />{" "}
-            {isEditing ? "Cancel" : "Edit"}
-          </button>
+          <div className={styles.btnGrid}>
+            <button
+              className={styles.editBtn}
+              // onClick={() => navigate(`/admin/edit-client/${client._id}`)}
+              onClick={() => setIsEditing1((prev) => !prev)}
+            >
+              <FontAwesomeIcon icon={isEditing1 ? faTimes : faUserEdit} />{" "}
+              {isEditing1 ? "Cancel" : "Edit"}
+            </button>
+            {isEditing1 && (
+              // <div className={styles.saveBar}>
+              <button
+                className={styles.saveBtn}
+                onClick={handleEdit1}
+                disabled={loading}
+              >
+                <FontAwesomeIcon icon={faSave} />{" "}
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+              // </div>
+            )}
+          </div>
         </div>
 
         <div className={styles.infoGrid}>
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Name:</span>
 
-            {isEditing ? (
+            {isEditing1 ? (
               <input
-                value={client.name || ""}
+                value={clientData.name || ""}
                 onChange={(e) => handleClientChange("name", e.target.value)}
               />
             ) : (
               <span className={styles.infoValue}>{client?.name}</span>
             )}
           </div>
-          <div className={styles.infoRow}>
+          {/* <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Email:</span>
             <span className={styles.infoValue}>{client?.email}</span>
-          </div>
+          </div> */}
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Phone:</span>
             <span className={styles.infoValue}>
-              {client.contact &&
-                (isEditing ? (
+              {clientData.contact &&
+                (isEditing1 ? (
                   <>
                     <select
                       name="phoneCountry"
-                      value={client.contact?.phoneCountry || ""}
+                      value={clientData.contact?.phoneCountry || ""}
                       onChange={(e) =>
                         handleClientNestedChange(
                           "contact",
@@ -385,7 +503,7 @@ export default function ClientDetail() {
                       ))}
                     </select>
                     <input
-                      value={client.contact?.phone || ""}
+                      value={clientData.contact?.phone || ""}
                       onChange={(e) =>
                         handleClientNestedChange(
                           "contact",
@@ -405,9 +523,9 @@ export default function ClientDetail() {
 
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Role:</span>
-            {isEditing ? (
+            {isEditing1 ? (
               <input
-                value={client.position || ""}
+                value={clientData.position || ""}
                 onChange={(e) => handleClientChange("position", e.target.value)}
               />
             ) : (
@@ -421,21 +539,35 @@ export default function ClientDetail() {
       <div className={styles.clientCard}>
         <div className={styles.cardHeader}>
           <h3>Company Information</h3>
-          <button
-            className={styles.editBtn}
-            // onClick={() => navigate(`/admin/edit-client/${client._id}`)}
-            onClick={() => setIsEditing((prev) => !prev)}
-          >
-            <FontAwesomeIcon icon={isEditing ? faTimes : faUserEdit} />{" "}
-            {isEditing ? "Cancel" : "Edit"}
-          </button>
+          <div className={styles.btnGrid}>
+            <button
+              className={styles.editBtn}
+              // onClick={() => navigate(`/admin/edit-client/${client._id}`)}
+              onClick={() => setIsEditing2((prev) => !prev)}
+            >
+              <FontAwesomeIcon icon={isEditing2 ? faTimes : faUserEdit} />{" "}
+              {isEditing2 ? "Cancel" : "Edit"}
+            </button>
+            {isEditing2 && (
+              // <div className={styles.saveBar}>
+              <button
+                className={styles.saveBtn}
+                onClick={handleEdit2}
+                disabled={loading}
+              >
+                <FontAwesomeIcon icon={faSave} />{" "}
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+              // </div>
+            )}
+          </div>
         </div>
         <div className={styles.infoGrid}>
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Company Name:</span>
-            {isEditing ? (
+            {isEditing2 ? (
               <input
-                value={company.name || ""}
+                value={companyData.name || ""}
                 onChange={(e) => handleCompanyChange("name", e.target.value)}
               />
             ) : (
@@ -444,191 +576,26 @@ export default function ClientDetail() {
           </div>
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Email:</span>
-            {isEditing ? (
+            {isEditing2 ? (
               <input
-                value={company.email || ""}
+                value={companyData.email || ""}
                 onChange={(e) => handleCompanyChange("email", e.target.value)}
               />
             ) : (
               <span className={styles.infoValue}>{company.email}</span>
             )}
           </div>
-          {company.address && (
-            <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Address:</span>
-              <span className={styles.infoValue}>
-                <span>
-                  {isEditing ? (
-                    <>
-                      <strong>Address Line 1:</strong>{" "}
-                      <input
-                        value={company.address?.addressLine1 || ""}
-                        onChange={(e) =>
-                          handleCompanyNestedChange(
-                            "address",
-                            "addressLine1",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </>
-                  ) : (
-                    company.address?.addressLine1
-                  )}
-                </span>{" "}
-                <span>
-                  {isEditing ? (
-                    <>
-                      <strong>Address Line 2:</strong>{" "}
-                      <input
-                        value={company.address?.addressLine2 || ""}
-                        onChange={(e) =>
-                          handleCompanyNestedChange(
-                            "address",
-                            "addressLine2",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </>
-                  ) : (
-                    company.address?.addressLine2
-                  )}
-                </span>{" "}
-                <span>
-                  {isEditing ? (
-                    <>
-                      <strong>Street:</strong>{" "}
-                      <input
-                        value={company.address?.street || ""}
-                        onChange={(e) =>
-                          handleCompanyNestedChange(
-                            "address",
-                            "street",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </>
-                  ) : (
-                    company.address?.street
-                  )}
-                </span>{" "}
-                <span>
-                  {isEditing ? (
-                    <>
-                      <strong>Landmark:</strong>{" "}
-                      <input
-                        value={company.address?.landmark || ""}
-                        onChange={(e) =>
-                          handleCompanyNestedChange(
-                            "address",
-                            "landmark",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </>
-                  ) : (
-                    company.address?.landmark
-                  )}
-                </span>{" "}
-                <span>
-                  {isEditing ? (
-                    <>
-                      <strong>City:</strong>{" "}
-                      <input
-                        value={company.address?.city || ""}
-                        onChange={(e) =>
-                          handleCompanyNestedChange(
-                            "address",
-                            "city",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </>
-                  ) : (
-                    company.address?.city
-                  )}
-                </span>{" "}
-                <span>
-                  {isEditing ? (
-                    <>
-                      <strong>State:</strong>{" "}
-                      <input
-                        value={company.address?.state || ""}
-                        onChange={(e) =>
-                          handleCompanyNestedChange(
-                            "address",
-                            "state",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </>
-                  ) : (
-                    company.address?.state
-                  )}
-                </span>{" "}
-                <span>
-                  {isEditing ? (
-                    <>
-                      <strong>Country:</strong>{" "}
-                      <select
-                        name="country"
-                        value={company.country}
-                        onChange={(e) =>
-                          handleCompanyChange("country", e.target.value)
-                        }
-                        required
-                      >
-                        <option value="">{company.address?.country}</option>
-                        {countries.map((c) => (
-                          <option key={c.name} value={c.name}>
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
-                    </>
-                  ) : (
-                    company.address?.country
-                  )}
-                </span>{" "}
-                <span>
-                  {isEditing ? (
-                    <>
-                      <strong>Zipcode:</strong>{" "}
-                      <input
-                        type="number"
-                        value={company.address?.zipcode || ""}
-                        onChange={(e) =>
-                          handleCompanyNestedChange(
-                            "address",
-                            "zipcode",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </>
-                  ) : (
-                    company.address?.zipcode
-                  )}
-                </span>
-              </span>
-            </div>
-          )}
 
-          {company.contactPerson && (
+          {companyData.contactPerson && (
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Contact Person:</span>
               <span className={styles.infoValue}>
-                {isEditing ? (
+                {isEditing2 ? (
                   <>
                     <p>
                       <strong>Name:</strong>{" "}
                       <input
-                        value={company.contactPerson?.name || ""}
+                        value={companyData.contactPerson?.name || ""}
                         onChange={(e) =>
                           handleCompanyNestedChange(
                             "contactPerson",
@@ -642,14 +609,14 @@ export default function ClientDetail() {
                 ) : (
                   company.contactPerson?.name
                 )}{" "}
-                {isEditing ? (
+                {isEditing2 ? (
                   <>
                     <p>
                       <strong>Phone Country:</strong>{" "}
                       <select
                         style={{ width: "70px" }}
                         value={
-                          company.contactPerson?.contact?.phoneCountry || ""
+                          companyData.contactPerson?.contact?.phoneCountry || ""
                         }
                         onChange={(e) =>
                           setCompanyData((prev) => ({
@@ -676,12 +643,12 @@ export default function ClientDetail() {
                 ) : (
                   company.contactPerson?.contact?.phoneCountry
                 )}{" "}
-                {isEditing ? (
+                {isEditing2 ? (
                   <>
                     <p>
                       <strong>Phone:</strong>{" "}
                       <input
-                        value={company.contactPerson?.contact?.phone || ""}
+                        value={companyData.contactPerson?.contact?.phone || ""}
                         onChange={(e) =>
                           setCompanyData((prev) => ({
                             ...prev,
@@ -703,6 +670,172 @@ export default function ClientDetail() {
               </span>
             </div>
           )}
+
+          {companyData.address && (
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Address:</span>
+              <span className={styles.infoValue}>
+                <span>
+                  {isEditing2 ? (
+                    <>
+                      <strong>Address Line 1:</strong>{" "}
+                      <input
+                        value={companyData.address?.addressLine1 || ""}
+                        onChange={(e) =>
+                          handleCompanyNestedChange(
+                            "address",
+                            "addressLine1",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </>
+                  ) : (
+                    company.address?.addressLine1
+                  )}
+                </span>{" "}
+                <span>
+                  {isEditing2 ? (
+                    <>
+                      <strong>Address Line 2:</strong>{" "}
+                      <input
+                        value={companyData.address?.addressLine2 || ""}
+                        onChange={(e) =>
+                          handleCompanyNestedChange(
+                            "address",
+                            "addressLine2",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </>
+                  ) : (
+                    company.address?.addressLine2
+                  )}
+                </span>{" "}
+                <span>
+                  {isEditing2 ? (
+                    <>
+                      <strong>Street:</strong>{" "}
+                      <input
+                        value={companyData.address?.street || ""}
+                        onChange={(e) =>
+                          handleCompanyNestedChange(
+                            "address",
+                            "street",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </>
+                  ) : (
+                    company.address?.street
+                  )}
+                </span>{" "}
+                <span>
+                  {isEditing2 ? (
+                    <>
+                      <strong>Landmark:</strong>{" "}
+                      <input
+                        value={companyData.address?.landmark || ""}
+                        onChange={(e) =>
+                          handleCompanyNestedChange(
+                            "address",
+                            "landmark",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </>
+                  ) : (
+                    company.address?.landmark
+                  )}
+                </span>{" "}
+                <span>
+                  {isEditing2 ? (
+                    <>
+                      <strong>City:</strong>{" "}
+                      <input
+                        value={companyData.address?.city || ""}
+                        onChange={(e) =>
+                          handleCompanyNestedChange(
+                            "address",
+                            "city",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </>
+                  ) : (
+                    company.address?.city
+                  )}
+                </span>{" "}
+                <span>
+                  {isEditing2 ? (
+                    <>
+                      <strong>State:</strong>{" "}
+                      <input
+                        value={companyData.address?.state || ""}
+                        onChange={(e) =>
+                          handleCompanyNestedChange(
+                            "address",
+                            "state",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </>
+                  ) : (
+                    company.address?.state
+                  )}
+                </span>{" "}
+                <span>
+                  {isEditing2 ? (
+                    <>
+                      <strong>Country:</strong>{" "}
+                      <select
+                        name="country"
+                        value={companyData.country}
+                        onChange={(e) =>
+                          handleCompanyChange("country", e.target.value)
+                        }
+                        required
+                      >
+                        <option value="">{companyData.address?.country}</option>
+                        {countries.map((c) => (
+                          <option key={c.name} value={c.name}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </>
+                  ) : (
+                    company.address?.country
+                  )}
+                </span>{" "}
+                <span>
+                  {isEditing2 ? (
+                    <>
+                      <strong>Zipcode:</strong>{" "}
+                      <input
+                        type="number"
+                        value={companyData.address?.zipcode || ""}
+                        onChange={(e) =>
+                          handleCompanyNestedChange(
+                            "address",
+                            "zipcode",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </>
+                  ) : (
+                    company.address?.zipcode
+                  )}
+                </span>
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -711,24 +844,38 @@ export default function ClientDetail() {
       <div className={styles.clientCard}>
         <div className={styles.cardHeader}>
           <h3>Credentials</h3>
-          <button
-            className={styles.editBtn}
-            // onClick={() => navigate(`/admin/edit-client/${client._id}`)}
-            onClick={() => setIsEditing((prev) => !prev)}
-          >
-            <FontAwesomeIcon icon={isEditing ? faTimes : faUserEdit} />{" "}
-            {isEditing ? "Cancel" : "Edit"}
-          </button>
+          <div className={styles.btnGrid}>
+            <button
+              className={styles.editBtn}
+              // onClick={() => navigate(`/admin/edit-client/${client._id}`)}
+              onClick={() => setIsEditing3((prev) => !prev)}
+            >
+              <FontAwesomeIcon icon={isEditing3 ? faTimes : faUserEdit} />{" "}
+              {isEditing3 ? "Cancel" : "Edit"}
+            </button>
+            {isEditing3 && (
+              // <div className={styles.saveBar}>
+              <button
+                className={styles.saveBtn}
+                onClick={handleEdit2}
+                disabled={loading}
+              >
+                <FontAwesomeIcon icon={faSave} />{" "}
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+              // </div>
+            )}
+          </div>
         </div>
         <div className={styles.infoGrid}>
-          {company.licenseDetails && (
+          {companyData.licenseDetails && (
             <>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>License Type:</span>
                 <span className={styles.infoValue}>
-                  {isEditing ? (
+                  {isEditing3 ? (
                     <select
-                      value={company.licenseDetails?.licenseType || ""}
+                      value={companyData.licenseDetails?.licenseType || ""}
                       onChange={(e) =>
                         handleCompanyNestedChange(
                           "licenseDetails",
@@ -738,7 +885,8 @@ export default function ClientDetail() {
                       }
                     >
                       <option value="">
-                        {company.licenseDetails?.licenseType}
+                        {/* {companyData.licenseDetails?.licenseType} */}
+                        --Select License Type --
                       </option>
                       <option value="Trade License">Trade License</option>
                       <option value="Industrial License">
@@ -760,9 +908,9 @@ export default function ClientDetail() {
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>License Number:</span>
                 <span className={styles.infoValue}>
-                  {isEditing ? (
+                  {isEditing3 ? (
                     <input
-                      value={company.licenseDetails?.licenseNumber || ""}
+                      value={companyData.licenseDetails?.licenseNumber || ""}
                       onChange={(e) =>
                         handleCompanyNestedChange(
                           "licenseDetails",
@@ -780,12 +928,14 @@ export default function ClientDetail() {
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>License Issue Date:</span>
                 <span className={styles.infoValue}>
-                  {isEditing ? (
+                  {isEditing3 ? (
                     <input
                       type="date"
                       value={
-                        company.licenseDetails?.licenseIssueDate
-                          ? new Date(company.licenseDetails.licenseIssueDate)
+                        companyData.licenseDetails?.licenseIssueDate
+                          ? new Date(
+                              companyData.licenseDetails.licenseIssueDate
+                            )
                               .toISOString()
                               .split("T")[0]
                           : ""
@@ -809,12 +959,12 @@ export default function ClientDetail() {
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>License Expiry Date:</span>
                 <span className={styles.infoValue}>
-                  {isEditing ? (
+                  {isEditing3 ? (
                     <input
                       type="date"
                       value={
-                        company.licenseDetails?.licenseExpiry
-                          ? new Date(company.licenseDetails.licenseExpiry)
+                        companyData.licenseDetails?.licenseExpiry
+                          ? new Date(companyData.licenseDetails.licenseExpiry)
                               .toISOString()
                               .split("T")[0]
                           : ""
@@ -835,17 +985,17 @@ export default function ClientDetail() {
             </>
           )}
 
-          {company.financialYear && (
+          {companyData.financialYear && (
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Financial Year:</span>
               <span className={styles.infoValue}>
-                {isEditing ? (
+                {isEditing3 ? (
                   <>
                     <input
                       type="date"
                       value={
-                        company.financialYear?.startDate
-                          ? new Date(company.financialYear.startDate)
+                        companyData.financialYear?.startDate
+                          ? new Date(companyData.financialYear.startDate)
                               .toISOString()
                               .split("T")[0]
                           : ""
@@ -862,8 +1012,8 @@ export default function ClientDetail() {
                     <input
                       type="date"
                       value={
-                        company.financialYear?.endDate
-                          ? new Date(company.financialYear.endDate)
+                        companyData.financialYear?.endDate
+                          ? new Date(companyData.financialYear.endDate)
                               .toISOString()
                               .split("T")[0]
                           : ""
@@ -890,10 +1040,10 @@ export default function ClientDetail() {
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Tax Registration Number:</span>
             <span className={styles.infoValue}>
-              {isEditing ? (
+              {isEditing3 ? (
                 <input
                   type="text"
-                  value={company.taxRegistrationNumber || ""}
+                  value={companyData.taxRegistrationNumber || ""}
                   onChange={(e) =>
                     handleCompanyChange("taxRegistrationNumber", e.target.value)
                   }
@@ -906,16 +1056,19 @@ export default function ClientDetail() {
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Business Type:</span>
             <span className={styles.infoValue}>
-              {isEditing ? (
+              {isEditing3 ? (
                 <select
                   name="businessType"
-                  value={company.businessType}
+                  value={companyData.businessType}
                   onChange={(e) =>
                     handleCompanyChange("businessType", e.target.value)
                   }
                   required
                 >
-                  <option value="">{company.businessType}</option>
+                  <option value="">
+                    {/* {companyData.businessType} */}
+                    --Select Business Type --
+                  </option>
                   <option value="Sole Proprietorship">
                     Sole Proprietorship
                   </option>
@@ -936,14 +1089,25 @@ export default function ClientDetail() {
       <div className={styles.clientCard} id="documents">
         <div className={styles.cardHeader}>
           <h3>Documents</h3>
-          <button
-            className={styles.editBtn}
-            // onClick={() => navigate(`/admin/edit-client/${client._id}`)}
-            onClick={() => setIsEditing((prev) => !prev)}
-          >
-            <FontAwesomeIcon icon={isEditing ? faTimes : faUserEdit} />{" "}
-            {isEditing ? "Cancel" : "Edit"}
-          </button>
+          <div className={styles.btnGrid}>
+            <button
+              className={styles.editBtn}
+              onClick={() => setIsEditing4((prev) => !prev)}
+            >
+              <FontAwesomeIcon icon={isEditing4 ? faTimes : faUserEdit} />{" "}
+              {isEditing4 ? "Cancel" : "Edit"}
+            </button>
+            {isEditing4 && (
+              <button
+                className={styles.saveBtn}
+                onClick={handleEdit}
+                disabled={loading}
+              >
+                <FontAwesomeIcon icon={faSave} />{" "}
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Filters */}
@@ -980,90 +1144,7 @@ export default function ClientDetail() {
           />
         </div>
 
-        {/* {filteredDocuments.length > 0 ? (
-          <ul className={styles.documentList}>
-            {filteredDocuments.map((doc) => (
-              <li className={styles.documentItem} key={doc._id}>
-                <p>
-                  <strong>Type:</strong>{" "}
-                  {
-                    Object.entries(DocumentType).find(
-                      ([, v]) => v === doc.documentDetails.documentType
-                    )?.[0]
-                  }
-                </p>
-                <p>
-                  <strong>Status:</strong>{" "}
-                  {
-                    Object.entries(DocStatus).find(
-                      ([, v]) => v === doc.documentDetails.docStatus
-                    )?.[0]
-                  }
-                </p>
-                <p>
-                  <strong>Uploaded:</strong>{" "}
-                  {formatDateToDDMMYYYY(doc.documentDetails.uploadedAt)}
-                </p>
-                <p>
-                  <a
-                    href={`${ADMIN_END_POINT}/files/${doc.documentDetails.document.replace(
-                      "uploads/document/",
-                      ""
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.viewLink}
-                  >
-                    View Document
-                  </a>
-                </p>
-
-                <div className={styles.docAction}>
-                  <label className={styles.docLabel}>Comments:</label>
-                  <input
-                    type="text"
-                    className={styles.docInput}
-                    value={editedDocs[doc._id]?.comments || ""}
-                    onChange={(e) =>
-                      handleFieldChange(doc._id, "comments", e.target.value)
-                    }
-                    placeholder="Add comment..."
-                  />
-                </div>
-
-                <div className={styles.docAction}>
-                  <label className={styles.docLabel}>
-                    Status: {editedDocs[doc._id]?.status}
-                  </label>
-                  <select
-                    className={styles.docSelect}
-                    value={editedDocs[doc._id]?.status || ""}
-                    onChange={(e) =>
-                      handleFieldChange(doc._id, "status", e.target.value)
-                    }
-                  >
-                    {Object.keys(DocStatus).map((key) => (
-                      <option key={key} value={key}>
-                        {key}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className={styles.docAction}>
-                  <button
-                    className={styles.docUpdateBtn}
-                    onClick={() => handleUpdate(doc._id)}
-                  >
-                    Update
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className={styles.emptyText}>No documents found</p>
-        )} */}
+        {/* Existing Documents */}
         {filteredDocuments.length > 0 ? (
           <table className={styles.documentTable}>
             <thead>
@@ -1082,7 +1163,7 @@ export default function ClientDetail() {
                 <tr key={doc._id}>
                   {/* Document Type */}
                   <td>
-                    {isEditing ? (
+                    {isEditing4 ? (
                       <select
                         className={styles.docSelect}
                         value={
@@ -1126,7 +1207,7 @@ export default function ClientDetail() {
 
                   {/* Document Upload + Existing Link */}
                   <td>
-                    {isEditing ? (
+                    {isEditing4 ? (
                       <>
                         <input
                           type="file"
@@ -1176,7 +1257,7 @@ export default function ClientDetail() {
                         handleFieldChange(doc._id, "comments", e.target.value)
                       }
                       placeholder="Add comment..."
-                      disabled={!isEditing}
+                      // disabled={!isEditing4}
                     />
                   </td>
 
@@ -1188,7 +1269,7 @@ export default function ClientDetail() {
                       onChange={(e) =>
                         handleFieldChange(doc._id, "status", e.target.value)
                       }
-                      disabled={!isEditing}
+                      // disabled={!isEditing4}
                     >
                       {Object.keys(DocStatus).map((key) => (
                         <option key={key} value={key}>
@@ -1213,6 +1294,55 @@ export default function ClientDetail() {
           </table>
         ) : (
           <p className={styles.emptyText}>No documents found</p>
+        )}
+
+        {/* ➕ New Document Upload Section (only visible in edit mode) */}
+        {isEditing4 && (
+          <div className={styles.newDocsSection}>
+            <h4>Upload New Documents</h4>
+            <button
+              type="button"
+              className={styles.btnAddDocument}
+              onClick={handleAddDocument}
+            >
+              + Add Document
+            </button>
+
+            {newDocs.map((doc, index) => (
+              <div key={index} className={styles.documentBlock}>
+                <select
+                  value={doc.documentType}
+                  onChange={(e) =>
+                    handleNewDocChange(index, "documentType", e.target.value)
+                  }
+                  required
+                >
+                  <option value="">--Select Document Type--</option>
+                  {Object.entries(DocumentType).map(([key, val]) => (
+                    <option key={val} value={val}>
+                      {key}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  onChange={(e) =>
+                    handleNewDocChange(index, "file", e.target.files[0])
+                  }
+                />
+
+                <button
+                  type="button"
+                  className={styles.addBtn}
+                  onClick={() => handleRemoveDocument(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
@@ -1275,7 +1405,7 @@ export default function ClientDetail() {
         )}
       </div>
 
-      {isEditing && (
+      {/* {isEditing && (
         <div className={styles.saveBar}>
           <button
             className={styles.saveBtn}
@@ -1285,7 +1415,7 @@ export default function ClientDetail() {
             {loading ? "Saving..." : "Save Changes"}
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

@@ -81,7 +81,7 @@ function Login() {
                 type="email"
                 id="email"
                 ref={emailInputRef}
-                autocomplete="username"
+                autoComplete="username"
                 required
               />
             </div>
@@ -93,7 +93,7 @@ function Login() {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   ref={passwordInputRef}
-                  autocomplete="current-password"
+                  autoComplete="current-password"
                   required
                 />
                 <span
