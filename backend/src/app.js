@@ -100,19 +100,19 @@ DBController.initConnection(async () => {
         console.log("Server is running on", Util.getBaseURL());
 
         // cron.schedule(
-        //   // "0 0 * * *",  //every midnight
-        //   "*/5 * * * * *",
-        // //   "* * * * *",
+        // //   "0 0 * * *",  //every midnight
+        // //   "*/5 * * * * *",
+        //   "* * * * *",
         //   async () => {
         //     console.log("in cron");
         //     // await CronController.serviceDeadlineTomorrow();
         //     // await CronController.serviceDeadlineToday();
+        //     await CronController.setServiceStatusCompleted();
 
 
-        //     await CronController.sendNotificationsBasedOnDB();
+        //     // await CronController.sendNotificationsBasedOnDB();
         //     // await CronController.documentStatusNotifications();
 
-        //     // await CronController.setServiceStatusCompleted();
         //    }
         // );
     });

@@ -3,6 +3,7 @@ const EmailBulk = require("../emails/emailBulk");
 const NotificationController = require("../controllers/admin/NotificationController");
 const { TableFields, DocStatus, DocumentType } = require("../utils/constants");
 const Document = require("../db/models/document");
+const Client = require('../db/models/client');
 
 const serviceTypeMap = {
     1: "VATServices",
@@ -113,24 +114,47 @@ exports.serviceDeadlineToday = async () => {
 
 exports.setServiceStatusCompleted = async () => {
     try {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayString = yesterday.toISOString().split("T")[0];
+        const today = new Date();
 
-        const yesterdayStart = new Date(`${yesterdayString}T00:00:00.000Z`);
-        const yesterdayEnd = new Date(`${yesterdayString}T23:59:59.999Z`);
-
-        const allUsers = await Service.find({
-            "services.serviceEndDate": {
-                $eq: yesterdayStart,
-            },
+        const allClients = await Client.find({
+            [TableFields.services]: {
+                $elemMatch: {
+                    [TableFields.endDate]: { $lte: today }, // ✅ correct field
+                    [TableFields.serviceStatus]: 2
+                }
+            }
         });
 
-        if (allUsers.length > 0) {
-        
+        if (allClients.length === 0) {
+            console.log("No expired services found.");
+            return;
         }
-    } catch (error) { }
+
+        console.log(`Found ${allClients.length} clients with expired services.`);
+
+        // Loop through each client and update only expired services
+        for (const client of allClients) {
+            let updated = false;
+
+            client[TableFields.services].forEach((service) => {
+                if (service[TableFields.serviceStatus] === 2 &&
+                    new Date(service[TableFields.endDate]) <= today) {
+                    service[TableFields.serviceStatus] = 3; // Mark as completed
+                    updated = true;
+                }
+            });
+
+            if (updated) {
+                await client.save();
+            }
+        }
+
+        console.log("Service statuses updated successfully.");
+    } catch (error) {
+        console.error("Error while setting services to completed:", error);
+    }
 };
+
 
 // exports.sendNotificationForServiceDeadline = async ({ daysFromNow = 0 } = {}) => {
 //     try {
@@ -372,50 +396,5 @@ exports.documentStatusNotifications = async () => {
         }
     } catch (err) {
         console.error("❌ Error in documentStatusNotifications:", err);
-    }
-};
-
-exports.setServiceStatusCompleted = async () => {
-    try {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayString = yesterday.toISOString().split("T")[0];
-
-        const yesterdayStart = new Date(`${yesterdayString}T00:00:00.000Z`);
-        const yesterdayEnd = new Date(`${yesterdayString}T23:59:59.999Z`);
-
-        return await Service.updateMany(
-            {
-                [`${TableFields.services}`]: {
-                    $elemMatch: {
-                        [`${TableFields.serviceEndDate}`]: {
-                            $gte: yesterdayStart,
-                            $lte: yesterdayEnd,
-                        },
-                        [`${TableFields.deleted}`]: false,
-                        [`${TableFields.serviceStatus}`]: { $ne: 3 }, // optional: skip already completed
-                    },
-                },
-            },
-            {
-                $set: {
-                    [`${TableFields.services}.$[elem].${TableFields.serviceStatus}`]: 3,
-                },
-            },
-            {
-                arrayFilters: [
-                    {
-                        [`elem.${TableFields.serviceEndDate}`]: {
-                            $gte: yesterdayStart,
-                            $lte: yesterdayEnd,
-                        },
-                        [`elem.${TableFields.deleted}`]: false,
-                        [`elem.${TableFields.serviceStatus}`]: { $ne: 3 },
-                    },
-                ],
-            }
-        );
-    } catch (error) {
-        console.error("Error in setServiceStatusCompleted:", error);
     }
 };

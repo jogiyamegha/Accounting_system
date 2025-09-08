@@ -479,7 +479,7 @@ export default function DynamicService() {
         }
     };
 
-    const renewService = async (serviceId, clientId ) => {
+    const renewService = async (serviceId, clientId) => {
         try {
             if (!serviceId) return console.error("Service ID not found!");
 
@@ -533,6 +533,10 @@ export default function DynamicService() {
     //     }
     // };
 
+    const goToClientDetails = (clientId) => {
+        navigate(`/admin/client-detail/${clientId}`);
+    };
+
     return (
         <div className={styles.pageWrapper}>
             <Sidebar />
@@ -560,37 +564,47 @@ export default function DynamicService() {
                                 client.services
                                     .filter((s) => s.serviceId === id || s.serviceId?._id === id)
                                     .map((service, idx) => (
-                                        <tr key={`${client._id}-${idx}`}>
-                                            <td>{client[ "name_" ]}</td>
+                                        <tr
+                                            key={`${client._id}-${idx}`}
+                                            className={styles.tableRow}
+                                            onClick={() => goToClientDetails(client._id)} // ✅ row click
+                                            style={{ cursor: "pointer" }}
+                                        >
+                                            <td>{client["name_"]}</td>
                                             <td>{client.email}</td>
                                             <td>{formatDate(service.serviceStartDate)}</td>
                                             <td>{formatDate(service.endDate)}</td>
                                             <td>{service.serviceStatus}</td>
-                                            <td>
-                                                <button
-                                                    className={styles.uploadBtn3}
-                                                    onClick={() =>
+                                            <td
+                                                onClick={(e) => e.stopPropagation()} // ⛔ prevent row click on button click
+                                            >
+                                                {service.serviceStatus === 3 && (
+                                                    <button
+                                                        className={styles.uploadBtn3}
+                                                        onClick={() =>
+                                                            renewService(
+                                                                service.serviceId,
+                                                                client._id
+                                                            )
+                                                        }
+                                                    >
+                                                        Renew Service
+                                                    </button>
+                                                )}
+
+                                                {service.serviceStatus === 2 && (
+                                                    <button
+                                                        className={styles.uploadBtn3}
+                                                        onClick={() =>
                                                             deAssignService(
                                                                 service.serviceId,
                                                                 client._id
                                                             )
                                                         }
                                                     >
-                                                    De-Assign
-                                                </button>
-                                            </td>
-                                            <td>
-                                                <button
-                                                    className={styles.uploadBtn3}
-                                                    onClick={() =>
-                                                        renewService(
-                                                            service.serviceId,
-                                                            client._id,
-                                                        )
-                                                    }
-                                                >
-                                                    Renew Service
-                                                </button>
+                                                        De-Assign
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))
@@ -601,4 +615,5 @@ export default function DynamicService() {
             </div>
         </div>
     );
-}
+};
+
