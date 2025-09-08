@@ -1,5 +1,6 @@
 const ClientService = require("../../db/services/ClientService");
 const ServiceService = require("../../db/services/ServiceService");
+const Client = require('../../db/models/client');
 const {
     TableFields,
     ValidationMsg,
@@ -164,7 +165,6 @@ exports.renewService = async (req) => {
     const serviceId = req.params[TableFields.serviceId];
     const clientId = req.params[TableFields.clientId];
     const reqBody = req.body;
-        console.log("backend");
 
     const clientExists = await ClientService.userExists(clientId);
     if (!clientExists) {
@@ -172,24 +172,21 @@ exports.renewService = async (req) => {
     }
 
     const checkClientAssignService = await ClientService.checkClientAssignService(clientId, serviceId);
-
     if (!checkClientAssignService) {
         throw new ValidationError(ValidationMsg.ClientNotAssignService);
     }
 
     const isServiceCompleted = await ClientService.checkIsServiceCompleted(clientId, serviceId);
-    console.log(isServiceCompleted);
 
     if (!isServiceCompleted) {
         throw new ValidationError(ValidationMsg.ServiceIsNotCompleted)
     }
 
-    await ClientService.addRenewService(clientId, serviceId )
+    await ClientService.addRenewService(clientId, serviceId);
 
     const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
 
     // Email.sendServiceRenewalMail(client[TableFields.name_], client[TableFields.email], endDate)
- 
 }
 
 async function parseAndValidate(

@@ -30,10 +30,10 @@ class ClientService {
         return new ProjectionBuilder(async function () {
             return Client.find({
                 [TableFields.services]: {
-                    $elemMatch: { 
+                    $elemMatch: {
                         [TableFields.serviceId]: serviceId,
                         [TableFields.deleted]: false
-                     }
+                    }
                 }
             })
         })
@@ -43,25 +43,92 @@ class ClientService {
         const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
         const services = client[TableFields.services];
 
-        for (let service of services) {
-            if (service[TableFields.serviceId].toString() === serviceId.toString()) {
-                return true;
-            }
-        }
-        return false;
+        // Check if client has ever been assigned this service
+        return services.some(service => service[TableFields.serviceId].toString() === serviceId.toString());
     }
 
     static checkIsServiceCompleted = async (clientId, serviceId) => {
         const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
         const services = client[TableFields.services];
-        for (let service of services) {
-            console.log(service[TableFields.serviceId].toString() === serviceId.toString() && service[TableFields.serviceStatus] == 3);
-            if (service[TableFields.serviceId].toString() === serviceId.toString() && service[TableFields.serviceStatus] == 3) {
-                return true;
-            }
+
+        // Filter services by serviceId and sort by start date (most recent first)
+        const serviceInstances = services
+            .filter(service => service[TableFields.serviceId].toString() === serviceId.toString())
+            .sort((a, b) => new Date(b[TableFields.serviceStartDate]) - new Date(a[TableFields.serviceStartDate]));
+
+        if (serviceInstances.length === 0) {
+            return false; // No service found
         }
+
+        // Check the most recent service instance
+        const latestService = serviceInstances[0];
+        const currentDate = new Date();
+        const endDate = new Date(latestService[TableFields.endDate]);
+
+        // Service is completed if:
+        // 1. Status is 3 (completed) AND end date has passed, OR
+        // 2. Status is 2 (active) AND end date has passed (expired)
+        if ((latestService[TableFields.serviceStatus] == 3 && endDate < currentDate) ||
+            (latestService[TableFields.serviceStatus] == 2 && endDate < currentDate)) {
+            return true;
+        }
+
         return false;
+    };
+
+    static addRenewService = async (clientId, serviceId) => {
+        const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+
+        const todayDate = new Date();
+        const endDate = new Date(todayDate);
+        endDate.setDate(endDate.getDate() + service[TableFields.serviceDuration]);
+
+        return await Client.updateOne(
+            {
+                [TableFields.ID]: clientId
+            },
+            {
+                $push: {
+                    [TableFields.services]: {
+                        [TableFields.serviceId]: serviceId,
+                        [TableFields.serviceStartDate]: todayDate,
+                        [TableFields.endDate]: endDate,
+                        [TableFields.serviceStatus]: 2
+                    }
+                }
+            }
+        );
     }
+
+    static checkIsServiceCompleted = async (clientId, serviceId) => {
+        const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+        const services = client[TableFields.services];
+
+        // Filter services by serviceId and sort by start date (most recent first)
+        const serviceInstances = services
+            .filter(service => service[TableFields.serviceId].toString() === serviceId.toString())
+            .sort((a, b) => new Date(b[TableFields.serviceStartDate]) - new Date(a[TableFields.serviceStartDate]));
+
+        if (serviceInstances.length === 0) {
+            return false; // No service found
+        }
+
+        // Check the most recent service instance
+        const latestService = serviceInstances[0];
+        const currentDate = new Date();
+        const endDate = new Date(latestService[TableFields.endDate]);
+
+        // Service is completed if:
+        // 1. Status is 3 (completed) AND end date has passed, OR
+        // 2. Status is 2 (active) AND end date has passed (expired)
+        if ((latestService[TableFields.serviceStatus] == 3 && endDate < currentDate) ||
+            (latestService[TableFields.serviceStatus] == 2 && endDate < currentDate)) {
+            return true;
+        }
+
+        return false;
+    };
+
 
     static updateDeassign = async (clientId, serviceId) => {
         return await Client.findOneAndUpdate(
@@ -322,12 +389,12 @@ class ClientService {
             updateFields[TableFields.contact] = contactUpdate;
         }
 
-        let data =  await Client.updateOne(
+        let data = await Client.updateOne(
             { [TableFields.ID]: clientId },
             { $set: updateFields }
         );
         // console.log("data",data);
-        
+
         return data;
     };
 
