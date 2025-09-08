@@ -490,10 +490,10 @@ export default function ClientDetail() {
         <div className={styles.infoGrid}>
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Name:</span>
-
             {isEditing1 ? (
               <input
                 value={clientData.name || ""}
+                className={styles.textField}
                 onChange={(e) => handleClientChange("name", e.target.value)}
               />
             ) : (
@@ -506,54 +506,54 @@ export default function ClientDetail() {
           </div> */}
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Phone:</span>
-            <span className={styles.infoValue}>
-              {clientData.contact &&
-                (isEditing1 ? (
-                  <>
-                    <select
-                      name="phoneCountry"
-                      value={clientData.contact?.phoneCountry || ""}
-                      onChange={(e) =>
-                        handleClientNestedChange(
-                          "contact",
-                          "phoneCountry",
-                          e.target.value
-                        )
+            {clientData.contact &&
+              (isEditing1 ? (
+                <div className={styles.infoRow1}>
+                  <select
+                    name="phoneCountry"
+                    className={styles.selectField1}
+                    value={clientData.contact?.phoneCountry || ""}
+                    onChange={(e) =>
+                      handleClientNestedChange(
+                        "contact",
+                        "phoneCountry",
+                        e.target.value
+                      )
+                    }
+                    style={{ width: "80px" }}
+                    maxLength={10}
+                    onInput={(e) => {
+                      e.target.value = e.target.value.replace(/\D/g, "");
+                      if (e.target.value.length > 10) {
+                        e.target.value = e.target.value.slice(0, 10);
                       }
-                      style={{ width: "80px" }}
-                      maxLength={10}
-                      onInput={(e) => {
-                        e.target.value = e.target.value.replace(/\D/g, "");
-                        if (e.target.value.length > 10) {
-                          e.target.value = e.target.value.slice(0, 10);
-                        }
-                      }}
-                      required
-                    >
-                      <option value="">Select</option>
-                      {countries.map((c) => (
-                        <option key={`${c.code}-${c.name}`} value={c.code}>
-                          ({c.code}){c.name}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      value={clientData.contact?.phone || ""}
-                      onChange={(e) =>
-                        handleClientNestedChange(
-                          "contact",
-                          "phone",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </>
-                ) : (
-                  <>
-                    {client?.contact?.phoneCountry} {client?.contact?.phone}
-                  </>
-                ))}
-            </span>
+                    }}
+                    required
+                  >
+                    <option value="">Select</option>
+                    {countries.map((c) => (
+                      <option key={`${c.code}-${c.name}`} value={c.code}>
+                        ({c.code}){c.name}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    className={styles.textField}
+                    value={clientData.contact?.phone || ""}
+                    onChange={(e) =>
+                      handleClientNestedChange(
+                        "contact",
+                        "phone",
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+              ) : (
+                <span className={styles.infoValue}>
+                  {client?.contact?.phoneCountry} {client?.contact?.phone}
+                </span>
+              ))}
           </div>
 
           <div className={styles.infoRow}>
@@ -561,6 +561,7 @@ export default function ClientDetail() {
             {isEditing1 ? (
               <input
                 value={clientData.position || ""}
+                className={styles.textField}
                 onChange={(e) => handleClientChange("position", e.target.value)}
               />
             ) : (
@@ -602,6 +603,7 @@ export default function ClientDetail() {
             <span className={styles.infoLabel}>Company Name:</span>
             {isEditing2 ? (
               <input
+                className={styles.textField}
                 value={companyData.name || ""}
                 onChange={(e) => handleCompanyChange("name", e.target.value)}
               />
@@ -613,6 +615,7 @@ export default function ClientDetail() {
             <span className={styles.infoLabel}>Email:</span>
             {isEditing2 ? (
               <input
+                className={styles.textField}
                 value={companyData.email || ""}
                 onChange={(e) => handleCompanyChange("email", e.target.value)}
               />
@@ -715,6 +718,7 @@ export default function ClientDetail() {
                     <>
                       <strong>Address Line 1:</strong>{" "}
                       <input
+                        className={styles.textField}
                         value={companyData.address?.addressLine1 || ""}
                         onChange={(e) =>
                           handleCompanyNestedChange(
@@ -734,6 +738,7 @@ export default function ClientDetail() {
                     <>
                       <strong>Address Line 2:</strong>{" "}
                       <input
+                        className={styles.textField}
                         value={companyData.address?.addressLine2 || ""}
                         onChange={(e) =>
                           handleCompanyNestedChange(
@@ -753,6 +758,7 @@ export default function ClientDetail() {
                     <>
                       <strong>Street:</strong>{" "}
                       <input
+                        className={styles.textField}
                         value={companyData.address?.street || ""}
                         onChange={(e) =>
                           handleCompanyNestedChange(
@@ -772,6 +778,7 @@ export default function ClientDetail() {
                     <>
                       <strong>Landmark:</strong>{" "}
                       <input
+                        className={styles.textField}
                         value={companyData.address?.landmark || ""}
                         onChange={(e) =>
                           handleCompanyNestedChange(
@@ -791,6 +798,7 @@ export default function ClientDetail() {
                     <>
                       <strong>City:</strong>{" "}
                       <input
+                        className={styles.textField}
                         value={companyData.address?.city || ""}
                         onChange={(e) =>
                           handleCompanyNestedChange(
@@ -810,6 +818,7 @@ export default function ClientDetail() {
                     <>
                       <strong>State:</strong>{" "}
                       <input
+                        className={styles.textField}
                         value={companyData.address?.state || ""}
                         onChange={(e) =>
                           handleCompanyNestedChange(
@@ -829,6 +838,7 @@ export default function ClientDetail() {
                     <>
                       <strong>Country:</strong>{" "}
                       <select
+                        className={styles.selectField}
                         name="country"
                         value={companyData.country}
                         onChange={(e) =>
@@ -853,6 +863,7 @@ export default function ClientDetail() {
                     <>
                       <strong>Zipcode:</strong>{" "}
                       <input
+                        className={styles.textField}
                         type="number"
                         maxLength={6}
                         pattern="\d{6}"
@@ -912,124 +923,126 @@ export default function ClientDetail() {
             <>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>License Type:</span>
-                <span className={styles.infoValue}>
-                  {isEditing3 ? (
-                    <select
-                      value={companyData.licenseDetails?.licenseType || ""}
-                      onChange={(e) =>
-                        handleCompanyNestedChange(
-                          "licenseDetails",
-                          "licenseType",
-                          e.target.value
-                        )
-                      }
-                    >
-                      <option value="">
-                        {/* {companyData.licenseDetails?.licenseType} */}
-                        --Select License Type --
-                      </option>
-                      <option value="Trade License">Trade License</option>
-                      <option value="Industrial License">
-                        Industrial License
-                      </option>
-                      <option value="Professional License">
-                        Professional License
-                      </option>
-                      <option value="Commercial License">
-                        Commercial License
-                      </option>
-                    </select>
-                  ) : (
-                    company.licenseDetails?.licenseType
-                  )}
-                </span>
+                {isEditing3 ? (
+                  <select
+                    className={styles.selectField}
+                    value={companyData.licenseDetails?.licenseType || ""}
+                    onChange={(e) =>
+                      handleCompanyNestedChange(
+                        "licenseDetails",
+                        "licenseType",
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="">
+                      {/* {companyData.licenseDetails?.licenseType} */}
+                      --Select License Type --
+                    </option>
+                    <option value="Trade License">Trade License</option>
+                    <option value="Industrial License">
+                      Industrial License
+                    </option>
+                    <option value="Professional License">
+                      Professional License
+                    </option>
+                    <option value="Commercial License">
+                      Commercial License
+                    </option>
+                  </select>
+                ) : (
+                  <span className={styles.infoValue}>
+                    {company.licenseDetails?.licenseType}
+                  </span>
+                )}
               </div>
 
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>License Number:</span>
-                <span className={styles.infoValue}>
-                  {isEditing3 ? (
-                    <input
-                      value={companyData.licenseDetails?.licenseNumber || ""}
-                      onChange={(e) =>
-                        handleCompanyNestedChange(
-                          "licenseDetails",
-                          "licenseNumber",
-                          e.target.value
-                        )
-                      }
-                    />
-                  ) : (
-                    company.licenseDetails?.licenseNumber
-                  )}
-                </span>
+                {isEditing3 ? (
+                  <input
+                    className={styles.textField}
+                    value={companyData.licenseDetails?.licenseNumber || ""}
+                    onChange={(e) =>
+                      handleCompanyNestedChange(
+                        "licenseDetails",
+                        "licenseNumber",
+                        e.target.value
+                      )
+                    }
+                  />
+                ) : (
+                  <span className={styles.infoValue}>
+                    {company.licenseDetails?.licenseNumber}
+                  </span>
+                )}
               </div>
 
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>License Issue Date:</span>
-                <span className={styles.infoValue}>
-                  {isEditing3 ? (
-                    <input
-                      type="date"
-                      value={
-                        companyData.licenseDetails?.licenseIssueDate
-                          ? new Date(
-                              companyData.licenseDetails.licenseIssueDate
-                            )
-                              .toISOString()
-                              .split("T")[0]
-                          : ""
-                      }
-                      onChange={(e) =>
-                        handleCompanyNestedChange(
-                          "licenseDetails",
-                          "licenseIssueDate",
-                          e.target.value
-                        )
-                      }
-                    />
-                  ) : (
-                    formatDateToDDMMYYYY(
+                {isEditing3 ? (
+                  <input
+                    type="date"
+                    className={styles.dateField}
+                    value={
+                      companyData.licenseDetails?.licenseIssueDate
+                        ? new Date(companyData.licenseDetails.licenseIssueDate)
+                            .toISOString()
+                            .split("T")[0]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleCompanyNestedChange(
+                        "licenseDetails",
+                        "licenseIssueDate",
+                        e.target.value
+                      )
+                    }
+                  />
+                ) : (
+                  <span className={styles.infoValue}>
+                    {formatDateToDDMMYYYY(
                       company.licenseDetails?.licenseIssueDate
-                    )
-                  )}
-                </span>
+                    )}
+                  </span>
+                )}
               </div>
 
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>License Expiry Date:</span>
-                <span className={styles.infoValue}>
-                  {isEditing3 ? (
-                    <input
-                      type="date"
-                      min={
-                        companyData.licenseDetails?.licenseIssueDate
-                          ? new Date(
-                              companyData.licenseDetails.licenseIssueDate
-                            )
-                              .toISOString()
-                              .split("T")[0]
-                          : new Date().toISOString().split("T")[0]
-                      }
-                      value={
-                        companyData.licenseDetails?.licenseExpiry
-                          ? new Date(companyData.licenseDetails.licenseExpiry)
-                              .toISOString()
-                              .split("T")[0]
-                          : ""
-                      }
-                      onChange={(e) =>
-                        handleCompanyNestedChange(
-                          "licenseDetails",
-                          "licenseExpiry",
-                          e.target.value
-                        )
-                      }
-                    />
-                  ) : (
-                    formatDateToDDMMYYYY(company.licenseDetails?.licenseExpiry)
-                  )}
-                </span>
+                {isEditing3 ? (
+                  <input
+                    type="date"
+                    className={styles.dateField}
+                    min={
+                      companyData.licenseDetails?.licenseIssueDate
+                        ? new Date(companyData.licenseDetails.licenseIssueDate)
+                            .toISOString()
+                            .split("T")[0]
+                        : new Date().toISOString().split("T")[0]
+                    }
+                    value={
+                      companyData.licenseDetails?.licenseExpiry
+                        ? new Date(companyData.licenseDetails.licenseExpiry)
+                            .toISOString()
+                            .split("T")[0]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleCompanyNestedChange(
+                        "licenseDetails",
+                        "licenseExpiry",
+                        e.target.value
+                      )
+                    }
+                  />
+                ) : (
+                  <span className={styles.infoValue}>
+                    {formatDateToDDMMYYYY(
+                      company.licenseDetails?.licenseExpiry
+                    )}
+                  </span>
+                )}
               </div>
             </>
           )}
@@ -1037,59 +1050,59 @@ export default function ClientDetail() {
           {companyData.financialYear && (
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Financial Year:</span>
-              <span className={styles.infoValue}>
-                {isEditing3 ? (
-                  <>
-                    <input
-                      type="date"
-                      value={
-                        companyData.financialYear?.startDate
-                          ? new Date(companyData.financialYear.startDate)
-                              .toISOString()
-                              .split("T")[0]
-                          : ""
-                      }
-                      onChange={(e) =>
-                        handleCompanyNestedChange(
-                          "financialYear",
-                          "startDate",
-                          e.target.value
-                        )
-                      }
-                    />
-                    {" - "}
-                    <input
-                      type="date"
-                      min={
-                        companyData.financialYear?.startDate
-                          ? new Date(companyData.financialYear.startDate)
-                              .toISOString()
-                              .split("T")[0]
-                          : new Date().toISOString().split("T")[0]
-                      }
-                      value={
-                        companyData.financialYear?.endDate
-                          ? new Date(companyData.financialYear.endDate)
-                              .toISOString()
-                              .split("T")[0]
-                          : ""
-                      }
-                      onChange={(e) =>
-                        handleCompanyNestedChange(
-                          "financialYear",
-                          "endDate",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </>
-                ) : (
-                  <>
-                    {formatDateToDDMMYYYY(company.financialYear?.startDate)} -{" "}
-                    {formatDateToDDMMYYYY(company.financialYear?.endDate)}
-                  </>
-                )}
-              </span>
+              {isEditing3 ? (
+                <>
+                  <input
+                    className={styles.dateField}
+                    type="date"
+                    value={
+                      companyData.financialYear?.startDate
+                        ? new Date(companyData.financialYear.startDate)
+                            .toISOString()
+                            .split("T")[0]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleCompanyNestedChange(
+                        "financialYear",
+                        "startDate",
+                        e.target.value
+                      )
+                    }
+                  />
+                  {" - "}
+                  <input
+                    type="date"
+                    className={styles.dateField}
+                    min={
+                      companyData.financialYear?.startDate
+                        ? new Date(companyData.financialYear.startDate)
+                            .toISOString()
+                            .split("T")[0]
+                        : new Date().toISOString().split("T")[0]
+                    }
+                    value={
+                      companyData.financialYear?.endDate
+                        ? new Date(companyData.financialYear.endDate)
+                            .toISOString()
+                            .split("T")[0]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleCompanyNestedChange(
+                        "financialYear",
+                        "endDate",
+                        e.target.value
+                      )
+                    }
+                  />
+                </>
+              ) : (
+                <span className={styles.infoValue}>
+                  {formatDateToDDMMYYYY(company.financialYear?.startDate)} -{" "}
+                  {formatDateToDDMMYYYY(company.financialYear?.endDate)}
+                </span>
+              )}
             </div>
           )}
 
@@ -1099,6 +1112,7 @@ export default function ClientDetail() {
               {isEditing3 ? (
                 <input
                   type="text"
+                  className={styles.textField}
                   value={companyData.taxRegistrationNumber || ""}
                   onChange={(e) => {
                     const value = e.target.value;
@@ -1118,6 +1132,7 @@ export default function ClientDetail() {
               {isEditing3 ? (
                 <select
                   name="businessType"
+                  className={styles.selectField}
                   value={companyData.businessType}
                   onChange={(e) =>
                     handleCompanyChange("businessType", e.target.value)

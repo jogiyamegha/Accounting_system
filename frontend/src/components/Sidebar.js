@@ -154,14 +154,14 @@ export default function Sidebar() {
                             >
                                 <FontAwesomeIcon icon={faTasks} /> Service Management
                             </div>
-                            {showServiceMenu && (
+                            {/* {showServiceMenu && (
                                 <ul className={styles.dropdownMenu}>
                                     <li onClick={() => handleItemClick("/admin/service/1")}>VAT Filing</li>
                                     <li onClick={() => handleItemClick("/admin/service/2")}>Corporate Tax</li>
                                     <li onClick={() => handleItemClick("/admin/service/3")}>Payroll</li>
                                     <li onClick={() => handleItemClick("/admin/service/4")}>Audit</li>
                                 </ul>
-                            )}
+                            )} */}
                         </li>
 
                         <li>
