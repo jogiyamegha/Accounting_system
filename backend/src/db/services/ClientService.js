@@ -26,18 +26,98 @@ class ClientService {
         });
     };
 
+    static checkServiceAssignedAndCompletedOrDeassign = async (client, serviceId) => {
+        // here Have to check that servce is assigned or not, if assigned then if deleted flag is true then deassign then return false or return true
+        const services = client[TableFields.services];
+        for (let service of services) {
+            if (service[TableFields.serviceId].toString() === serviceId && service[TableFields.deleted] == true) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static checkIsServiceAssign = async (client, serviceId) => {
+        const services = client[TableFields.services];
+        for (let service of services) {
+            if (service[TableFields.ID].toString() == serviceId.toString()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static checkServiceCompletedOrNot = async (client, serviceId) => {
+        const services = client[TableFields.services];
+
+        for (let service of services) {
+            if (service[TableFields.ID].toString() === serviceId && service[TableFields.endDate] <= new Date()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // static getAllClientsRelatedService = (serviceId) => {
+    //     return new ProjectionBuilder(async function () {
+    //         return Client.find({
+    //             [TableFields.services]: {
+    //                 $elemMatch: {
+    //                     [TableFields.serviceId]: MongoUtil.toObjectId(serviceId),
+    //                     [TableFields.deleted]: false
+    //                 }
+    //             }
+    //         }).select({
+    //             services: {
+    //                 $filter: {
+    //                     input: "$services",
+    //                     as: "service",
+    //                     cond: {
+    //                         $and: [
+    //                             { $eq: ["$$service.serviceId", MongoUtil.toObjectId(serviceId)] },
+    //                             { $eq: ["$$service.deleted", false] }
+    //                         ]
+    //                     }
+    //                 }
+    //             }
+    //         });
+    //     });
+    // };
+
+
     static getAllClientsRelatedService = (serviceId) => {
+        const objectId = MongoUtil.toObjectId(serviceId);
+
         return new ProjectionBuilder(async function () {
             return Client.find({
                 [TableFields.services]: {
                     $elemMatch: {
-                        [TableFields.serviceId]: serviceId,
+                        [TableFields.serviceId]: objectId,
                         [TableFields.deleted]: false
                     }
                 }
-            })
-        })
-    }
+            }).select({
+                // include all fields
+                _id: 1,
+                name: 1,
+                email: 1,
+                phone: 1,
+                // ... any other fields you have in Client schema
+                services: {
+                    $filter: {
+                        input: "$services",
+                        as: "service",
+                        cond: {
+                            $and: [
+                                { $eq: ["$$service.serviceId", objectId] },
+                                { $eq: ["$$service.deleted", false] }
+                            ]
+                        }
+                    }
+                }
+            });
+        });
+    };
 
     static checkClientAssignService = async (clientId, serviceId) => {
         const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
@@ -75,6 +155,8 @@ class ClientService {
 
         return false;
     };
+
+
 
     static addRenewService = async (clientId, serviceId) => {
         const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
@@ -130,20 +212,21 @@ class ClientService {
     };
 
 
-    static updateDeassign = async (clientId, serviceId) => {
+    static updateDeassign = async (client, serviceId) => {
         return await Client.findOneAndUpdate(
             {
-                _id: clientId,
-                [`${TableFields.services}.${TableFields.serviceId}`]: serviceId,
+                [TableFields.ID]: client[TableFields.ID],
+                [`${TableFields.services}.${TableFields.ID}`]: serviceId
             },
             {
                 $set: {
-                    [`${TableFields.services}.$.${TableFields.deleted}`]: true,
-                },
+                    [`${TableFields.services}.$.${TableFields.deleted}`]: true
+                }
             },
-            { new: true }
+            { new: true } // returns updated document
         );
     };
+
 
     static addRenewService = async (clientId, serviceId) => {
         const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
@@ -274,15 +357,12 @@ class ClientService {
         );
     };
 
-    static addServiceInArray = async (client, clientEmail, serviceId) => {
+    static addServiceInArray = async (clientEmail, serviceId) => {
         const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
 
         const todayDate = new Date();
         const endDate = new Date(todayDate);
         endDate.setDate(endDate.getDate() + service[TableFields.serviceDuration]);
-
-        console.log("Start Date:", todayDate);
-        console.log("End Date:", endDate);
 
         return await Client.updateOne(
             {

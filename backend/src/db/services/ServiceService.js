@@ -15,9 +15,9 @@ class ServiceService {
         })
     }
 
-    static serviceExists = async (serviceName) => {
+    static serviceExists = async (serviceId) => {
         return await Service.exists({
-            [TableFields.serviceName] : serviceName,
+            [TableFields.ID] : serviceId,
             [TableFields.deleted] : false
         })
     }
@@ -49,12 +49,12 @@ class ServiceService {
         });
     };
 
-    static getClientsFilterByServiceType = (serviceType) => {
+    static getClientsFilterByServiceType = (serviceId) => {
         return new ProjectionBuilder(async function () {
             const docs = await Service.find({
                 [TableFields.services]: {
                     $elemMatch: {
-                        [TableFields.serviceType]: serviceType,
+                        [TableFields.serviceId]: serviceId,
                         [TableFields.deleted]: false,
                     },
                 },

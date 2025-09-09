@@ -1,6 +1,7 @@
 const ClientService = require("../../db/services/ClientService");
 const ServiceService = require("../../db/services/ServiceService");
-const Client = require('../../db/models/client');
+const DocumentService = require("../../db/services/DocumentService");
+const CalendarController = require('../../controllers/admin/CalendarController');
 const {
     TableFields,
     ValidationMsg,
@@ -9,7 +10,6 @@ const {
 const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
 const Email = require("../../emails/email");
-const DocumentService = require("../../db/services/DocumentService");
 
 exports.addService = async (req) => {
     const reqBody = req.body;
@@ -20,8 +20,8 @@ exports.addService = async (req) => {
     }
 
     return await parseAndValidate(
-        reqBody, 
-        undefined, 
+        reqBody,
+        undefined,
         async (updatedFields) => {
             return await ServiceService.insertRecord(updatedFields);
         }
@@ -32,7 +32,7 @@ exports.editService = async (req) => {
     const reqBody = req.body;
     const serviceId = req.params[TableFields.ID];
     const serviceExists = await ServiceService.serviceExistsWithId(serviceId);
-    if(!serviceExists) {
+    if (!serviceExists) {
         throw new ValidationError(ValidationMsg.ServiceNotExists)
     }
 
@@ -51,7 +51,7 @@ exports.editService = async (req) => {
 exports.deleteService = async (req) => {
     const serviceId = req.params[TableFields.ID];
     const serviceExists = await ServiceService.serviceExistsWithId(serviceId);
-    if(!serviceExists) {
+    if (!serviceExists) {
         throw new ValidationError(ValidationMsg.ServiceNotExists)
     }
 
@@ -61,10 +61,7 @@ exports.deleteService = async (req) => {
 exports.assignService = async (req, res) => {
     const reqBody = req.body;
     const serviceId = req.params[TableFields.ID];
-    console.log("serviceId", serviceId);
-
     const clientEmail = reqBody[TableFields.clientEmail];
-
     const clientExists = await ClientService.existsWithEmail(clientEmail);
     if (!clientExists) {
         throw new ValidationError(ValidationMsg.ClientNotExists);
@@ -74,24 +71,27 @@ exports.assignService = async (req, res) => {
         .withBasicInfo()
         .execute();
 
-    const existsService = await ClientService.serviceExists(
-        serviceId,
-        clientEmail
-    );
-    console.log("existsService",existsService);
+    const serviceExists = await ServiceService.serviceExists(serviceId);
+    if(!serviceExists) {
+        throw new ValidationError(ValidationMsg.ServiceNotExists);
+    }
 
-    if (existsService) {
-        throw new ValidationError(ValidationMsg.ServiceAlreadyExists);
-    } 
-    return await ClientService.addServiceInArray(client,clientEmail ,serviceId);
+    const isServiceAssignedAndCompletedOrDessigned = await ClientService.checkServiceAssignedAndCompletedOrDeassign(client, serviceId);
+   
+    if(isServiceAssignedAndCompletedOrDessigned) {
+        throw new ValidationError(ValidationMsg.ServiceIsRunning);
+    }
+
+    return await ClientService.addServiceInArray(clientEmail, serviceId);
+    // await CalendarController.setServiceEndDate(client);
 };
 
 exports.getAllServices = async (req) => {
     const services = await ServiceService.listAllService({
         ...req.query
     })
-    .withBasicInfo()
-    .execute();
+        .withBasicInfo()
+        .execute();
     return services.records;
 }
 
@@ -101,6 +101,8 @@ exports.getClientsAssignedService = async (req) => {
     )
         .withBasicInfo()
         .execute();
+
+    console.log("all clients service", clients);
     return clients;
 };
 
@@ -133,33 +135,83 @@ exports.getServiceDetail = async (req) => {
     return { clientDetails, allServices, docs };
 };
 
+// exports.deAssignService = async (req) => {
+//     const serviceId = req.params[TableFields.serviceId];
+//     const clientId = req.params[TableFields.clientId];
+
+//     console.log(serviceId);
+//     console.log(clientId);
+
+//     const clientExists = await ClientService.userExists(clientId);
+//     if (!clientExists) {
+//         throw new ValidationError(ValidationMsg.ClientNotExists);
+//     }
+
+//     const checkClientAssignService = await ClientService.checkClientAssignService(clientId, serviceId);
+
+//     if (!checkClientAssignService) {
+//         throw new ValidationError(ValidationMsg.ClientNotAssignService);
+//     }
+
+//     console.log("checkClientAssignService", checkClientAssignService);
+
+
+//     const isServiceCompleted = await ClientService.checkIsServiceCompleted(clientId, serviceId);
+
+
+//     // console.log("isServiceCompleted", isServiceCompleted);
+//     // if (isServiceCompleted) {
+//     //     throw new ValidationError(ValidationMsg.ServiceIsCompleted)
+//     // }
+
+//     // let result = await ClientService.updateDeassign(clientId, serviceId);
+//     // console.log(result);
+//     // return result;
+// }
+
 exports.deAssignService = async (req) => {
     const serviceId = req.params[TableFields.serviceId];
     const clientId = req.params[TableFields.clientId];
-
+ 
     console.log(serviceId);
     console.log(clientId);
-
+ 
     const clientExists = await ClientService.userExists(clientId);
     if (!clientExists) {
         throw new ValidationError(ValidationMsg.ClientNotExists);
     }
+ 
+    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+    // const checkClientAssignService = await ClientService.checkClientAssignService(clientId, serviceId);
+ 
+    // if (!checkClientAssignService) {
+    //     throw new ValidationError(ValidationMsg.ClientNotAssignService);
+    // }
+    
+    const isServiceAssign = await ClientService.checkIsServiceAssign(client, serviceId);
 
-    const checkClientAssignService = await ClientService.checkClientAssignService(clientId, serviceId);
-
-    if (!checkClientAssignService) {
-        throw new ValidationError(ValidationMsg.ClientNotAssignService);
+    if(!isServiceAssign) {
+        throw new ValidationError(ValidationMsg.ServiceIsNotAssigned)
     }
 
-    const isServiceCompleted = await ClientService.checkIsServiceCompleted(clientId, serviceId);
+    const isServiceCompleted = await ClientService.checkServiceCompletedOrNot(client, serviceId);
+    console.log("isServiceCompleted", isServiceCompleted);
 
-    if (isServiceCompleted) {
-        throw new ValidationError(ValidationMsg.ServiceIsCompleted)
+    if(!isServiceCompleted) {
+        throw new ValidationError(ValidationMsg.ServiceIsNotCompletedToDeassign)
     }
 
-    let result = await ClientService.updateDeassign(clientId, serviceId);
-    return result;
+    return await ClientService.updateDeassign(client, serviceId);
+    // const isServiceCompleted = await ClientService.checkIsServiceCompleted(clientId, serviceId);
+ 
+    // if (isServiceCompleted) {
+    //     throw new ValidationError(ValidationMsg.ServiceIsCompleted)
+    // }
+ 
+    // let result = await ClientService.updateDeassign(clientId, serviceId);
+    // return result;
 }
+ 
 
 exports.renewService = async (req) => {
     const serviceId = req.params[TableFields.serviceId];
@@ -194,17 +246,17 @@ async function parseAndValidate(
     existingField = {},
     onValidationCompleted = async (updatedFields) => { }
 ) {
-    if (isFieldEmpty(reqBody[TableFields.serviceName],existingField[TableFields.serviceName])) {
+    if (isFieldEmpty(reqBody[TableFields.serviceName], existingField[TableFields.serviceName])) {
         throw new ValidationError(ValidationMsg.ServiceNameEmpty);
     }
-   
+
     if (isFieldEmpty(reqBody.serviceDuration, existingField.serviceDuration)) {
         throw new ValidationError(ValidationMsg.ServiceDurationEmpty);
     }
 
     const response = await onValidationCompleted({
-        [TableFields.serviceName] : reqBody[TableFields.serviceName],
-        [TableFields.serviceDuration] : reqBody[TableFields.serviceDuration]
+        [TableFields.serviceName]: reqBody[TableFields.serviceName],
+        [TableFields.serviceDuration]: reqBody[TableFields.serviceDuration]
     });
     return response;
 }

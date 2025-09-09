@@ -11,6 +11,12 @@ exports.addEvent = async (req) => {
     }) 
 }
 
+exports.setServiceEndDate = async (client) => {
+    const endDate = client[TableFields.endDate];
+    console.log(endDate);
+    return await CalendarService.insertRecord(endDate);
+}
+
 exports.getAllEvents = async (req) => {
     const events = await CalendarService.getAllEventsByDate().withBasicInfo().execute();
     return events;

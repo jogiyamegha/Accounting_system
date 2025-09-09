@@ -204,7 +204,9 @@ const ValidationMsg = (function () {
     ValidationMsg.ServiceNotEnded = "Opps, can not assign service as past service is running!"
     ValidationMsg.ClientNotAssignService = 'this service is not assigned to client..';
     ValidationMsg.ServiceIsCompleted = 'service is already completed, You can not De-assign.';
+    ValidationMsg.ServiceIsNotCompletedToDeassign = 'Service Is Not Completed yet so you can not de-assign it!';
     ValidationMsg.ServiceIsNotCompleted = 'service is not completed yet, so you can renew it after completion';
+    ValidationMsg.ServiceIsRunning = "Service is running, so you can assign after its completion.";
     ValidationMsg.DeadlineCategoryEmpty = 'deadline field is required';
     ValidationMsg.DateEmpty = 'Date required';
     ValidationMsg.EventNotFound = 'Event Not Found';
@@ -212,6 +214,7 @@ const ValidationMsg = (function () {
     ValidationMsg.ServiceDurationEmpty = 'Service Duration required!';
     ValidationMsg.ServiceAlreadyExists = 'Service Already Exists';
     ValidationMsg.ServiceNotExists = 'Service not exists';
+    ValidationMsg.ServiceIsNotAssigned = 'Oops, Service Is Not Assigned!';
 
     return ValidationMsg;
 })();
