@@ -9,8 +9,6 @@ const {
 const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
 const { MongoUtil } = require("../mongoose");
-const { findById } = require("../models/service");
-const { serviceExistsWithId } = require("./ServiceService");
 const ServiceService = require("./ServiceService");
 
 class ClientService {
@@ -26,10 +24,20 @@ class ClientService {
         });
     };
 
+    static isServiceExistsInClient = async (client, serviceId) => {
+        const services = client[TableFields.services];
+
+        for(let service of services) {
+            if(service[TableFields.serviceId].toString() === serviceId.toString()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static checkServiceAssignedAndCompletedOrDeassign = async (client, serviceId) => {
         // here Have to check that servce is assigned or not, if assigned then if deleted flag is true then deassign then return false or return true
         const services = client[TableFields.services];
-        console.log(services);
         if(services.length != 0) {
             for (let service of services) {
                 if (service[TableFields.serviceId].toString() === serviceId && service[TableFields.deleted] == true) {
@@ -61,6 +69,25 @@ class ClientService {
             }
         }
         return false;
+    }
+
+    static checkAllServiceCompleted = async (client, serviceId) => {
+        const services = client[TableFields.services];
+        if(services.length > 0){
+            for(let service of services) {
+                if(
+                    (service[TableFields.serviceId].toString() === serviceId.toString()) && 
+                    (service[TableFields.endDate] < new Date()) && 
+                    (service[TableFields.serviceStatus] == 3) && 
+                    (service[TableFields.deleted] == false)
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
     }
 
     // static getAllClientsRelatedService = (serviceId) => {
@@ -123,14 +150,6 @@ class ClientService {
             });
         });
     };
-
-    static checkClientAssignService = async (clientId, serviceId) => {
-        const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
-        const services = client[TableFields.services];
-
-        // Check if client has ever been assigned this service
-        return services.some(service => service[TableFields.serviceId].toString() === serviceId.toString());
-    }
 
     static checkIsServiceCompleted = async (clientId, serviceId) => {
         const client = await ClientService.getUserById(clientId).withBasicInfo().execute();

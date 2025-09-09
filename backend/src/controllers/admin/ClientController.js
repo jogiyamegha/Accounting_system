@@ -250,10 +250,7 @@ exports.deleteClient = async (req) => {
 
 exports.getClientsByService = async (req) => {
     const serviceId = req.params[TableFields.ID];
-
-    const a = await ClientService.getAllClientsRelatedService(serviceId).withBasicInfo().execute();
-    console.log(a);
-    return a;
+    return await ClientService.getAllClientsRelatedService(serviceId).withBasicInfo().execute();
 }
 
 exports.getAllClients = async (req) => {

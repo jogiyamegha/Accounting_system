@@ -167,17 +167,6 @@ class ServiceService {
         });
     };
 
-    static checkClientAssignService = async (clientId, serviceId) => {
-        return await Service.exists({
-            "clientDetail.clientId": clientId,
-            services: {
-                $elemMatch: {
-                    _id: serviceId,
-                },
-            },
-        });
-    };
-
     static checkIsServiceCompleted = async (clientId, serviceId) => {
         const mainService = await ServiceService.getServiceByClientId(clientId)
             .withBasicInfo()

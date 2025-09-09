@@ -215,6 +215,7 @@ const ValidationMsg = (function () {
     ValidationMsg.ServiceAlreadyExists = 'Service Already Exists';
     ValidationMsg.ServiceNotExists = 'Service not exists';
     ValidationMsg.ServiceIsNotAssigned = 'Oops, Service Is Not Assigned!';
+    ValidationMsg.ServiceNotExistsInClient = 'Service is Not Exists In Client!';
 
     return ValidationMsg;
 })();
