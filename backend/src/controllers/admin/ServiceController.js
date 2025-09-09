@@ -13,9 +13,9 @@ const Email = require("../../emails/email");
 
 exports.addService = async (req) => {
     const reqBody = req.body;
-    const serviceExists = await ServiceService.serviceExists(reqBody[TableFields.serviceName]);
+    const serviceExistsWithName = await ServiceService.serviceExistsWithName(reqBody[TableFields.serviceName]);
 
-    if (serviceExists) {
+    if (serviceExistsWithName) {
         throw new ValidationError(ValidationMsg.ServiceAlreadyExists);
     }
 
@@ -77,6 +77,7 @@ exports.assignService = async (req, res) => {
     }
 
     const isServiceAssignedAndCompletedOrDessigned = await ClientService.checkServiceAssignedAndCompletedOrDeassign(client, serviceId);
+    console.log(isServiceAssignedAndCompletedOrDessigned);
    
     if(isServiceAssignedAndCompletedOrDessigned) {
         throw new ValidationError(ValidationMsg.ServiceIsRunning);
@@ -197,8 +198,8 @@ exports.deAssignService = async (req) => {
     const isServiceCompleted = await ClientService.checkServiceCompletedOrNot(client, serviceId);
     console.log("isServiceCompleted", isServiceCompleted);
 
-    if(!isServiceCompleted) {
-        throw new ValidationError(ValidationMsg.ServiceIsNotCompletedToDeassign)
+    if(isServiceCompleted) {
+        throw new ValidationError(ValidationMsg.ServiceIsCompletedToDeassign)
     }
 
     return await ClientService.updateDeassign(client, serviceId);

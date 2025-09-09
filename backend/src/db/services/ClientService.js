@@ -29,12 +29,17 @@ class ClientService {
     static checkServiceAssignedAndCompletedOrDeassign = async (client, serviceId) => {
         // here Have to check that servce is assigned or not, if assigned then if deleted flag is true then deassign then return false or return true
         const services = client[TableFields.services];
-        for (let service of services) {
-            if (service[TableFields.serviceId].toString() === serviceId && service[TableFields.deleted] == true) {
-                return false;
+        console.log(services);
+        if(services.length != 0) {
+            for (let service of services) {
+                if (service[TableFields.serviceId].toString() === serviceId && service[TableFields.deleted] == true) {
+                    return false;
+                }
             }
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 
     static checkIsServiceAssign = async (client, serviceId) => {

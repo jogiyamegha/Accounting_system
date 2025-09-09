@@ -15,6 +15,13 @@ class ServiceService {
         })
     }
 
+    static serviceExistsWithName = async (serviceName) => {
+        return await Service.exists({
+            [TableFields.serviceName] : serviceName,
+            [TableFields.deleted] : false
+        })
+    }
+
     static serviceExists = async (serviceId) => {
         return await Service.exists({
             [TableFields.ID] : serviceId,
