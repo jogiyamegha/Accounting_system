@@ -17,11 +17,10 @@ const calendarSchema = new Schema(
                         type: mongoose.Schema.Types.ObjectId,
                         ref: TableNames.Client,
                     },
-                    // [TableFields.clientName]: {
-                    //     type: String,
-                    //     trim: true,
-                    //     required: [true, ValidationMsg.NameEmpty],
-                    // },
+                    [TableFields.clientName]: {
+                        type: String,
+                        trim: true,
+                    },
                 },
             },
         ],

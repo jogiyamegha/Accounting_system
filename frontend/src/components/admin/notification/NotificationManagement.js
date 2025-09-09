@@ -6,7 +6,7 @@ import {
 } from "../../../utils/constants";
 import Sidebar from "../../Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faBell, faClock } from "@fortawesome/free-solid-svg-icons";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -198,6 +198,16 @@ export default function NotificationManagement() {
             </button>
           </form>
         </div>
+
+        <button
+          className={classes.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={classes.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
       </div>
     </div>
   );

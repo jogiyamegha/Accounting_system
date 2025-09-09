@@ -4,7 +4,7 @@ import { ADMIN_END_POINT, DocStatus } from "../../../utils/constants";
 import Sidebar from "../../Sidebar";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFolderOpen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faFolderOpen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 const API_URL = `${ADMIN_END_POINT}/document-management`;
 
@@ -167,6 +167,15 @@ export default function DocumentManagement() {
           ))}
         </div>
       )}
+      <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
     </div>
   );
 }

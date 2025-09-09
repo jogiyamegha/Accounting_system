@@ -1,5 +1,7 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../../assets/logo.svg";
 import styles from "../../styles/homePage.module.css";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const HomePage = () => {
     return (
@@ -126,6 +128,15 @@ const HomePage = () => {
                     <p className={styles.copyright}>&copy; 2025 E-Services. All Rights Reserved.</p>
                 </div>
             </footer>
+            <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
         </div>
     );
 };

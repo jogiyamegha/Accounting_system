@@ -7,6 +7,8 @@ import { Eye, EyeOff } from "lucide-react";
 
 import styles from "../../styles/login.module.css";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 function Login() {
   const emailInputRef = useRef();
@@ -143,6 +145,15 @@ function Login() {
 
       {/* Right: Image Section */}
       <div className={styles.imageSection}></div>
+      <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
     </div>
   );
 }

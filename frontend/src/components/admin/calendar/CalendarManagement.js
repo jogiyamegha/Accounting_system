@@ -3,6 +3,7 @@ import Sidebar from "../../Sidebar";
 import styles from "../../../styles/calendar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faArrowLeft,
   faCalendarAlt,
   faExclamationTriangle,
   faPen,
@@ -30,6 +31,9 @@ export default function CalendarManagement() {
     return t;
   }, []);
 
+  const [clients, setClients] = useState([]);
+  const [selectedClient, setSelectedClient] = useState("");
+
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState(null);
@@ -38,6 +42,7 @@ export default function CalendarManagement() {
 
   const [filterDate, setFilterDate] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
+  const [filterClient, setFilterClient] = useState("");
 
   // 🔹 Edit modal states
   const [editingDateKey, setEditingDateKey] = useState(null);
@@ -92,11 +97,17 @@ export default function CalendarManagement() {
         credentials: "include",
       });
       const data = await res.json();
+      console.log("data", data);
 
       const mapped = {};
       data.forEach((item) => {
         const dateKey = item.date.split("T")[0];
         const title = categoryMap[item.deadlineCategory] || "Unknown";
+
+        // Extract client names
+        const clients = (item.associatedClients || []).map(
+          (c) => c.clientDetails?.clientName || "Unknown Client"
+        );
 
         if (!mapped[dateKey]) mapped[dateKey] = [];
         mapped[dateKey].push({
@@ -104,6 +115,7 @@ export default function CalendarManagement() {
           title,
           deadlineCategory: item.deadlineCategory,
           date: dateKey,
+          clients, // array of names
         });
       });
 
@@ -114,9 +126,30 @@ export default function CalendarManagement() {
     }
   };
 
+  const fetchClients = async () => {
+    try {
+      const res = await fetch(`${ADMIN_END_POINT}/fetch-clients`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok) toast.error(data.error || "Failed to fetch clients");
+      setClients(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load clients");
+    }
+  };
+
   useEffect(() => {
     fetchDeadlines();
+    fetchClients();
   }, []);
+
+  // 🔹 All client names extracted from deadlines (for filter dropdown)
+  const allClients = (clients.records || [])
+    .map((c) => c.name) // take the client name
+    .filter(Boolean) // remove null/undefined
+    .sort((a, b) => a.localeCompare(b));
 
   // Build calendar cells
   const calendarCells = [];
@@ -156,12 +189,12 @@ export default function CalendarManagement() {
     setSelectedCategory("");
   };
 
-  // 🔹 Add event
   const handleAddEvent = async () => {
     if (selectedDay && selectedCategory) {
       const newEvent = {
         deadlineCategory: selectedCategory,
         date: selectedDay.key,
+        clientEmail: selectedClient,
       };
 
       try {
@@ -189,12 +222,16 @@ export default function CalendarManagement() {
               }
             : prev
         );
+        navigate(0);
       } catch (err) {
         toast.error("something went wrong in saving deadline");
         console.error("Error saving deadline:", err);
       }
 
       setSelectedCategory("");
+      setSelectedClient("");
+    } else {
+      toast.error("Please select both category and client");
     }
   };
 
@@ -208,6 +245,16 @@ export default function CalendarManagement() {
     ) {
       return false;
     }
+    if (
+      filterClient &&
+      !events.some((ev) =>
+        ev.clients.some((c) =>
+          c.toLowerCase().includes(filterClient.toLowerCase())
+        )
+      )
+    ) {
+      return false;
+    }
     return true;
   });
 
@@ -218,7 +265,8 @@ export default function CalendarManagement() {
       events.map((ev) => ({
         ...ev,
         deadlineCategory: ev.deadlineCategory,
-        date: ev.date, // include date for editing
+        date: ev.date,
+        clientEmail: ev.clientEmail || "",
       }))
     );
   };
@@ -233,7 +281,8 @@ export default function CalendarManagement() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               deadlineCategory: ev.deadlineCategory,
-              date: ev.date, // send updated date
+              date: ev.date,
+              clientEmail: ev.clientEmail,
             }),
             credentials: "include",
           })
@@ -243,6 +292,7 @@ export default function CalendarManagement() {
       setEditingDateKey(null);
       setEditingEvents([]);
       await fetchDeadlines();
+      navigate(0);
     } catch (err) {
       toast.error("Error updating events");
       console.error("Update error:", err);
@@ -396,18 +446,30 @@ export default function CalendarManagement() {
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
                 >
-                  <option value="">All Categories</option>
+                  <option value="">Categories</option>
                   {Object.entries(categoryMap).map(([id, label]) => (
                     <option key={id} value={id}>
                       {label}
                     </option>
                   ))}
                 </select>
-                {(filterDate || filterCategory) && (
+                <select
+                  value={filterClient}
+                  onChange={(e) => setFilterClient(e.target.value)}
+                >
+                  <option value="">Clients</option>
+                  {allClients.map((name, idx) => (
+                    <option key={idx} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+                {(filterDate || filterCategory || filterClient) && (
                   <button
                     onClick={() => {
                       setFilterDate("");
                       setFilterCategory("");
+                      setFilterClient("");
                     }}
                   >
                     Clear Filters
@@ -417,14 +479,14 @@ export default function CalendarManagement() {
 
               {/* Events List */}
               {filteredMonthDeadlines.length === 0 && (
-                <div className={styles.noEvents}>No deadlines this month.</div>
+                <div className={styles.noEvents}>No Events this month.</div>
               )}
               {filteredMonthDeadlines.map((k) => {
                 const events = deadlines[k] || [];
                 return (
                   <div key={k} className={styles.eventItem}>
                     <div className={styles.eventHeader}>
-                      <strong>{k}</strong>
+                      <strong>{new Date(k).toLocaleDateString("en-GB")}</strong>
                       <div className={styles.actionIcons}>
                         <FontAwesomeIcon
                           icon={faPen}
@@ -442,7 +504,7 @@ export default function CalendarManagement() {
                     <div className={styles.eventListCompact}>
                       {events.map((e, i) => (
                         <span key={i} className={styles.eventChip}>
-                          {e.title}
+                          {e.title} : {e.clients.join(", ")}
                         </span>
                       ))}
                     </div>
@@ -452,6 +514,16 @@ export default function CalendarManagement() {
             </aside>
           </div>
         </div>
+
+        <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
       </div>
 
       {/* 🔹 Add Event Popup */}
@@ -466,7 +538,7 @@ export default function CalendarManagement() {
             onClick={(e) => e.stopPropagation()}
           >
             <h4>
-              Details — {selectedDay.key}{" "}
+              Details — {new Date(selectedDay.key).toLocaleDateString("en-GB")}{" "}
               {selectedDay.isToday && (
                 <span className={styles.todayPill}>Today</span>
               )}
@@ -476,7 +548,10 @@ export default function CalendarManagement() {
               <ul className={styles.popupEventList}>
                 {selectedDay.events.map((ev, i) => (
                   <li key={i} className={styles.popupEventItem}>
-                    {ev.title}
+                    {ev.title} —{" "}
+                    <span className={styles.clientEmail}>
+                      {ev.clients.join(", ")}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -495,10 +570,25 @@ export default function CalendarManagement() {
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
-                  <option value="">-- Select Deadline Category --</option>
+                  <option value="">-- Select Event Category --</option>
                   {Object.entries(categoryMap).map(([id, label]) => (
                     <option key={id} value={id}>
                       {label}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  id="clientSelect"
+                  value={selectedClient}
+                  onChange={(e) => setSelectedClient(e.target.value)}
+                  required
+                  className={styles.addInput}
+                >
+                  <option value="">-- Select Client Email --</option>
+                  {clients.records?.map((client) => (
+                    <option key={client._id} value={client.email}>
+                      {client.email}
                     </option>
                   ))}
                 </select>
@@ -507,7 +597,7 @@ export default function CalendarManagement() {
                   className={`${styles.popupButton} ${styles.addButton}`}
                   onClick={handleAddEvent}
                 >
-                  <FontAwesomeIcon icon={faPlus} /> Register Deadline
+                  <FontAwesomeIcon icon={faPlus} /> Register Event
                 </button>
               </div>
             </div>
@@ -568,6 +658,36 @@ export default function CalendarManagement() {
                   }}
                   className={styles.addInput}
                 />
+
+                {/* Multi-Client Selector */}
+                <select
+                  value={
+                    ev.associatedClients?.[0]?.clientDetails.clientId || ""
+                  }
+                  onChange={(e) => {
+                    const client = clients.records.find(
+                      (c) => c._id === e.target.value
+                    );
+                    const newEvents = [...editingEvents];
+                    newEvents[i].associatedClients = [
+                      {
+                        clientDetails: {
+                          clientId: client._id,
+                          clientName: client.name_,
+                        },
+                      },
+                    ];
+                    setEditingEvents(newEvents);
+                  }}
+                  className={styles.addInput}
+                >
+                  <option value="">-- Select Client --</option>
+                  {clients.records?.map((client) => (
+                    <option key={client._id} value={client._id}>
+                      {client.name_} {client.email}
+                    </option>
+                  ))}
+                </select>
               </div>
             ))}
 

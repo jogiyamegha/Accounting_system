@@ -3,6 +3,8 @@ import styles from "./InvoiceForm.module.css";
 import { ADMIN_END_POINT, generateInvoiceNumber } from "../../utils/constants";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 
 const InvoiceForm = ({ onSubmit }) => {
@@ -153,6 +155,7 @@ const InvoiceForm = ({ onSubmit }) => {
   if (!data) return <p className="empty-text">No client details found</p>;
 
   return (
+    <>
     <form onSubmit={handleSubmit} className={styles.formContainer}>
       <h1 className={styles.mainTitle}>Create New Invoice</h1>
 
@@ -339,6 +342,18 @@ const InvoiceForm = ({ onSubmit }) => {
         </button>
       </div>
     </form>
+
+    <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
+
+    </>
   );
 };
 

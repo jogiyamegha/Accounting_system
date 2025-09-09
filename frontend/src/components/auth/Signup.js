@@ -5,6 +5,8 @@ import { Eye, EyeOff } from "lucide-react";
 
 import styles from "../../styles/signup.module.css";
 import { toast } from "react-toastify";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Signup() {
   const { role } = useParams();
@@ -207,6 +209,15 @@ export default function Signup() {
 
       {/* Right: Image Section */}
       <div className={styles.imageSection}></div>
+      <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
     </div>
   );
 }

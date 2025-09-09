@@ -13,7 +13,7 @@ import {
 } from "recharts";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faFile, faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faFile, faChartLine, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 import styles from "../../styles/adminDashboard.module.css";
 import {
@@ -212,6 +212,16 @@ export default function Dashboard() {
             </>
           )}
         </section>
+
+        <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
       </main>
     </div>
   );

@@ -16,6 +16,7 @@ import {
   faTimes,
   faUserEdit,
   faSave,
+  faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "../../Sidebar";
 import { toast } from "react-toastify";
@@ -1490,6 +1491,15 @@ export default function ClientDetail() {
           </button>
         </div>
       )} */}
+      <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
     </div>
   );
 }
