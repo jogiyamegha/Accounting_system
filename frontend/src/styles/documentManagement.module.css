@@ -3,7 +3,7 @@
   margin-left: 260px; /* sidebar width */
   padding: 30px 40px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #e2e4e5;
+  background-color: #f8fafc;
   min-height: 100vh;
   transition: margin-left 0.3s ease;
 }
@@ -17,14 +17,24 @@
 }
 
 /* Page Title */
+
 .title {
-  font-size: 26px;
-  font-weight: 600;
-  margin-bottom: 25px;
-  color: #1f2937;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.title h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.5px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 /* Search bar */

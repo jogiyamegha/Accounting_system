@@ -93,9 +93,13 @@ export default function DocumentManagement() {
   return (
     <div className={styles.container}>
       <Sidebar />
-      <h2 className={styles.title}>
+      
+      <div className={styles.title}>
+        <h1>
+
         <FontAwesomeIcon icon={faFolderOpen} /> Document Management
-      </h2>
+        </h1>
+      </div>
 
       <div className={styles.searchContainer}>
         <input

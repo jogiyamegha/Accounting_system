@@ -272,9 +272,11 @@ export default function CalendarManagement() {
       <Sidebar />
 
       <div className={styles.contentArea}>
-        <h2 className={styles.title}>
-          <FontAwesomeIcon icon={faCalendarAlt} /> Calendar Management
-        </h2>
+        <div className={styles.title}>
+          <h1>
+            <FontAwesomeIcon icon={faCalendarAlt} /> Calendar Management
+          </h1>
+        </div>
 
         <div className={styles.calendarContainer}>
           <div className={styles.calendarHeader}>

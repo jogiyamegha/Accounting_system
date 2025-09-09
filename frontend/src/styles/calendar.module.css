@@ -12,17 +12,26 @@
 .contentArea {
   flex: 1;
   padding: 24px 32px;
-   margin-left: var(--sidebar-width);
+  margin-left: var(--sidebar-width);
 }
 
 .title {
-  font-size: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.title h1 {
+  font-size: 1.75rem;
   font-weight: 700;
-  margin: 8px 0 12px;
-  color: #1f2937;
+  color: #0f172a;
+  letter-spacing: -0.5px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .calendarContainer {
@@ -413,7 +422,7 @@
   padding: 8px 12px;
   background: #f8f9fa;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .filterLabel {
@@ -434,14 +443,14 @@
 }
 
 .filters select {
-  width: 50%
+  width: 50%;
 }
 
 .filters input[type="date"]:focus,
 .filters select:focus {
   outline: none;
   border-color: #007bff;
-  box-shadow: 0 0 4px rgba(0,123,255,0.25);
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
 }
 
 /* Secondary button (Clear Filters) */
@@ -460,7 +469,6 @@
   background: #d6d8db;
 }
 
-
 .iconButton {
   margin-left: 6px;
   cursor: pointer;
@@ -477,7 +485,7 @@
   padding: 8px 10px;
   margin-bottom: 10px;
   position: relative;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .eventHeader {
@@ -505,8 +513,6 @@
   color: #d9534f; /* Red for delete */
 }
 
-
-
 /* Responsive */
 @media (max-width: 1200px) {
   .calendarMain {
@@ -518,8 +524,7 @@
   }
 }
 @media (max-width: 768px) {
-
-  .contentArea{
+  .contentArea {
     margin-left: 50px;
   }
   .calendarGrid {
@@ -545,7 +550,7 @@
   }
 }
 @media (max-width: 480px) {
-  .contentArea{
+  .contentArea {
     margin-left: 15px;
   }
   .calendarDay {

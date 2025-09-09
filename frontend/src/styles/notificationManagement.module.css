@@ -12,10 +12,24 @@
 }
 
 .pageTitle {
+  display: flex;
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 2rem;
   color: #111827;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 8px;
+
+}
+
+.pageTitle h1{
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Card styles */
@@ -43,7 +57,7 @@
 }
 
 .notificationItem {
-  background: #fff;
+  background: #eeececc8;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 1rem;

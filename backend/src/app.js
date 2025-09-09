@@ -26,6 +26,9 @@ env.config({
     path: "./config/dev.env",
 });
 
+app.set("view engine", "hbs");
+app.set("views", path.join(__dirname, "templates"));
+
 // JSON payloads
 app.use(express.json());
 app.use(
@@ -44,6 +47,8 @@ app.use(
     express.static(path.join(__dirname, "../static_files"))
 );
 
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use((req, res, next) => {
     res.setHeader(
         "Cache-Control",
@@ -56,6 +61,8 @@ app.use((req, res, next) => {
 
 app.use(AdminRoutes);
 app.use(ClientRoutes);
+
+
 
 // 🔹 API route to serve documents by filename
 app.get("/admin/files/:filename", auth, (req, res) => {
@@ -92,6 +99,10 @@ app.get("/admin/invoice/:filename", auth, (req, res) => {
 
 app.get("/", (res) => {
     res.sendStatus(200);
+});
+
+app.use((req, res) => {
+  res.status(404).render("error/404Page", { title: "Page Not Found" });
 });
 
 DBController.initConnection(async () => {

@@ -16,6 +16,8 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+
 }
 .pageTitle {
   font-size: 1.8rem;

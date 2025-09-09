@@ -16,6 +16,7 @@ import {
   faPlus,
   faCheckCircle,
   faBan,
+  faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function ClientManagement() {
@@ -140,9 +141,6 @@ export default function ClientManagement() {
           <h1>
             <FontAwesomeIcon icon={faUsers} /> Client Management
           </h1>
-          <button className={styles.addClientBtn} onClick={handleAddClient}>
-            <FontAwesomeIcon icon={faPlus} /> Add Client
-          </button>
         </header>
 
         <div className={styles.searchBox}>
@@ -152,6 +150,9 @@ export default function ClientManagement() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button className={styles.addClientBtn} onClick={handleAddClient}>
+            <FontAwesomeIcon icon={faPlus} /> Add Client
+          </button>
         </div>
 
         <section className={styles.tableSection}>
@@ -168,7 +169,7 @@ export default function ClientManagement() {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th className={styles.actionsCol}></th>
+                    <th style={{ textAlign: "center" }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -183,7 +184,7 @@ export default function ClientManagement() {
                       <td>{client.contact.phone}</td>
                       <td
                         className={styles.actions}
-                        onClick={(e) => e.stopPropagation()} // prevent row click on buttons
+                        onClick={(e) => e.stopPropagation()}
                       >
                         {/* <button onClick={() => handleView(client._id)}>
                                                     <FontAwesomeIcon icon={faEye} /> View
@@ -249,6 +250,23 @@ export default function ClientManagement() {
             </>
           )}
         </section>
+
+        {/* <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          <FontAwesomeIcon icon={faArrowLeft} />{""} Back
+        </button> */}
+
+        <button
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
       </main>
     </div>
   );

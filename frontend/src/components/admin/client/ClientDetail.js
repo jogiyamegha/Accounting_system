@@ -419,10 +419,10 @@ export default function ClientDetail() {
       <Sidebar />
 
       <div className={styles.adjustment}>
-        <h2 className={styles.pageTitle}>
+        <h1 className={styles.pageTitle}>
           {" "}
           <FontAwesomeIcon icon={faClipboardList} /> Client Details
-        </h2>
+        </h1>
         <button
           className={styles.gtBtn}
           onClick={() => handleGenerateInvoice(client._id)}
@@ -452,7 +452,7 @@ export default function ClientDetail() {
               </p> */}
 
               <div className={styles.infoRow}>
-                <span className={styles.infoValue}>Email: {client.email}</span>
+                <span className={styles.infoValue}>{client.email}</span>
               </div>
             </div>
           </div>
