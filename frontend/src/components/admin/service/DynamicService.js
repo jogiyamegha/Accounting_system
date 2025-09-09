@@ -427,10 +427,14 @@ export default function DynamicService() {
         headers: { "Content-Type": "application/json" },
       });
 
-      if (!res.ok) throw new Error("Failed to fetch clients");
+      if (!res.ok) {
+        let errorData = await res.json();
+
+        toast.error(errorData.error || "Failed to fetch clients");
+      }
 
       const data = await res.json();
-      console.log("data", data);
+      // console.log("data", data);
       setClients(data); // ✅ data is already an array
     } catch (err) {
       console.error("Error fetching clients:", err);
@@ -457,11 +461,12 @@ export default function DynamicService() {
         }
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to de-assign service");
-      }
-
       const result = await res.json();
+      if (!res.ok) {
+        let errorData = result.error;
+
+        toast.error(errorData || "Failed to de-assign service");
+      }
 
       setClients((prev) =>
         prev.map((client) =>
@@ -495,7 +500,9 @@ export default function DynamicService() {
       );
 
       if (!res.ok) {
-        throw new Error("Failed to de-assign service");
+        let errorData = await res.json();
+
+        toast.error(errorData.error || "Failed to de-assign service");
       }
 
       setClients((prev) =>
@@ -564,7 +571,7 @@ export default function DynamicService() {
                   <th>Start Date</th>
                   <th>End Date</th>
                   <th>Status</th>
-                  <th style={{textAlign: "center" }}>Actions</th>
+                  <th style={{ textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -619,16 +626,15 @@ export default function DynamicService() {
           )}
         </section>
 
-
         <button
-                  className={styles.backButton}
-                  onClick={() => window.history.back()}
-                >
-                  Back
-                  <div className={styles.icon}>
-                    <FontAwesomeIcon icon={faArrowLeft} />
-                  </div>
-                </button>
+          className={styles.backButton}
+          onClick={() => window.history.back()}
+        >
+          Back
+          <div className={styles.icon}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </div>
+        </button>
       </div>
     </div>
   );

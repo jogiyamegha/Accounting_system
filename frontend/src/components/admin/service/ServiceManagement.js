@@ -326,7 +326,10 @@ export default function ServiceManagement() {
         credentials: "include",
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to fetch services");
+      if (!res.ok) {
+
+        toast.error(data.error || "Failed to fetch services")
+      };
       setServices(data);
     } catch (err) {
       console.error(err);
@@ -340,7 +343,7 @@ export default function ServiceManagement() {
         credentials: "include",
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to fetch clients");
+      if (!res.ok) toast.error(data.error || "Failed to fetch clients");
       setClients(data);
     } catch (err) {
       console.error(err);
@@ -367,7 +370,7 @@ export default function ServiceManagement() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to add service");
+      if (!res.ok) toast.error(data.error || "Failed to add service");
 
       toast.success("Service added successfully!");
       setShowModal(false);
@@ -408,7 +411,7 @@ export default function ServiceManagement() {
       );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to assign service");
+      if (!res.ok) toast.error(data.error || "Failed to assign service");
 
       toast.success("Service assigned successfully!");
       setShowAssignModal(false);
@@ -456,7 +459,7 @@ export default function ServiceManagement() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to update service");
+      if (!res.ok) toast.error(data.error || "Failed to update service");
 
       toast.success("Service updated successfully!");
 
@@ -480,7 +483,7 @@ export default function ServiceManagement() {
         credentials: "include",
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to delete service");
+      if (!res.ok) toast.error(data.error || "Failed to delete service");
 
       toast.success("Service deleted successfully!");
       setServices((prev) => prev.filter((s) => s._id !== id));

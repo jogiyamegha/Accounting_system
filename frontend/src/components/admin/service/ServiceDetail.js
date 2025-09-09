@@ -31,13 +31,14 @@ export default function ServiceDetail() {
 
 
                 if (!res.ok) {
-                    toast.error("Failed to fetch service details");
-                    throw new Error("Failed to fetch service details");
+                    let errorData = await res.json();
+                    toast.error(errorData.error ||  "Failed to fetch service details");
+                    // throw new Error("Failed to fetch service details");
                 }
 
                 const result = await res.json();
 
-                console.log(result)
+                // console.log(result)
                 setServiceData(result);
             } catch (err) {
                 console.error(err);
