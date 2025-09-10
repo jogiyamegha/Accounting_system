@@ -145,15 +145,16 @@ exports.sendDocStatusMail = async (name, emailId, status, comments) => {
     }
 };
 
-exports.sendServiceAssignMail = async (name, emailId, serviceType) => {
+exports.sendServiceAssignMail = async (name, emailId, serviceName) => {
     const invitationTemplate = fs
         .readFileSync(
             path.join(customerViewDirPath, "client", "service-assign.hbs")
         )
         .toString();
+
     let data = {
         name: name,
-        serviceType: serviceType,
+        serviceName: serviceName,
         email: emailId,
     };
 
@@ -196,7 +197,7 @@ exports.sendActDActMail = async (name, emailId, status) => {
     }
 };
 
-exports.sendServiceRenewalMail = async (name, emailId, serviceName, serviceEndDate) => {
+exports.sendServiceRenewalMail = async (name, emailId, serviceName) => {
     const invitationTemplate = fs
         .readFileSync(path.join(customerViewDirPath, "client", "service-renewal.hbs"))
         .toString();
@@ -206,9 +207,7 @@ exports.sendServiceRenewalMail = async (name, emailId, serviceName, serviceEndDa
     let data = {
         name: name,
         email: emailId,
-        serviceName: serviceName,
-        serviceEndDate: formatDateToDDMMYYYY(serviceEndDate)
- 
+        serviceName: serviceName, 
     };
 
     const template = Handlebars.compile(invitationTemplate);

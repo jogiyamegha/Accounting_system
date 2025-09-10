@@ -26,9 +26,8 @@ class ClientService {
 
     static isServiceExistsInClient = async (client, serviceId) => {
         const services = client[TableFields.services];
-
-        for(let service of services) {
-            if(service[TableFields.serviceId].toString() === serviceId.toString()) {
+        for (let service of services) {
+            if (service[TableFields.serviceId].toString() === serviceId) {
                 return true;
             }
         }
@@ -36,25 +35,28 @@ class ClientService {
     }
 
     static checkServiceAssignedAndCompletedOrDeassign = async (client, serviceId) => {
-        // here Have to check that servce is assigned or not, if assigned then if deleted flag is true then deassign then return false or return true
+        // Check if service is currently running (assigned, not deleted, and not completed)
         const services = client[TableFields.services];
-        if(services.length != 0) {
+        if (services.length != 0) {
             for (let service of services) {
-                if (service[TableFields.serviceId].toString() === serviceId && service[TableFields.deleted] == true) {
-                    return false;
+                if (service[TableFields.serviceId].toString() === serviceId) {
+                    // If service exists and is not deleted and not completed, it's running
+                    if (service[TableFields.deleted] == false && service[TableFields.endDate] > new Date()) {
+                        return true; // Service is running
+                    }
                 }
             }
-            return true;
-        } else {
-            return false;
         }
+        return false; // No running service found, can assign
     }
 
     static checkIsServiceAssign = async (client, serviceId) => {
         const services = client[TableFields.services];
         for (let service of services) {
-            if (service[TableFields.ID].toString() == serviceId.toString()) {
-                return true;
+            if (service[TableFields.serviceId].toString() === serviceId &&
+                service[TableFields.deleted] == false &&
+                service[TableFields.endDate] > new Date()) {
+                return true; // Service is assigned and active
             }
         }
         return false;
@@ -64,31 +66,34 @@ class ClientService {
         const services = client[TableFields.services];
 
         for (let service of services) {
-            if (service[TableFields.ID].toString() === serviceId && service[TableFields.endDate] <= new Date()) {
-                return true;
+            if (service[TableFields.serviceId].toString() === serviceId &&
+                service[TableFields.deleted] == false &&
+                service[TableFields.endDate] <= new Date()) {
+                return true; // Service is completed
             }
         }
         return false;
     }
 
-    static checkAllServiceCompleted = async (client, serviceId) => {
-        const services = client[TableFields.services];
-        if(services.length > 0){
-            for(let service of services) {
-                if(
-                    (service[TableFields.serviceId].toString() === serviceId.toString()) && 
-                    (service[TableFields.endDate] < new Date()) && 
-                    (service[TableFields.serviceStatus] == 3) && 
-                    (service[TableFields.deleted] == false)
-                ) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            return false;
-        }
-    }
+
+    // static checkAllServiceCompleted = async (client, serviceId) => {
+    //     const services = client[TableFields.services];
+    //     if (services.length > 0) {
+    //         for (let service of services) {
+    //             if (
+    //                 (service[TableFields.serviceId].toString() === serviceId.toString()) &&
+    //                 (service[TableFields.endDate] < new Date()) &&
+    //                 (service[TableFields.serviceStatus] == 3) &&
+    //                 (service[TableFields.deleted] == false)
+    //             ) {
+    //                 return true;
+    //             }
+    //         }
+    //         return false;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     // static getAllClientsRelatedService = (serviceId) => {
     //     return new ProjectionBuilder(async function () {
@@ -116,6 +121,23 @@ class ClientService {
     //     });
     // };
 
+
+    static checkAllServiceCompleted = async (client, serviceId) => {
+        const services = client[TableFields.services];
+        if (services.length > 0) {
+            for (let service of services) {
+                if (
+                    (service[TableFields.serviceId].toString() === serviceId.toString()) &&
+                    (service[TableFields.endDate] <= new Date()) && // Changed < to <=
+                    (service[TableFields.serviceStatus] == 3) &&
+                    (service[TableFields.deleted] == false)
+                ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     static getAllClientsRelatedService = (serviceId) => {
         const objectId = MongoUtil.toObjectId(serviceId);
@@ -235,22 +257,28 @@ class ClientService {
         return false;
     };
 
-
     static updateDeassign = async (client, serviceId) => {
+        // Find the active (non-deleted) service entry for this serviceId
         return await Client.findOneAndUpdate(
             {
-                [TableFields.ID]: client[TableFields.ID],
-                [`${TableFields.services}.${TableFields.ID}`]: serviceId
+                [TableFields.ID]: client[TableFields.ID]
             },
             {
                 $set: {
-                    [`${TableFields.services}.$.${TableFields.deleted}`]: true
+                    [`${TableFields.services}.$[elem].${TableFields.deleted}`]: true
                 }
             },
-            { new: true } // returns updated document
+            {
+                arrayFilters: [
+                    {
+                        [`elem.${TableFields.serviceId}`]: serviceId,
+                        [`elem.${TableFields.deleted}`]: false
+                    }
+                ],
+                new: true
+            }
         );
     };
-
 
     static addRenewService = async (clientId, serviceId) => {
         const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
@@ -381,6 +409,30 @@ class ClientService {
         );
     };
 
+    // static addServiceInArray = async (clientEmail, serviceId) => {
+    //     const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+
+    //     const todayDate = new Date();
+    //     const endDate = new Date(todayDate);
+    //     endDate.setDate(endDate.getDate() + service[TableFields.serviceDuration]);
+
+    //     return await Client.updateOne(
+    //         {
+    //             [TableFields.email]: clientEmail
+    //         },
+    //         {
+    //             $push: {
+    //                 [TableFields.services]: {
+    //                     [TableFields.serviceId]: serviceId,
+    //                     [TableFields.serviceStartDate]: todayDate,
+    //                     [TableFields.endDate]: endDate,
+    //                     [TableFields.serviceStatus]: 2
+    //                 }
+    //             }
+    //         }
+    //     );
+    // };
+
     static addServiceInArray = async (clientEmail, serviceId) => {
         const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
 
@@ -398,7 +450,8 @@ class ClientService {
                         [TableFields.serviceId]: serviceId,
                         [TableFields.serviceStartDate]: todayDate,
                         [TableFields.endDate]: endDate,
-                        [TableFields.serviceStatus]: 2
+                        [TableFields.serviceStatus]: 2,
+                        [TableFields.deleted]: false // Explicitly set deleted to false
                     }
                 }
             }
