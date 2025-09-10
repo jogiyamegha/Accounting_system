@@ -334,7 +334,7 @@
 .statusActions a {
   background: #eff6ff;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: 10px;
   width: 40px;
   height: 40px;
   cursor: pointer;
@@ -358,7 +358,7 @@
 .statusActions button {
   background: #fef2f2;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: 10px;
   width: 40px;
   height: 40px;
   cursor: pointer;
@@ -416,8 +416,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px; /* space between icon and text */
-  padding: 6px 14px;
-  font-size: 0.78rem;
+  padding: 8px 16px;
+  font-size: 0.8rem;
   font-weight: 600;
   border-radius: 20px; /* pill shape */
   border: none;
@@ -488,12 +488,11 @@
 /* Default button style */
 .pagination button {
   padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
   color: #334155;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.85rem;
   cursor: pointer;
   min-width: 38px;
   text-align: center;
@@ -503,14 +502,14 @@
 
 /* Hover effect */
 .pagination button:hover:not(:disabled) {
-  background: #f1f5f9;
-  color: #2563eb;
+  background: #e2e8f0;
+  color: #1d4ed8;
   box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
 }
 
 /* Disabled state */
 .pagination button:disabled {
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: not-allowed;
   box-shadow: none;
 }
@@ -518,18 +517,18 @@
 /* Active (current page) */
 .pagination .activePage {
   background: #2563eb;
-  color: #ffffff;
+  color: #fff;
   border-color: #2563eb;
   font-weight: 600;
   box-shadow: 0 3px 6px rgba(37, 99, 235, 0.25);
 }
 
 /* Optional — make Previous/Next stand out */
-.pagination button:first-child,
+/* .pagination button:first-child,
 .pagination button:last-child {
   font-weight: 600;
   padding: 8px 18px;
-}
+} */
 
 .backButton {
   position: fixed; /* floating button */
