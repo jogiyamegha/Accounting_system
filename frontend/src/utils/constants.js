@@ -26,6 +26,15 @@ export const DocStatus = (function () {
     return DocStatus;
 })();
 
+export const ServiceStatus = (function () {
+    function ServiceStatus(){}
+    ServiceStatus.notStarted = 1;
+    ServiceStatus.inProgress = 2;
+    ServiceStatus.completed = 3;
+
+    return ServiceStatus;
+})();
+
 export const BusinessType = function () {
     function BusinessType() { }
     BusinessType.soleProprietorship = 1;

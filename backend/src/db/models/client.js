@@ -105,6 +105,9 @@ const clientSchema = new Schema(
                     type : Number,
                     enum : Object.values(ServiceStatus)
                 },
+                [TableFields.serviceStatusChangeDate] : {
+                    type: Date
+                },
                 [TableFields.deleted] : {
                     type: Boolean,
                     default : false

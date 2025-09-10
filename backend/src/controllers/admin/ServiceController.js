@@ -361,6 +361,32 @@ exports.renewService = async (req, res) => {
     }
 };
 
+exports.updateServiceStatus = async (req) => {
+    const serviceId = req.params[TableFields.serviceId];
+    const clientId = req.params[TableFields.clientId];
+    const newStatus = req.body[TableFields.serviceStatus];
+
+    console.log(serviceId, clientId, newStatus);
+
+    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+    if(!client) {
+        throw new ValidationError(ValidationMsg.ClientNotExists);
+    }
+
+    const serviceAssign = await ClientService.isServiceExistsInClient(client, serviceId);
+    if(!serviceAssign){
+        throw new ValidationError(ValidationMsg.ServiceNotExistsInClient);
+    }
+
+    return await ClientService.updateServiceStatus(serviceId, clientId, newStatus);
+}
+
+exports.getServiceName = async(req, res) => {
+    const serviceId = req.params[TableFields.ID];
+    const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+    // return service[TableFields.serviceName]
+    return res.status(200).json({ _id: service._id, name: service.serviceName });
+}
 
 async function parseAndValidate(
     reqBody,

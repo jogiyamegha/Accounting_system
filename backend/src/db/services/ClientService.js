@@ -4,7 +4,7 @@ const {
     TableNames,
     UserTypes,
     ValidationMsg,
-    InterfaceType,
+    ServiceStatus,
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
@@ -26,8 +26,9 @@ class ClientService {
 
     static isServiceExistsInClient = async (client, serviceId) => {
         const services = client[TableFields.services];
+        console.log(services);
         for (let service of services) {
-            if (service[TableFields.serviceId].toString() === serviceId) {
+            if (service[TableFields.ID].toString() === serviceId) {
                 return true;
             }
         }
@@ -279,6 +280,68 @@ class ClientService {
             }
         );
     };
+
+    // static updateServiceStatus = async (serviceId, clientId, newStatus) => {
+
+    //     return await Client.findByIdAndUpdate(
+    //         {
+    //             [TableFields.ID] : clientId
+    //         },
+    //         {
+    //             $set: {
+    //                 [`${TableFields.services}.$[elem].${TableFields.serviceStatus}`]: newStatus
+    //             }
+    //         },
+    //         {
+    //             arrayFilters: [
+    //                 {
+    //                     [`elem.${TableFields.serviceId}`]: serviceId,
+    //                     [`elem.${TableFields.deleted}`]: false
+    //                 }
+    //             ],
+    //             new: true
+    //         }
+    //     )
+    // }
+
+    static updateServiceStatus = async (serviceId, clientId, newStatus) => {
+        const statusMap = {
+            notStarted: ServiceStatus.notStarted,
+            "not started": ServiceStatus.notStarted,
+            inProgress: ServiceStatus.inProgress,
+            "in progress": ServiceStatus.inProgress,
+            completed: ServiceStatus.completed,
+            1: ServiceStatus.notStarted,
+            2: ServiceStatus.inProgress,
+            3: ServiceStatus.completed,
+        };
+
+        const mappedStatus = statusMap[newStatus];
+        if (!mappedStatus) {
+            throw new Error(`Invalid status: ${newStatus}`);
+        }
+
+        return await Client.findByIdAndUpdate(
+            clientId,
+            {
+                $set: {
+                    [`${TableFields.services}.$[elem].${TableFields.serviceStatus}`]: mappedStatus,
+                    [`${TableFields.services}.$[elem].${TableFields.serviceStatusChangeDate}`]: Date.now(),
+                },
+            },
+            {
+                arrayFilters: [
+                    {
+                        "elem._id": serviceId,
+                        [`elem.${TableFields.deleted}`]: false,
+                    },
+                ],
+                new: true,
+            }
+        );
+
+    };
+
 
     static addRenewService = async (clientId, serviceId) => {
         const service = await ServiceService.findById(serviceId).withBasicInfo().execute();

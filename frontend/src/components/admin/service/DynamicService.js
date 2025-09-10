@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ADMIN_END_POINT } from "../../../utils/constants";
+import { ADMIN_END_POINT, ServiceStatus } from "../../../utils/constants";
 import Sidebar from "../../Sidebar";
 import styles from "../../../styles/dynamicService.module.css";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAddressCard, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+
+const serviceStatusNumberToString = {
+    1: "not Started",
+    2: "in Progress",
+    3: "completed",
+};
 
 const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -13,16 +19,49 @@ const formatDate = (dateString) => {
 };
 
 export default function DynamicService() {
-    const { id } = useParams(); // ✅ serviceId from URL
+    const { id } = useParams();
     const [clients, setClients] = useState([]);
+    const [serviceName, setServiceName] = useState("");
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState("");
+    const [endDateFilter, setEndDateFilter] = useState("");
+    const [sortOrder, setSortOrder] = useState("asc"); // NEW: sort state
     const navigate = useNavigate();
-    const [selectedClient, setSelectedClient] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [documents, setDocuments] = useState([]);
-    const [requiredDocs, setRequiredDocs] = useState([]);
+    const [statusUpdates, setStatusUpdates] = useState({});
+    const [totalClients, setTotalClients] = useState(0);
 
-    const fetchClients = async () => {
+    const [page, setPage] = useState(1);
+    const limit = 10;
+
+
+    const getServiceName = async () => {
+        try {
+            const res = await fetch(`${ADMIN_END_POINT}/service-name/${id}`, {
+                method: "GET",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            if (!res.ok) {
+                let errorData = await res.json();
+                toast.error(errorData.error || "Failed to fetch service name");
+                return;
+            }
+
+            const data = await res.json();
+            return data.name;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const getServiceNameAndSet = async () => {
+        const name = await getServiceName();
+        if (name) setServiceName(name);
+    };
+
+    const fetchServiceAndClients = async () => {
         try {
             const res = await fetch(`${ADMIN_END_POINT}/service/${id}`, {
                 method: "GET",
@@ -37,7 +76,12 @@ export default function DynamicService() {
             }
 
             const data = await res.json();
-            setClients(data);
+
+            if (data.service?.name) setServiceName(data.service.name);
+            if (Array.isArray(data.clients)) setClients(data.clients);
+            else setClients(data);
+            setTotalClients(data.total || 0);
+
         } catch (err) {
             console.error("Error fetching clients:", err);
             toast.error(err.message);
@@ -46,10 +90,12 @@ export default function DynamicService() {
         }
     };
 
-
     useEffect(() => {
-        if (id) fetchClients();
-    }, [id]);
+        if (id) {
+            fetchServiceAndClients();
+            getServiceNameAndSet();
+        }
+    }, [page, id]);
 
     const deAssignService = async (serviceId, clientId) => {
         try {
@@ -66,20 +112,17 @@ export default function DynamicService() {
 
             const result = await res.json();
             if (!res.ok) {
-                let errorData = result.error;
-                toast.error(errorData || "Failed to de-assign service");
+                toast.error(result.error || "Failed to de-assign service");
                 return;
             }
 
             toast.success("Service De-assigned Successfully");
-            // Refresh the data instead of manually updating state
-            await fetchClients();
+            await fetchServiceAndClients();
         } catch (err) {
             console.error("Error de-assigning service:", err);
             toast.error("Error occurred while de-assigning service");
         }
     };
-
 
     const renewService = async (serviceId, clientId) => {
         try {
@@ -101,17 +144,65 @@ export default function DynamicService() {
             }
 
             toast.success("Service renewed successfully");
-            // Refresh the data
-            await fetchClients();
+            await fetchServiceAndClients();
         } catch (error) {
             console.error("Error renew service:", error);
             toast.error("Error occurred while renewing service");
         }
     };
 
+    const handleStatusChangeUpdate = async (serviceId, clientId) => {
+        try {
+            const newStatus = statusUpdates[serviceId];
+            if (!newStatus) {
+                toast.warning("Please select a status before updating.");
+                return;
+            }
+
+            const res = await fetch(
+                `${ADMIN_END_POINT}/update-service-status/${serviceId}/${clientId}`,
+                {
+                    method: "PATCH",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ serviceStatus: newStatus }),
+                }
+            );
+
+            const result = await res.json();
+            if (!res.ok) {
+                toast.error(result.error || "Failed to update status");
+                return;
+            }
+
+            toast.success("Service status updated successfully");
+            await fetchServiceAndClients();
+        } catch (err) {
+            console.error("Error updating service status:", err);
+            toast.error("Error occurred while updating status");
+        }
+    };
+
     const goToClientDetails = (clientId) => {
         navigate(`/admin/client-detail/${clientId}`);
     };
+
+    // NEW: Helper to sort services by end date
+    const sortByEndDate = (services) => {
+        return [...services].sort((a, b) => {
+            const dateA = a.endDate ? new Date(a.endDate) : new Date(0);
+            const dateB = b.endDate ? new Date(b.endDate) : new Date(0);
+            return sortOrder === "asc"
+                ? dateA - dateB
+                : dateB - dateA;
+        });
+    };
+
+    const totalPages = Math.ceil(totalClients / limit);
+  const goToPage = (p) => {
+    if (p >= 1 && p <= totalPages) setPage(p);
+  };
+
 
     return (
         <div className={styles.pageWrapper}>
@@ -120,84 +211,295 @@ export default function DynamicService() {
                 <div className={styles.pageTitle}>
                     <h1>
                         <FontAwesomeIcon icon={faAddressCard} />
-                        Clients Applied
+                        Associated Clients with{" "}
+                        {serviceName && (
+                            <span className={styles.serviceName}>
+                                – {serviceName}
+                            </span>
+                        )}
                     </h1>
+                </div>
+
+                {/* 🔎 Filters + Sort */}
+                <div className={styles.filterContainer}>
+                    <input
+                        type="text"
+                        placeholder="Search by name or email..."
+                        className={styles.searchBar}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+
+                    <input
+                        type="date"
+                        className={styles.dateFilter}
+                        value={endDateFilter}
+                        onChange={(e) => setEndDateFilter(e.target.value)}
+                    />
+
+                    <select
+                        className={styles.statusFilter}
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                        <option value="">All Status</option>
+                        {Object.entries(serviceStatusNumberToString).map(
+                            ([key, value]) => (
+                                <option key={key} value={key}>
+                                    {value}
+                                </option>
+                            )
+                        )}
+                    </select>
+
+                    {/* NEW: Sort by End Date */}
+                    <select
+                        className={styles.sortSelect}
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                    >
+                        <option value="asc">Sort by End Date (ASC)</option>
+                        <option value="desc">Sort by End Date (DESC)</option>
+                    </select>
                 </div>
 
                 <section className={styles.tableSection}>
                     {loading ? (
                         <p className={styles.loading}>Loading clients...</p>
                     ) : clients.length === 0 ? (
-                        <p className={styles.noData}>No clients found for this service.</p>
+                        <p className={styles.noData}>
+                            No clients found for this service.
+                        </p>
                     ) : (
                         <table className={styles.card}>
                             <thead>
                                 <tr>
-                                    <th>Client Name</th>
+                                    <th>Name</th>
                                     <th>Email</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                     <th>Status</th>
-                                    <th style={{ textAlign: "center" }}>Actions</th>
+                                    <th>Change Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {clients.map((client) =>
-                                    client.services
-                                        .filter(
-                                            (s) => s.serviceId === id || s.serviceId?._id === id
+                                {clients
+                                    .filter((client) => {
+                                        const term = searchTerm.toLowerCase();
+                                        return (
+                                            client.name
+                                                .toLowerCase()
+                                                .includes(term) ||
+                                            client.email
+                                                .toLowerCase()
+                                                .includes(term)
+                                        );
+                                    })
+                                    .map((client) =>
+                                        sortByEndDate(
+                                            client.services.filter(
+                                                (s) =>
+                                                    s.serviceId === id ||
+                                                    s.serviceId?._id === id
+                                            )
                                         )
-                                        .map((service, idx) => (
-                                            <tr
-                                                key={`${client._id}-${idx}`}
-                                                className={styles.tableRow}
-                                                onClick={() => goToClientDetails(client._id)} // ✅ row click
-                                                style={{ cursor: "pointer" }}
-                                            >
-                                                <td>{client.name}</td>
-                                                <td>{client.email}</td>
-                                                <td>{formatDate(service.serviceStartDate)}</td>
-                                                <td>{formatDate(service.endDate)}</td>
-                                                <td>{service.serviceStatus}</td>
-                                                <td
-                                                    className={styles.actions}
-                                                    onClick={(e) => e.stopPropagation()}
+                                            .filter((service) => {
+                                                let matchesStatus =
+                                                    !statusFilter ||
+                                                    String(
+                                                        service.serviceStatus
+                                                    ) === statusFilter;
+
+                                                let matchesEndDate = true;
+                                                if (endDateFilter) {
+                                                    const formattedServiceEndDate =
+                                                        new Date(
+                                                            service.endDate
+                                                        )
+                                                            .toISOString()
+                                                            .split("T")[0];
+                                                    matchesEndDate =
+                                                        formattedServiceEndDate ===
+                                                        endDateFilter;
+                                                }
+
+                                                return (
+                                                    matchesStatus &&
+                                                    matchesEndDate
+                                                );
+                                            })
+                                            .map((service, idx) => (
+                                                <tr
+                                                    key={`${client._id}-${idx}`}
+                                                    className={
+                                                        styles.tableRow
+                                                    }
+                                                    onClick={() =>
+                                                        goToClientDetails(
+                                                            client._id
+                                                        )
+                                                    }
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
                                                 >
-                                                    {service.serviceStatus === 3 && (
-                                                        <button
-                                                            className={styles.uploadBtn4}
-                                                            onClick={() =>
-                                                                renewService(
-                                                                    service.serviceId?._id || service.serviceId,
-                                                                    client._id
+                                                    <td>{client.name}</td>
+                                                    <td>{client.email}</td>
+                                                    <td>
+                                                        {formatDate(
+                                                            service.serviceStartDate
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        {formatDate(
+                                                            service.endDate
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        {
+                                                            serviceStatusNumberToString[
+                                                            service
+                                                                .serviceStatus
+                                                            ]
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <select
+                                                            className={
+                                                                styles.statusSelect
+                                                            }
+                                                            onClick={(e) =>
+                                                                e.stopPropagation()
+                                                            }
+                                                            value={
+                                                                statusUpdates[
+                                                                service._id
+                                                                ] || ""
+                                                            }
+                                                            onChange={(e) =>
+                                                                setStatusUpdates(
+                                                                    (prev) => ({
+                                                                        ...prev,
+                                                                        [service._id]:
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                    })
                                                                 )
                                                             }
                                                         >
-                                                            Renew Service
-                                                        </button>
-                                                    )}
-
-                                                    {service.serviceStatus === 2 && (
+                                                            <option value="">
+                                                                Select Status
+                                                            </option>
+                                                            {Object.keys(
+                                                                ServiceStatus
+                                                            ).map((key) => (
+                                                                <option
+                                                                    key={key}
+                                                                    value={key}
+                                                                >
+                                                                    {key}
+                                                                </option>
+                                                            ))}
+                                                        </select>
                                                         <button
-                                                            className={styles.uploadBtn4}
-                                                            onClick={() =>
-                                                                deAssignService(
-                                                                    service.serviceId?._id || service.serviceId,
-                                                                    client._id
-                                                                )
+                                                            className={
+                                                                styles.statusUpdateBtn
                                                             }
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleStatusChangeUpdate(
+                                                                    service._id,
+                                                                    client._id
+                                                                );
+                                                            }}
                                                         >
-                                                            De-Assign
+                                                            Update Status
                                                         </button>
-                                                    )}
+                                                    </td>
 
-                                                </td>
-                                            </tr>
-                                        ))
-                                )}
+                                                    <td
+                                                        className={
+                                                            styles.actions
+                                                        }
+                                                        onClick={(e) =>
+                                                            e.stopPropagation()
+                                                        }
+                                                    >
+                                                        {service.serviceStatus ===
+                                                            3 && (
+                                                                <button
+                                                                    className={
+                                                                        styles.uploadBtn4
+                                                                    }
+                                                                    onClick={() =>
+                                                                        renewService(
+                                                                            service
+                                                                                .serviceId
+                                                                                ?._id ||
+                                                                            service.serviceId,
+                                                                            client._id
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Renew
+                                                                </button>
+                                                            )}
+
+                                                        {service.serviceStatus ===
+                                                            2 && (
+                                                                <button
+                                                                    className={
+                                                                        styles.uploadBtn5
+                                                                    }
+                                                                    onClick={() =>
+                                                                        deAssignService(
+                                                                            service
+                                                                                .serviceId
+                                                                                ?._id ||
+                                                                            service.serviceId,
+                                                                            client._id
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    De-Assign
+                                                                </button>
+                                                            )}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                    )}
                             </tbody>
                         </table>
+                        
                     )}
+
+                    <div className={styles.pagination}>
+                                    <button
+                                      onClick={() => goToPage(page - 1)}
+                                      disabled={page === 1}
+                                    >
+                                      Previous
+                                    </button>
+                    
+                                    {Array.from({ length: totalPages }, (_, i) => (
+                                      <button
+                                        key={i + 1}
+                                        className={page === i + 1 ? styles.activePage : ""}
+                                        onClick={() => goToPage(i + 1)}
+                                      >
+                                        {i + 1}
+                                      </button>
+                                    ))}
+                    
+                                    <button
+                                      onClick={() => goToPage(page + 1)}
+                                      disabled={page === totalPages}
+                                    >
+                                      Next
+                                    </button>
+                                  </div>
                 </section>
 
                 <button

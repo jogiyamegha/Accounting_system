@@ -344,6 +344,7 @@ const TableFields = (function () {
     TableFields.serviceStartDate = "serviceStartDate";
     TableFields.serviceEndDate = "serviceEndDate";
     TableFields.serviceStatus = 'serviceStatus';
+    TableFields.serviceStatusChangeDate = 'serviceStatusChangeDate';
     TableFields.clients = "clients";
     TableFields.durationType = "durationType";
     TableFields.startingAmount = "startingAmount";

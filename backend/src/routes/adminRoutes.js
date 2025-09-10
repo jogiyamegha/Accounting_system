@@ -214,6 +214,11 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/service-name/:${TableFields.ID}`)
+.asGET(ServiceController.getServiceName)
+.useAdminAuth()
+.build()
+
 .addPath(`/de-assign-service/:${TableFields.serviceId}/:${TableFields.clientId}`)
 .asDELETE(ServiceController.deAssignService)
 .useAdminAuth()
@@ -226,6 +231,11 @@ const router = API.configRoute("/admin")
 
 .addPath(`/all-clients-assigned-service/:${TableFields.serviceType}`)
 .asGET(ServiceController.getClientsAssignedService)
+.useAdminAuth()
+.build()
+
+.addPath(`/update-service-status/:${TableFields.serviceId}/:${TableFields.clientId}`)
+.asUPDATE(ServiceController.updateServiceStatus)
 .useAdminAuth()
 .build()
 

@@ -249,8 +249,16 @@ exports.deleteClient = async (req) => {
 };
 
 exports.getClientsByService = async (req) => {
-    const serviceId = req.params[TableFields.ID];
-    return await ClientService.getAllClientsRelatedService(serviceId).withBasicInfo().execute();
+    // const serviceId = req.params[TableFields.ID];
+    // return await ClientService.getAllClientsRelatedService(serviceId).withBasicInfo().execute();
+    const clients = await ClientService.listClients({
+        ...req.query
+    })
+    .withBasicInfo()
+    .execute();
+
+    console.log("clients", clients.records);
+    return clients.records;
 }
 
 exports.getAllClients = async (req) => {
