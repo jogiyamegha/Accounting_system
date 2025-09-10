@@ -205,6 +205,49 @@
   border-color: #bbf7d0;
 }
 
+.tagSection{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tags{
+  list-style: none; 
+  position: relative;
+  padding-left: 1.5em; 
+  margin: 0.5em 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tags::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* Specific colors */
+.tags:nth-child(1)::before {
+  /* background-color: #2563eb;  */
+  background-color: #e0ecff; 
+  border-color: #93c5fd;
+
+}
+
+.tags:nth-child(2)::before {
+  background-color: #22c55e; 
+}
+
+.tags:nth-child(3)::before {
+  background-color: #ef4444; 
+}
+
+
 /* Indicators */
 .deadlineDot {
   position: absolute;

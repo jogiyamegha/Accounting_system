@@ -52,6 +52,9 @@ exports.editEvent = async (req) => {
     const reqBody = req.body;
     const eventId = req.params[TableFields.ID];
 
+    console.log("reqBody",reqBody);
+    // console.log(eventId);
+
 
     const event = await CalendarService.findById(eventId).withBasicInfo().execute();
     if(!event) {
@@ -100,6 +103,7 @@ async function parseAndValidateEvent(
         [TableFields.clientDetails]: {
             [TableFields.clientId]: client[TableFields.ID],
             [TableFields.clientName]: client[TableFields.name_],
+            [TableFields.clientEmail]: client[TableFields.email],
         },
     };
 

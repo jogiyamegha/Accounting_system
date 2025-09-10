@@ -1,3 +1,6 @@
+/* ==========================
+   Base Styles (Desktop)
+========================== */
 .pageWrapper {
   display: flex;
   min-height: 100vh;
@@ -8,7 +11,8 @@
 .mainContent {
   flex: 1;
   padding: 2rem 3rem;
-  margin-left: 280px;
+  margin-left: 280px; /* sidebar width */
+  transition: margin 0.3s ease;
 }
 
 .pageTitle {
@@ -18,14 +22,12 @@
   margin-bottom: 28px;
   padding-bottom: 12px;
   border-bottom: 2px solid #e5e7eb;
-
 }
 
 .pageTitle h1 {
-font-size: 1.75rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #0f172a;
-  letter-spacing: -0.5px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -41,12 +43,6 @@ font-size: 1.75rem;
 }
 
 .card {
-  /* background: #ffffff;
-  padding: 1.8rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  margin-bottom: 2rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease; */
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -62,18 +58,12 @@ font-size: 1.75rem;
   padding: 14px 16px;
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
-  letter-spacing: 0.5px;
 }
 
 .card td {
   padding: 16px;
   border-bottom: 1px solid #f1f5f9;
   color: #1e293b;
-  transition: background 0.2s ease;
-}
-
-.card tbody tr {
-  transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .card tbody tr:hover {
@@ -87,42 +77,9 @@ font-size: 1.75rem;
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
-
 }
 
-/* .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-} */
-
-.cardTitle {
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin-bottom: 1.2rem;
-  color: #1a202c;
-  border-left: 4px solid #033c7c;
-  padding-left: 10px;
-}
-
-.loading {
-  color: #718096;
-  font-size: 1rem;
-  padding: 1rem;
-}
-
-.noData {
-  color: #e53e3e;
-  font-weight: 500;
-  font-size: 1rem;
-  padding: 1rem;
-}
-
-.clientList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
+/* Client Card List */
 .clientItem {
   background: #fafbff;
   border: 1px solid #e2e8f0;
@@ -161,61 +118,35 @@ font-size: 1.75rem;
   font-style: italic;
 }
 
-/* Upload Button */
-.uploadBtn1 {
-  background: #b2b0e8;
-  color: #fff;
-  margin-top: 0.5rem;
-  border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
-}
-
-.uploadBtn1:hover {
-  background: #9896e6;
-  transform: translateY(-2px);
-}
-.uploadBtn2 {
-  background: #7a85c1;
-  color: #fff;
-  margin-top: 0.5rem;
-  border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
-}
-
-.uploadBtn2:hover {
-  background: #5f6bb3;
-  transform: translateY(-2px);
-}
-.uploadBtn3 {
-  background: #3b38a0;
-  color: #fff;
-  margin-top: 0.5rem;
-  border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
-}
-
-
-.uploadBtn3:hover {
-  background: #2d2a9a;
-  transform: translateY(-2px);
-}
+/* Buttons */
+.uploadBtn1,
+.uploadBtn2,
+.uploadBtn3,
 .uploadBtn4 {
-  background: #223187;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.uploadBtn1 { background: #b2b0e8; }
+.uploadBtn1:hover { background: #9896e6; transform: translateY(-2px); }
+
+.uploadBtn2 { background: #7a85c1; }
+.uploadBtn2:hover { background: #5f6bb3; transform: translateY(-2px); }
+
+.uploadBtn3 { background: #3b38a0; }
+.uploadBtn3:hover { background: #2d2a9a; transform: translateY(-2px); }
+
+.uploadBtn4 { background: #2ea34a; }
+.uploadBtn4:hover { background: #227535; transform: translateY(-2px); }
+
+.uploadBtn5 {
+  background: rgb(254, 45, 45);
   color: #fff;
   /* margin-top: 0.5rem; */
   border: none;
@@ -226,43 +157,38 @@ font-size: 1.75rem;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
 }
-
-.uploadBtn4:hover {
-  background: #071665;
+ 
+.uploadBtn5:hover{
+  background: red;
   transform: translateY(-2px);
 }
+ 
 
+/* Back Button */
 .backButton {
-  position: fixed; /* floating button */
+  position: fixed;
   bottom: 20px;
   right: 20px;
-
   background: linear-gradient(135deg, #4a90e2, #357abd);
   color: white;
-  font-family: inherit;
-  padding: 0.35em;
-  padding-left: 1.2em;
+  padding: 0.35em 1.2em 0.35em 1.2em;
   font-size: 14px;
   font-weight: 500;
   border-radius: 30px;
   border: none;
-  letter-spacing: 0.05em;
   display: flex;
   align-items: center;
-  box-shadow: inset 0 0 1.6em -0.6em #2d5a9b;
-  overflow: hidden;
-  position: fixed; 
   height: 2.8em;
   padding-right: 3.3em;
   cursor: pointer;
   z-index: 1100;
+  box-shadow: inset 0 0 1.6em -0.6em #2d5a9b;
   transition: all 0.3s ease;
 }
 
-.icon {
+.backButton .icon {
   background: white;
   margin-left: 1em;
-  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -270,199 +196,131 @@ font-size: 1.75rem;
   width: 2.2em;
   border-radius: 50%;
   box-shadow: 0.1em 0.1em 0.6em 0.2em #357abd;
+  position: absolute;
   right: 0.3em;
   transition: all 0.3s;
 }
 
 .backButton:hover .icon {
-   width: calc(100% - 0.6em); 
+  width: calc(100% - 0.6em);
   border-radius: 0.9em;
-  right: 0.3em;
-}
-
-.icon svg {
-  width: 1.1em;
-  transition: transform 0.3s;
-  color: #357abd;
 }
 
 .backButton:hover .icon svg {
-  transform: translateX(-0.1em); 
+  transform: translateX(-0.1em);
 }
 
-.backButton:active .icon {
-  transform: scale(0.95);
-}
-
-/* Modal Styles */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
+/* Modal */
 .modalContent {
   background: #fff;
   padding: 2rem;
   border-radius: 14px;
   width: 600px;
   max-width: 90%;
-  max-height: 80vh; /* ✅ limit modal height */
-  overflow-y: auto; /* ✅ enable vertical scroll */
+  max-height: 80vh;
+  overflow-y: auto;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.2s ease;
 }
 
-/* Optional: nice custom scrollbar */
-.modalContent::-webkit-scrollbar {
-  width: 6px;
-}
+/* Scrollbar */
+.modalContent::-webkit-scrollbar { width: 6px; }
+.modalContent::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 6px; }
+.modalContent::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
 
-.modalContent::-webkit-scrollbar-thumb {
-  background: #cbd5e0;
-  border-radius: 6px;
-}
-
-.modalContent::-webkit-scrollbar-thumb:hover {
-  background: #a0aec0;
-}
-
-.modalContent h2 {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  color: #1a202c;
-}
-
-.modalContent h3 {
-  margin-top: 1rem;
-  margin-bottom: 0.6rem;
-  font-size: 1.1rem;
-  color: #2d3748;
-}
-
-.modalContent ul {
-  padding-left: 1rem;
-  margin-bottom: 1rem;
-}
-
-.modalContent li {
-  font-size: 0.95rem;
-  margin-bottom: 0.4rem;
-  color: #374151;
-}
-
-.modalContent a {
-  color: #033c7c;
-  text-decoration: underline;
-}
-
-.modalContent form {
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.modalContent input[type="file"],
-.modalContent select,
-.modalContent input[type="text"] {
-  padding: 0.5rem;
-  border: 1px solid #cbd5e0;
-  border-radius: 8px;
-  font-size: 0.9rem;
-}
-
-.modalContent button[type="submit"] {
-  background: #033c7c;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.modalContent button[type="submit"]:hover {
-  background: #003673;
-}
-
-.modalContent button:last-of-type {
-  margin-top: 1rem;
-  background: #e2e8f0;
-  color: #1a202c;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-.modalContent button:last-of-type:hover {
-  background: #a6adb3;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Responsive Design */
+/* ==========================
+   Responsive: Large Tablets
+========================== */
 @media (max-width: 1024px) {
-  .mainContent {
-    padding: 1.5rem 2rem;
-  }
-
-  .pageTitle {
-    font-size: 1.7rem;
-  }
-
-  .card {
-    padding: 1.4rem;
-  }
+  .mainContent { padding: 1.5rem 2rem; margin-left: 220px; }
+  .pageTitle h1 { font-size: 1.6rem; }
+  .card th, .card td { padding: 12px 14px; }
 }
+
 
 @media (max-width: 768px) {
   .mainContent {
-    padding: 1rem;
+    padding: 1rem 1.5rem;
+    margin-left: 140px; /* collapsed sidebar width */
+    transition: margin 0.3s ease;
   }
 
-  .pageTitle {
-    font-size: 1.5rem;
-    margin-bottom: 1.2rem;
-  }
+  .pageTitle h1 { font-size: 1.4rem; }
+
+  .card th, .card td { padding: 10px 12px; font-size: 0.85rem; }
 
   .clientItem {
-    padding: 1rem;
     flex-direction: column;
     align-items: flex-start;
+    padding: 1rem;
+    gap: 0.5rem;
   }
 
-  .clientName {
-    font-size: 1rem;
-  }
+  .clientName { font-size: 1rem; }
+  .clientEmail { font-size: 0.9rem; }
+  .clientMeta { font-size: 0.8rem; }
 
-  .clientEmail {
-    font-size: 0.9rem;
-  }
+  .modalContent { width: 95%; padding: 1.5rem; }
 
-  .clientMeta {
-    font-size: 0.8rem;
-  }
-
-  .modalContent {
-    width: 95%;
-    padding: 1.5rem;
-  }
+  button, input, select { min-height: 40px; font-size: 1rem; }
 }
+
+ 
+.statusSelect {
+  width: 50%;
+  padding: 6px 8px;
+  margin-right: 5px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+ 
+.statusSelect:focus{
+  border-color: #3b82f6;
+}
+ 
+.statusUpdateBtn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+ 
+.statusUpdateBtn:hover{
+  background: #2563eb;
+}
+ 
+ 
+
+/* ==========================
+   Responsive: Phones
+========================== */
+@media (max-width: 480px) {
+  .mainContent {
+    padding: 0.8rem 1rem;
+    margin-left: 140px; /* keep collapsed sidebar visible */
+  }
+
+  .pageTitle h1 { font-size: 1.25rem; flex-wrap: wrap; gap: 4px; }
+
+  .tableSection { padding: 12px 14px; }
+
+  .card th, .card td { padding: 8px 10px; font-size: 0.8rem; }
+
+  .clientItem { padding: 0.8rem; gap: 0.4rem; }
+
+  .clientName { font-size: 0.95rem; }
+  .clientEmail { font-size: 0.85rem; }
+  .clientMeta { font-size: 0.75rem; }
+
+  .modalContent { width: 100%; padding: 1rem; }
+
+  .backButton { font-size: 13px; height: 2.4em; padding-right: 2.8em; }
+  .backButton .icon { height: 1.8em; width: 1.8em; }
+}
+

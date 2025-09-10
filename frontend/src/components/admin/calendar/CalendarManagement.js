@@ -97,7 +97,7 @@ export default function CalendarManagement() {
         credentials: "include",
       });
       const data = await res.json();
-      console.log("data", data);
+      // console.log("data", data);
 
       const mapped = {};
       data.forEach((item) => {
@@ -105,9 +105,10 @@ export default function CalendarManagement() {
         const title = categoryMap[item.deadlineCategory] || "Unknown";
 
         // Extract client names
-        const clients = (item.associatedClients || []).map(
-          (c) => c.clientDetails?.clientName || "Unknown Client"
-        );
+        const clients = (item.associatedClients || []).map((c) => ({
+          name: c.clientDetails?.clientName || "Unknown Client",
+          email: c.clientDetails?.clientEmail || "Unknown Email",
+        }));
 
         if (!mapped[dateKey]) mapped[dateKey] = [];
         mapped[dateKey].push({
@@ -115,7 +116,7 @@ export default function CalendarManagement() {
           title,
           deadlineCategory: item.deadlineCategory,
           date: dateKey,
-          clients, // array of names
+          clients,
         });
       });
 
@@ -235,59 +236,72 @@ export default function CalendarManagement() {
     }
   };
 
-  const filteredMonthDeadlines = monthDeadlines.filter((k) => {
-    const events = deadlines[k] || [];
+  const filteredMonthDeadlines = monthDeadlines.filter((dateKey) => {
+    const events = deadlines[dateKey] || [];
 
-    if (filterDate && k !== filterDate) return false;
+    // Strict filter by date
+    if (filterDate && dateKey !== filterDate) return false;
+
+    // Strict filter by category: at least one event must exactly match the category
     if (
       filterCategory &&
       !events.some((ev) => ev.deadlineCategory.toString() === filterCategory)
     ) {
       return false;
     }
+
+    // Strict filter by client name: at least one event must have a client exactly matching the name
     if (
       filterClient &&
-      !events.some((ev) =>
-        ev.clients.some((c) =>
-          c.toLowerCase().includes(filterClient.toLowerCase())
-        )
+      !events.some(
+        (ev) => ev.clients.some((c) => c.name === filterClient) // exact match
       )
     ) {
       return false;
     }
+
     return true;
   });
 
   // 🔹 Open edit modal for all events on date
+  // Flatten events for editing, one entry per client
   const handleEditEvent = (dateKey, events) => {
-    setEditingDateKey(dateKey);
-    setEditingEvents(
-      events.map((ev) => ({
-        ...ev,
+    const flattenedEvents = events.flatMap((ev) =>
+      ev.clients.map((client, idx) => ({
+        _id: `${ev._id}-${client.email}-${idx}`, // unique per client
+        originalEventId: ev._id, // reference to original event
+        title: ev.title,
         deadlineCategory: ev.deadlineCategory,
         date: ev.date,
-        clientEmail: ev.clientEmail || "",
+        clientEmail: client.email,
       }))
     );
+
+    setEditingDateKey(dateKey);
+    setEditingEvents(flattenedEvents);
   };
 
-  // 🔹 Save all edited events
+  // Save edited events
   const saveEditedEvents = async () => {
     try {
       await Promise.all(
         editingEvents.map((ev) =>
-          fetch(`${ADMIN_END_POINT}/edit-calendar-event/${ev._id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              deadlineCategory: ev.deadlineCategory,
-              date: ev.date,
-              clientEmail: ev.clientEmail,
-            }),
-            credentials: "include",
-          })
+          fetch(
+            `${ADMIN_END_POINT}/edit-calendar-event/${ev.originalEventId}`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                deadlineCategory: ev.deadlineCategory,
+                date: ev.date,
+                clientEmail: ev.clientEmail,
+              }),
+              credentials: "include",
+            }
+          )
         )
       );
+
       toast.success("Events updated successfully");
       setEditingDateKey(null);
       setEditingEvents([]);
@@ -355,6 +369,7 @@ export default function CalendarManagement() {
                 max="2100"
                 onChange={(e) => setCurrentYear(parseInt(e.target.value))}
               />
+
               <button
                 className={styles.navButton}
                 onClick={() => changeMonth(1)}
@@ -362,9 +377,16 @@ export default function CalendarManagement() {
                 &gt;
               </button>
             </div>
-            <button className={styles.todayButton} onClick={goToToday}>
-              Today
-            </button>
+            <div className={styles.tagSection}>
+              <button className={styles.todayButton} onClick={goToToday}>
+                Today
+              </button>
+              <ul>
+                <li className={styles.tags}>Today</li>
+                <li className={styles.tags}>Upcoming</li>
+                <li className={styles.tags}>Past</li>
+              </ul>
+            </div>
           </div>
 
           <div className={styles.calendarMain}>
@@ -434,7 +456,6 @@ export default function CalendarManagement() {
               <h3>
                 Agenda — {monthNames[currentMonth]} {currentYear}
               </h3>
-
               {/* Filters */}
               <div className={styles.filters}>
                 <input
@@ -476,41 +497,74 @@ export default function CalendarManagement() {
                   </button>
                 )}
               </div>
-
               {/* Events List */}
+              {/* Events List */}{" "}
               {filteredMonthDeadlines.length === 0 && (
                 <div className={styles.noEvents}>No Events this month.</div>
-              )}
-              {filteredMonthDeadlines.map((k) => {
-                const events = deadlines[k] || [];
-                return (
-                  <div key={k} className={styles.eventItem}>
+              )}{" "}
+              {filteredMonthDeadlines
+                .flatMap((dateKey) => {
+                  const events = deadlines[dateKey] || [];
+                  return events.flatMap((e) =>
+                    e.clients.map((client, idx) => ({
+                      _id: `${e._id}-${client.email}-${idx}`,
+                      title: e.title,
+                      clientName: client.name,
+                      clientEmail: client.email,
+                      dateKey,
+                      originalEvent: e,
+                    }))
+                  );
+                }) // ADD THIS NEW FILTER
+                .filter((ev) => {
+                  // Filter by client name if a client is selected
+                  if (filterClient && ev.clientName !== filterClient) {
+                    return false;
+                  } // Filter by category if a category is selected
+
+                  if (
+                    filterCategory &&
+                    ev.originalEvent.deadlineCategory.toString() !==
+                      filterCategory
+                  ) {
+                    return false;
+                  }
+                  return true;
+                })
+                .map((ev) => (
+                  <div key={ev._id} className={styles.eventItem}>
+                    {" "}
                     <div className={styles.eventHeader}>
-                      <strong>{new Date(k).toLocaleDateString("en-GB")}</strong>
+                      {" "}
+                      <strong>
+                        {" "}
+                        {new Date(ev.dateKey).toLocaleDateString("en-GB")}{" "}
+                      </strong>{" "}
                       <div className={styles.actionIcons}>
+                        {" "}
                         <FontAwesomeIcon
                           icon={faPen}
                           className={styles.iconButton}
-                          onClick={() => handleEditEvent(k, events)}
-                        />
+                          onClick={() =>
+                            handleEditEvent(ev.dateKey, [ev.originalEvent])
+                          }
+                        />{" "}
                         <FontAwesomeIcon
                           icon={faTrash}
                           className={styles.iconButton}
-                          onClick={() => handleDeleteEvent(k, events)}
-                        />
-                      </div>
+                          onClick={() =>
+                            handleDeleteEvent(ev.dateKey, [ev.originalEvent])
+                          }
+                        />{" "}
+                      </div>{" "}
                     </div>
-
                     <div className={styles.eventListCompact}>
-                      {events.map((e, i) => (
-                        <span key={i} className={styles.eventChip}>
-                          {e.title} : {e.clients.join(", ")}
-                        </span>
-                      ))}
+                      <span className={styles.eventChip}>
+                        {ev.title} : {ev.clientName} ({ev.clientEmail})
+                      </span>
                     </div>
                   </div>
-                );
-              })}
+                ))}
             </aside>
           </div>
         </div>
@@ -614,7 +668,6 @@ export default function CalendarManagement() {
         </div>
       )}
 
-      {/* 🔹 Edit Events Modal */}
       {editingDateKey && (
         <div
           className={styles.modalOverlay}
@@ -659,32 +712,19 @@ export default function CalendarManagement() {
                   className={styles.addInput}
                 />
 
-                {/* Multi-Client Selector */}
+                {/* Client Email Selector */}
                 <select
-                  value={
-                    ev.associatedClients?.[0]?.clientDetails.clientId || ""
-                  }
+                  value={ev.clientEmail}
                   onChange={(e) => {
-                    const client = clients.records.find(
-                      (c) => c._id === e.target.value
-                    );
                     const newEvents = [...editingEvents];
-                    newEvents[i].associatedClients = [
-                      {
-                        clientDetails: {
-                          clientId: client._id,
-                          clientName: client.name_,
-                        },
-                      },
-                    ];
+                    newEvents[i].clientEmail = e.target.value;
                     setEditingEvents(newEvents);
                   }}
                   className={styles.addInput}
                 >
-                  <option value="">-- Select Client --</option>
                   {clients.records?.map((client) => (
-                    <option key={client._id} value={client._id}>
-                      {client.name_} {client.email}
+                    <option key={client._id} value={client.email}>
+                      {client.email}
                     </option>
                   ))}
                 </select>
