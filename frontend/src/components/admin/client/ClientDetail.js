@@ -66,7 +66,6 @@ export default function ClientDetail() {
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             });
-            console.log("1", res);
 
             if (!res.ok) {
                 let errorData = await res.json();

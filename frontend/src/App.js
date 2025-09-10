@@ -33,6 +33,7 @@ import NotificationManagement from "./components/admin/notification/Notification
 import DynamicService from "./components/admin/service/DynamicService";
 import ServiceDetail from "./components/admin/service/ServiceDetail";
 import Navbar from "./components/Navbar";
+import { ClientServiceDetail } from "./components/admin/service/ClientServiceDetail";
 
 
 
@@ -183,18 +184,6 @@ function App() {
                 />
 
                 <Route
-                    path="/admin/service-management"
-                    element={
-                        <Layout>
-                            <ProtectedRoute>
-
-                                <ServiceManagement />
-                            </ProtectedRoute>
-                        </Layout>
-                    }
-                />
-
-                <Route
                     path="/admin/service/:id"
                     element={
                         <Layout>
@@ -211,6 +200,17 @@ function App() {
                         <Layout>
                             <ProtectedRoute>
                                 <ServiceDetail />
+                            </ProtectedRoute>
+                        </Layout>
+                    }
+                />
+
+                <Route
+                    path="/admin/client-service-details/:clientId"
+                    element={
+                        <Layout>
+                            <ProtectedRoute>
+                                <ClientServiceDetail />
                             </ProtectedRoute>
                         </Layout>
                     }
