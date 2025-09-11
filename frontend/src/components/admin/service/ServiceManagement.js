@@ -343,6 +343,7 @@ export default function ServiceManagement() {
             });
             const data = await res.json();
             if (!res.ok) toast.error(data.error || "Failed to fetch clients");
+            console.log("data 1",data);
             setClients(data);
         } catch (err) {
             console.error(err);

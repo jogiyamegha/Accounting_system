@@ -119,68 +119,41 @@
 }
 
 /* Buttons */
-.uploadBtn1,
-.uploadBtn2,
-.uploadBtn3,
+/* Green Button (Upload / Approve) */
 .uploadBtn4 {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #fff;
+  background: #fff;
+  border: 1px solid #86efac; /* light green border */
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  color: #15803d; /* dark green text */
+  font-size: 0.9rem;
 }
 
-.uploadBtn1 {
-  background: #b2b0e8;
-}
-.uploadBtn1:hover {
-  background: #9896e6;
-  transform: translateY(-2px);
-}
-
-.uploadBtn2 {
-  background: #7a85c1;
-}
-.uploadBtn2:hover {
-  background: #5f6bb3;
-  transform: translateY(-2px);
-}
-
-.uploadBtn3 {
-  background: #3b38a0;
-}
-.uploadBtn3:hover {
-  background: #2d2a9a;
-  transform: translateY(-2px);
-}
-
-.uploadBtn4 {
-  background: #2ea34a;
-}
 .uploadBtn4:hover {
-  background: #227535;
-  transform: translateY(-2px);
+  background: #dcfce7; /* light green background */
+  color: #166534; /* slightly darker green on hover */
+  transform: none;
+  box-shadow: none;
 }
 
 .uploadBtn5 {
-  background: rgb(254, 45, 45);
-  color: #fff;
-  /* margin-top: 0.5rem; */
-  border: none;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 14px;
-  font-weight: 500;
+  background: #fff;
+  border: 1px solid #fecaca; 
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  color: #b91c1c; 
+  font-size: 0.9rem;
 }
 
 .uploadBtn5:hover {
-  background: red;
-  transform: translateY(-2px);
+  background: #fee2e2; /* light red background */
+  color: #991b1b; /* darker red on hover */
+  transform: none;
+  box-shadow: none;
 }
 
 /* Filters */
@@ -242,29 +215,36 @@
 
 /* Back Button */
 .backButton {
-  position: fixed;
+  position: fixed; /* floating button */
   bottom: 20px;
   right: 20px;
+ 
   background: linear-gradient(135deg, #4a90e2, #357abd);
   color: white;
-  padding: 0.35em 1.2em 0.35em 1.2em;
+  font-family: inherit;
+  padding: 0.35em;
+  padding-left: 1.2em;
   font-size: 14px;
   font-weight: 500;
   border-radius: 30px;
   border: none;
+  letter-spacing: 0.05em;
   display: flex;
   align-items: center;
+  box-shadow: inset 0 0 1.6em -0.6em #2d5a9b;
+  overflow: hidden;
+  position: fixed;
   height: 2.8em;
   padding-right: 3.3em;
   cursor: pointer;
   z-index: 1100;
-  box-shadow: inset 0 0 1.6em -0.6em #2d5a9b;
   transition: all 0.3s ease;
 }
-
-.backButton .icon {
+ 
+.icon {
   background: white;
   margin-left: 1em;
+  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -272,20 +252,30 @@
   width: 2.2em;
   border-radius: 50%;
   box-shadow: 0.1em 0.1em 0.6em 0.2em #357abd;
-  position: absolute;
   right: 0.3em;
   transition: all 0.3s;
 }
-
+ 
 .backButton:hover .icon {
   width: calc(100% - 0.6em);
   border-radius: 0.9em;
+  right: 0.3em;
 }
-
+ 
+.icon svg {
+  width: 1.1em;
+  transition: transform 0.3s;
+  color: #357abd;
+}
+ 
 .backButton:hover .icon svg {
   transform: translateX(-0.1em);
 }
-
+ 
+.backButton:active .icon {
+  transform: scale(0.95);
+}
+ 
 /* Modal */
 .modalContent {
   background: #fff;

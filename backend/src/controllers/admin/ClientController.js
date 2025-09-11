@@ -257,7 +257,8 @@ exports.getClientsByService = async (req) => {
     .withBasicInfo()
     .execute();
 
-    // console.log("clients", clients.records);
+    console.log(clients);
+    console.log("clients", clients.records);
     
     return clients;
 }
@@ -270,6 +271,7 @@ exports.getAllClients = async (req) => {
         .withBasicInfo()
         .execute();
 
+    console.log("clients", clients);
     return clients;
 };
 

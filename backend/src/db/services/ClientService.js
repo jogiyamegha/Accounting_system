@@ -765,7 +765,7 @@ class ClientService {
             }
 
             let baseQuery = {
-                [TableFields.deleted]: false,
+                "deleted": false,
                 ...searchQuery,
             };
 
