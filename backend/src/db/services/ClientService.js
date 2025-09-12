@@ -313,7 +313,8 @@ class ClientService {
             },
             {
                 $set: {
-                    [`${TableFields.services}.$[elem].${TableFields.deleted}`]: true
+                    [`${TableFields.services}.$[elem].${TableFields.deleted}`]: true,
+                    [`${TableFields.services}.$[elem].${TableFields.deassignDate}`] : new Date()
                 }
             },
             {
@@ -558,6 +559,8 @@ class ClientService {
                 $push: {
                     [TableFields.services]: {
                         [TableFields.serviceId]: serviceId,
+                        [TableFields.serviceName] : service[TableFields.serviceName],
+                        [TableFields.serviceDuration] : service[TableFields.serviceDuration],
                         [TableFields.serviceStartDate]: todayDate,
                         [TableFields.endDate]: endDate,
                         [TableFields.serviceStatus]: 2,

@@ -94,6 +94,13 @@ const clientSchema = new Schema(
                     type : mongoose.Schema.Types.ObjectId,
                     ref : TableNames.Service
                 },
+                [TableFields.serviceName] : {
+                    type : String,
+                    trim : true
+                },
+                [TableFields.serviceDuration] : {
+                    type: Number
+                },
                 [TableFields.serviceStartDate] : {
                     type : Date,
                     default : Date.now() 
@@ -111,6 +118,9 @@ const clientSchema = new Schema(
                 [TableFields.deleted] : {
                     type: Boolean,
                     default : false
+                },
+                [TableFields.deassignDate] : {
+                    type : Date
                 }
             }
         ]
