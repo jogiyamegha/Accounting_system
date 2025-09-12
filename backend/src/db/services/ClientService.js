@@ -140,37 +140,84 @@ class ClientService {
         return false;
     }
 
-    static getAllClientsRelatedService = (serviceId) => {
-        const objectId = MongoUtil.toObjectId(serviceId);
-
+    static getAllClientsRelatedService = (serviceId, filter = {}) => {
         return new ProjectionBuilder(async function () {
-            return Client.find({
+            const objectId = MongoUtil.toObjectId(serviceId);
+
+            // Extract pagination, sorting, and count params
+            let limit = filter.limit || 0;
+            let skip = filter.skip || 0;
+            let sortKey = filter.sortKey || TableFields._createdAt;
+            let sortOrder = filter.sortOrder || 1;
+            let needCount = Util.parseBoolean(filter.needCount);
+
+            // Build search query
+            let searchQuery = {};
+            let searchTerm = filter.searchTerm;
+            if (searchTerm) {
+                searchQuery = {
+                    $or: [
+                        {
+                            [TableFields.name]: {
+                                $regex: Util.wrapWithRegexQry(searchTerm),
+                                $options: "i",
+                            },
+                        },
+                        {
+                            [TableFields.email]: {
+                                $regex: Util.wrapWithRegexQry(searchTerm),
+                                $options: "i",
+                            },
+                        },
+                        {
+                            [TableFields.phone]: {
+                                $regex: Util.wrapWithRegexQry(searchTerm),
+                                $options: "i",
+                            },
+                        },
+                    ],
+                };
+            }
+
+            // ✅ Base query:
+            // - Ensure outer deleted is false
+            // - Then check for service match with deleted=false
+            let baseQuery = {
+                [TableFields.deleted]: false, // outer deleted check
                 [TableFields.services]: {
                     $elemMatch: {
                         [TableFields.serviceId]: objectId,
-                        [TableFields.deleted]: false
-                    }
-                }
-            }).select({
-                // include all fields
-                _id: 1,
-                name: 1,
-                email: 1,
-                phone: 1,
-                // ... any other fields you have in Client schema
-                services: {
-                    $filter: {
-                        input: "$services",
-                        as: "service",
-                        cond: {
-                            $and: [
-                                { $eq: ["$$service.serviceId", objectId] },
-                                { $eq: ["$$service.deleted", false] }
-                            ]
-                        }
-                    }
-                }
-            });
+                        [TableFields.deleted]: false,
+                    },
+                },
+                ...searchQuery,
+            };
+
+            return await Promise.all([
+                needCount ? Client.countDocuments(baseQuery) : undefined,
+                Client.find(baseQuery)
+                    .limit(parseInt(limit))
+                    .skip(parseInt(skip))
+                    .sort({ [sortKey]: parseInt(sortOrder) })
+                    .select({
+                        _id: 1,
+                        name: 1,
+                        email: 1,
+                        phone: 1,
+                        services: {
+                            $filter: {
+                                input: "$services",
+                                as: "service",
+                                cond: {
+                                    $and: [
+                                        { $eq: ["$$service.serviceId", objectId] },
+                                        { $eq: ["$$service.deleted", false] }, // inner deleted check
+                                    ],
+                                },
+                            },
+                        },
+                    }),
+            ]).then(([total, records]) => ({ total, records }));
         });
     };
 

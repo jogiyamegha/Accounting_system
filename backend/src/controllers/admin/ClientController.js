@@ -249,18 +249,8 @@ exports.deleteClient = async (req) => {
 };
 
 exports.getClientsByService = async (req) => {
-    // const serviceId = req.params[TableFields.ID];
-    // return await ClientService.getAllClientsRelatedService(serviceId).withBasicInfo().execute();
-    const clients = await ClientService.listClients({
-        ...req.query
-    })
-    .withBasicInfo()
-    .execute();
-
-    console.log(clients);
-    console.log("clients", clients.records);
-    
-    return clients;
+    const serviceId = req.params[TableFields.ID];
+    return await ClientService.getAllClientsRelatedService(serviceId).withBasicInfo().execute();
 }
 
 exports.getAllClients = async (req) => {
@@ -274,6 +264,17 @@ exports.getAllClients = async (req) => {
     console.log("clients", clients);
     return clients;
 };
+
+exports.getClientServiceDetail = async(req) => {
+    const clientId = req.params[TableFields.clientId];
+    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+    console.log(client[TableFields.services]);
+    // return client[TableFields.services];
+    return {
+        clientInfo: client,
+        serviceArray : client[TableFields.services]
+    }
+}
 
 async function parseAndValidateClient(
     reqBody,
