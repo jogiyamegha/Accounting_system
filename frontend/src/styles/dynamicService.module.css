@@ -68,7 +68,7 @@
 
 .card tbody tr:hover {
   background: #eef1f1e9;
-  transform: scale(1.002);
+  /* transform: scale(1.002); */
   cursor: pointer;
 }
 
@@ -77,6 +77,7 @@
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  margin-top: 4px;
 }
 
 /* Client Card List */
@@ -121,39 +122,67 @@
 /* Buttons */
 /* Green Button (Upload / Approve) */
 .uploadBtn4 {
-  background: #fff;
-  border: 1px solid #86efac; /* light green border */
+  background: #d1fae5; /* softer minty green */
+  border: 1px solid #34d399; /* green-400 border */
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 8px;
-  transition: all 0.25s ease;
-  color: #15803d; /* dark green text */
+  padding: 8px 14px;
+  border-radius: 10px;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease,
+    color 0.25s ease, transform 0.2s ease;
+  color: #047857; /* green-700 text */
   font-size: 0.9rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px; /* if you add icon */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .uploadBtn4:hover {
-  background: #dcfce7; /* light green background */
-  color: #166534; /* slightly darker green on hover */
-  transform: none;
-  box-shadow: none;
+  background: #a7f3d0; /* green-200 hover */
+  color: #065f46; /* green-800 text */
+  border-color: #10b981; /* green-500 border */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* subtle hover elevation */
+  transform: translateY(-1px); /* subtle lift */
+}
+
+.uploadBtn4:active {
+  background: #6ee7b7; /* green-300 active */
+  transform: translateY(0); /* reset lift */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .uploadBtn5 {
-  background: #fff;
-  border: 1px solid #fecaca;
+  background: #fef2f2; /* soft red background */
+  border: 1px solid #fca5a5; /* red-300 border */
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 8px;
-  transition: all 0.25s ease;
-  color: #b91c1c;
+  padding: 8px 14px;
+  border-radius: 10px;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease,
+    color 0.25s ease, transform 0.2s ease;
+  color: #b91c1c; /* red-700 text */
   font-size: 0.9rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px; /* space for optional icon */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .uploadBtn5:hover {
-  background: #fee2e2; /* light red background */
-  color: #991b1b; /* darker red on hover */
-  transform: none;
-  box-shadow: none;
+  background: #fee2e2; /* red-200 hover */
+  color: #991b1b; /* red-800 text */
+  border-color: #f87171; /* red-400 border */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* subtle hover elevation */
+  transform: translateY(-1px); /* subtle lift */
+}
+
+.uploadBtn5:active {
+  background: #fecaca; /* red-300 active */
+  transform: translateY(0); /* reset lift */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 /* Filters */
@@ -221,15 +250,11 @@
   padding: 8px 16px;
   font-size: 0.8rem;
   font-weight: 600;
-  /* border: 1px solid #666; */
   border-radius: 20px; /* pill shape */
-  cursor: pointer;
-  /* transition: transform 0.2s ease, box-shadow 0.2s ease; */
+  border: none;
+  cursor: default; /* since it’s informational */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   white-space: nowrap;
-
-  border: 1px solid #ccc;
-  background: #f9f9f9;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .statusButton:hover {
@@ -243,48 +268,114 @@
   color: #333;
   font-size: 0.85rem;
   font-weight: 500;
-  padding: 8px 14px; 
-  border-bottom: 1px solid #eee; 
+  padding: 8px 14px;
+  border-bottom: 1px solid #eee;
 }
 
 .statusButton option:checked,
 .statusButton option:hover {
-  background-color: #f5f5f5; 
+  background-color: #f5f5f5;
   color: #007bff;
 }
 
 /* Status variations */
 .statusPending {
-  /* border: 2px solid #e69100; */
-  padding: 4px;
-  border-radius: 10px;
+  border: 2px solid #e69100;
   background-color: #fff7e6;
   color: #e69100;
-  box-shadow: 2px 2px 4px rgba(37, 99, 235, 0.15);
-  /* font-size: 12px; */
-  font-weight: 500;
 }
 
 .statusApproved {
-  /* border: 2px solid #155724; */
-  padding: 4px;
-  border-radius: 10px;
-  font-weight: 500;
+  border: 2px solid #155724;
 
   background-color: #e6f9ed;
   color: #155724;
-  box-shadow: 2px 2px 4px rgba(37, 99, 235, 0.15);
 }
 
 .statusRejected {
-  /* border: 2px solid #b91c1c; */
-  padding: 4px;
-  border-radius: 10px;
-  font-weight: 500;
-
+  border: 2px solid #b91c1c;
   background-color: #fde8e8;
   color: #b91c1c;
-  box-shadow: 2px 2px 4px rgba(37, 99, 235, 0.15);
+}
+
+/* Actions dropdown*/
+
+.actionsCell {
+  position: relative;
+  text-align: center; /* center horizontally */
+  vertical-align: middle;
+}
+/* Wrapper around the dots button */
+.menuWrapper {
+  display: flex; /* make flex container */
+  justify-content: center; /* center horizontally */
+  align-items: center; /* center vertically */
+  position: relative; /* needed for dropdown absolute positioning */
+  width: 100%; /* ensure full width of cell */
+}
+
+/* The dots button */
+.dotsButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  /* line-height: 1; */
+  color: #475569;
+}
+
+/* The dropdown itself */
+.dropdownMenu {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  /* min-width: 180px; */
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+
+  opacity: 0;
+  transform: translateY(-8px);
+  visibility: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+.dropdownMenu.open {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+/* Each item */
+.dropdownItem {
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease, padding-left 0.2s ease;
+}
+
+.dropdownItem:hover {
+  background: #f7f9fc; /* soft highlight */
+  padding-left: 20px; /* slight shift for feedback */
+  color: #007bff;
+}
+
+.dropdownItem + .dropdownItem {
+  border-top: 1px solid #f0f0f0;
 }
 
 /* Back Button */
@@ -421,6 +512,101 @@
   border-color: #2563eb;
   font-weight: 600;
   box-shadow: 0 3px 6px rgba(37, 99, 235, 0.25);
+}
+
+/* Overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+/* Modal box */
+.modalContent {
+  background: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  animation: fadeInScale 0.3s ease forwards;
+}
+
+.modalContent h2 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #1e293b;
+}
+
+/* Inputs */
+.modalContent form label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.modalContent form input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+/* Actions */
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* Buttons */
+.submitBtn {
+  background: #4f46e5;
+  color: #fff;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.submitBtn:hover {
+  background: #4338ca;
+}
+
+.cancelBtn {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.cancelBtn:hover {
+  background: #e5e7eb;
+}
+
+/* Animation */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* ==========================

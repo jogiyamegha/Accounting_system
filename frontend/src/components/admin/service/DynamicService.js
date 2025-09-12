@@ -6,7 +6,12 @@ import styles from "../../../styles/dynamicService.module.css";
 import loaderStyles from "../../../styles/loader.module.css";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAddressCard, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAddressCard,
+  faArrowLeft,
+  faEllipsisH,
+  faEllipsisV,
+} from "@fortawesome/free-solid-svg-icons";
 
 const serviceStatusNumberToString = {
   1: "not Started",
@@ -15,12 +20,12 @@ const serviceStatusNumberToString = {
 };
 
 // convert number status → string
-const getStatusKey = (statusValue) => {
-  if (statusValue === 1) return "not Started";
-  if (statusValue === 2) return "in Progress";
-  if (statusValue === 3) return "completed";
-  return "";
-};
+// const getStatusKey = (statusValue) => {
+//   if (statusValue === 1) return "not Started";
+//   if (statusValue === 2) return "in Progress";
+//   if (statusValue === 3) return "completed";
+//   return "";
+// };
 
 const formatDate = (dateString) => {
   if (!dateString) return "-";
@@ -40,8 +45,20 @@ export default function DynamicService() {
   const [statusUpdates, setStatusUpdates] = useState({});
   const [totalClients, setTotalClients] = useState(0);
 
+  // At the top of your component
+  const [showAssignStaffModal, setShowAssignStaffModal] = useState(false);
+  const [staffName, setStaffName] = useState("");
+  const [staffEmail, setStaffEmail] = useState("");
+  const [currentServiceClient, setCurrentServiceClient] = useState(null); // store service+client info
+
   const [page, setPage] = useState(1);
   const limit = 10;
+
+  const [openMenuId, setOpenMenuId] = useState(null);
+
+  const toggleMenu = (serviceId) => {
+    setOpenMenuId(openMenuId === serviceId ? null : serviceId);
+  };
 
   const getServiceName = async () => {
     try {
@@ -160,7 +177,7 @@ export default function DynamicService() {
 
   const handleStatusChangeUpdate = async (serviceId, clientId, newStatus) => {
     try {
-      // console.log("newStatus", newStatus);
+      console.log("newStatus", newStatus);
       if (!newStatus) {
         toast.warning("Please select a status before updating.");
         return;
@@ -190,6 +207,14 @@ export default function DynamicService() {
     }
   };
 
+  const assignStaff = () => {
+    alert("Heyy");
+  };
+
+  const manageDocument = () => {
+    alert("Heyy");
+  };
+
   const goToClientDetails = (clientId) => {
     navigate(`/admin/client-service-detail/${clientId}`);
   };
@@ -207,6 +232,12 @@ export default function DynamicService() {
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setPage(p);
   };
+
+  useEffect(() => {
+    const handleClickOutside = () => setOpenMenuId(null);
+    window.addEventListener("click", handleClickOutside);
+    return () => window.removeEventListener("click", handleClickOutside);
+  }, []);
 
   return (
     <div className={styles.pageWrapper}>
@@ -293,8 +324,9 @@ export default function DynamicService() {
                   <th>Start Date</th>
                   <th>End Date</th>
                   <th>Status</th>
-                  <th>Change Status</th>
+                  <th>Staff Assigned</th>
                   <th style={{ textAlign: "center" }}>Actions</th>
+                  <th style={{ textAlign: "center" }}>More Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -332,19 +364,12 @@ export default function DynamicService() {
                         return matchesStatus && matchesEndDate;
                       })
                       .map((service, idx) => {
-                        const currentKey =
-                          statusUpdates[service._id] ??
-                          getStatusKey(service.serviceStatus) ??
-                          "";
+                        const currentStatus = Number(
+                          statusUpdates[service._id] ?? service.serviceStatus
+                        );
 
-                        const statusClass =
-                          currentKey === "completed"
-                            ? styles.statusApproved
-                            : currentKey === "not Started"
-                            ? styles.statusRejected
-                            : currentKey === "in Progress"
-                            ? styles.statusPending
-                            : "";
+                        // console.log("first", currentStatus);
+
                         return (
                           <tr
                             key={`${client._id}-${idx}`}
@@ -359,18 +384,14 @@ export default function DynamicService() {
                             <td>{formatDate(service.serviceStartDate)}</td>
                             <td>{formatDate(service.endDate)}</td>
                             <td>
-                              <span className={`${statusClass}`}>
-                                {
-                                  serviceStatusNumberToString[
-                                    service.serviceStatus
-                                  ]
-                                }
-                              </span>
-                            </td>
-                            <td>
                               <select
-                                placeholder="Select Status"
-                                className={styles.statusButton}
+                                className={`${styles.statusButton} ${
+                                  currentStatus === ServiceStatus.inProgress
+                                    ? styles.statusPending
+                                    : currentStatus === ServiceStatus.completed
+                                    ? styles.statusApproved
+                                    : styles.statusRejected
+                                }`}
                                 onClick={(e) => e.stopPropagation()}
                                 value={
                                   statusUpdates[service._id] ??
@@ -378,14 +399,14 @@ export default function DynamicService() {
                                   ""
                                 }
                                 onChange={(e) => {
-                                  const selectedValue = e.target.value;
+                                  const selectedValue = Number(e.target.value);
 
                                   setStatusUpdates((prev) => ({
                                     ...prev,
                                     [service._id]: selectedValue,
                                   }));
 
-                                  // directly pass the selectedValue to the handler
+                                  // your existing handler
                                   handleStatusChangeUpdate(
                                     service._id,
                                     client._id,
@@ -393,14 +414,14 @@ export default function DynamicService() {
                                   );
                                 }}
                               >
-                                <option value="">Select Status</option>
                                 {Object.keys(ServiceStatus).map((key) => (
-                                  <option key={key} value={key}>
+                                  <option key={key} value={ServiceStatus[key]}>
                                     {key}
                                   </option>
                                 ))}
                               </select>
                             </td>
+                            <td  ><p style={{textAlign: "center"}}>NA</p></td>
 
                             <td
                               className={styles.actions}
@@ -436,6 +457,61 @@ export default function DynamicService() {
                                 </button>
                               )}
                             </td>
+
+                            <td
+                              className={styles.actionsCell}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <div className={styles.menuWrapper}>
+                                <button
+                                  type="button"
+                                  className={styles.dotsButton}
+                                  onClick={() => toggleMenu(service._id)}
+                                >
+                                  <FontAwesomeIcon icon={faEllipsisH} />
+                                </button>
+
+                                <div
+                                  className={`${styles.dropdownMenu} ${
+                                    openMenuId === service._id
+                                      ? styles.open
+                                      : ""
+                                  }`}
+                                >
+                                  <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => {
+                                      manageDocument(
+                                        service.serviceId?._id ||
+                                          service.serviceId,
+                                        client._id
+                                      );
+                                      setOpenMenuId(null);
+                                    }}
+                                  >
+                                    Manage Document
+                                  </button>
+
+                                  <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => {
+                                      setCurrentServiceClient({
+                                        serviceId:
+                                          service.serviceId?._id ||
+                                          service.serviceId,
+                                        clientId: client._id,
+                                      });
+                                      setShowAssignStaffModal(true);
+                                      setOpenMenuId(null);
+                                    }}
+                                  >
+                                    Assign Staff
+                                  </button>
+
+                                  
+                                </div>
+                              </div>
+                            </td>
                           </tr>
                         );
                       })
@@ -467,6 +543,63 @@ export default function DynamicService() {
             </button>
           </div>
         </section>
+
+        {showAssignStaffModal && (
+  <div className={styles.modalOverlay}>
+    <div className={styles.modalContent}>
+      <h2>Assign Staff</h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          // call your assignStaff here
+          assignStaff(
+            currentServiceClient.serviceId,
+            currentServiceClient.clientId,
+            { name: staffName, email: staffEmail }
+          );
+          // close modal
+          setShowAssignStaffModal(false);
+          setStaffName("");
+          setStaffEmail("");
+        }}
+      >
+        <label>
+          Staff Name:
+          <input
+            type="text"
+            value={staffName}
+            onChange={(e) => setStaffName(e.target.value)}
+            required
+          />
+        </label>
+
+        <label>
+          Staff Email:
+          <input
+            type="email"
+            value={staffEmail}
+            onChange={(e) => setStaffEmail(e.target.value)}
+            required
+          />
+        </label>
+
+        <div className={styles.modalActions}>
+          <button type="submit" className={styles.submitBtn}>
+            Assign
+          </button>
+          <button
+            type="button"
+            className={styles.cancelBtn}
+            onClick={() => setShowAssignStaffModal(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
 
         <button
           className={styles.backButton}

@@ -580,7 +580,7 @@ export default function DocumentManagement() {
                             onChange={(e) => {
                               const selectedStatus = e.target.value;
 
-                              console.log("ddj", selectedStatus);
+                              // console.log("ddj", selectedStatus);
 
                               // update local state
                               setEditedDocs((prev) => ({
