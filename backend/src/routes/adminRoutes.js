@@ -244,6 +244,16 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/edit-client-service-detail/:${TableFields.clientId}/:${TableFields.serviceId}`)
+.asUPDATE(ClientController.editClientServiceDetail)
+.useAdminAuth()
+.build()
+
+.addPath(`/client-service-de-assign/:${TableFields.serviceId}/:${TableFields.clientId}`)
+.asDELETE(ClientController.clientServiceDeassign)
+.useAdminAuth()
+.build()
+
 .addPath(`/documents/:${TableFields.clientId}/:${TableFields.serviceType}`)
 .asGET(DocumentController.getClientDocuments)
 .useAdminAuth()

@@ -52,10 +52,6 @@ exports.editEvent = async (req) => {
     const reqBody = req.body;
     const eventId = req.params[TableFields.ID];
 
-    console.log("reqBody",reqBody);
-    // console.log(eventId);
-
-
     const event = await CalendarService.findById(eventId).withBasicInfo().execute();
     if(!event) {
         throw new ValidationError(ValidationMsg.EventNotFound)

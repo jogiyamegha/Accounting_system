@@ -121,6 +121,9 @@ const clientSchema = new Schema(
                 },
                 [TableFields.deassignDate] : {
                     type : Date
+                },
+                [TableFields.updatedServiceDuration] : {
+                    type : Number
                 }
             }
         ]

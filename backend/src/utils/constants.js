@@ -352,6 +352,7 @@ const TableFields = (function () {
   TableFields.serviceStatus = "serviceStatus";
   TableFields.serviceStatusChangeDate = "serviceStatusChangeDate";
   TableFields.deassignDate = "deassignDate";
+  TableFields.updatedServiceDuration = 'updatedServiceDuration';  
   TableFields.clients = "clients";
   TableFields.durationType = "durationType";
   TableFields.startingAmount = "startingAmount";

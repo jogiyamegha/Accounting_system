@@ -10,6 +10,7 @@ const ValidationError = require("../../utils/ValidationError");
 const Util = require("../../utils/util");
 const { MongoUtil } = require("../mongoose");
 const ServiceService = require("./ServiceService");
+const moment = require('moment');
 
 class ClientService {
     static userExists = (id) => {
@@ -26,7 +27,6 @@ class ClientService {
 
     static isServiceExistsInClient = async (client, serviceId) => {
         const services = client[TableFields.services];
-        console.log(services);
         for (let service of services) {
             if (service[TableFields.ID].toString() === serviceId) {
                 return true;
@@ -314,7 +314,7 @@ class ClientService {
             {
                 $set: {
                     [`${TableFields.services}.$[elem].${TableFields.deleted}`]: true,
-                    [`${TableFields.services}.$[elem].${TableFields.deassignDate}`] : new Date()
+                    [`${TableFields.services}.$[elem].${TableFields.deassignDate}`]: new Date()
                 }
             },
             {
@@ -355,10 +355,11 @@ class ClientService {
     static updateServiceStatus = async (serviceId, clientId, newStatus) => {
         const statusMap = {
             notStarted: ServiceStatus.notStarted,
-            "not started": ServiceStatus.notStarted,
+            "not Started": ServiceStatus.notStarted,
             inProgress: ServiceStatus.inProgress,
-            "in progress": ServiceStatus.inProgress,
+            "in Progress": ServiceStatus.inProgress,
             completed: ServiceStatus.completed,
+            "completed": ServiceStatus.completed,
             1: ServiceStatus.notStarted,
             2: ServiceStatus.inProgress,
             3: ServiceStatus.completed,
@@ -398,9 +399,6 @@ class ClientService {
         const endDate = new Date(todayDate);
         endDate.setDate(endDate.getDate() + service[TableFields.serviceDuration]);
 
-        console.log("Start Date:", todayDate);
-        console.log("End Date:", endDate);
-
         return await Client.updateOne(
             {
                 [TableFields.ID]: clientId
@@ -417,6 +415,151 @@ class ClientService {
             }
         );
     }
+
+    // static updateClientServiceDetail = async (client, serviceId, reqBody) => {
+    //     // Build dynamic update object only with provided fields
+    //     const updateFields = {};
+    //     if (reqBody[TableFields.serviceStartDate] !== undefined) {
+    //         updateFields[`services.$.${TableFields.serviceStartDate}`] =
+    //             reqBody[TableFields.serviceStartDate];
+    //     }
+    //     if (reqBody[TableFields.endDate] !== undefined) {
+    //         updateFields[`services.$.${TableFields.endDate}`] =
+    //             reqBody[TableFields.endDate];
+    //     }
+    //     if (reqBody[TableFields.serviceStatusChangeDate] !== undefined) {
+    //         updateFields[`services.$.${TableFields.serviceStatusChangeDate}`] =
+    //             reqBody[TableFields.serviceStatusChangeDate];
+    //     }
+
+    //     if (Object.keys(updateFields).length === 0) {
+    //         throw new Error("No valid fields to update");
+    //     }
+
+    //     return await Client.findOneAndUpdate(
+    //         {
+    //             [TableFields.ID]: client[TableFields.ID],
+    //             [`${TableFields.services}.${TableFields.ID}`]: serviceId,
+    //         },
+    //         {
+    //             $set: updateFields,
+    //         },
+    //         { new: true } // return updated document
+    //     );
+    // };
+
+
+    static updateClientServiceDetail = async (client, serviceId, reqBody) => {
+        // 1. Fetch the client first to get existing service data
+        const clientDoc = await Client.findOne({
+            [TableFields.ID]: client[TableFields.ID],
+            [`${TableFields.services}.${TableFields.ID}`]: serviceId,
+        });
+
+        if (!clientDoc) {
+            throw new Error("Client or service not found");
+        }
+
+        const service = clientDoc.services.find(
+            (s) => s._id.toString() === serviceId.toString()
+        );
+
+        if (!service) {
+            throw new Error("Service not found in client");
+        }
+
+        const updateFields = {};
+        const today = moment().startOf("day");
+
+        // -------------------------------
+        // 2. Validate and update serviceStartDate
+        // -------------------------------
+        if (reqBody[TableFields.serviceStartDate] !== undefined) {
+            const newStartDate = moment(reqBody[TableFields.serviceStartDate]).startOf("day");
+            if (newStartDate.isBefore(today)) {
+                throw new Error("Service start date cannot be in the past");
+            }
+            updateFields[`services.$.${TableFields.serviceStartDate}`] = newStartDate.toDate();
+
+            // Set service status = 1 (not started) if start date is in future
+            if (newStartDate.isAfter(today)) {
+                updateFields[`services.$.${TableFields.serviceStatus}`] = 1;
+            }
+        }
+
+        // -------------------------------
+        // 3. Validate and update endDate
+        // -------------------------------
+        if (reqBody[TableFields.endDate] !== undefined) {
+            const newEndDate = moment(reqBody[TableFields.endDate]).startOf("day");
+            const baseStartDate =
+                reqBody[TableFields.serviceStartDate] !== undefined
+                    ? moment(reqBody[TableFields.serviceStartDate]).startOf("day")
+                    : moment(service.serviceStartDate).startOf("day");
+
+            if (newEndDate.isBefore(baseStartDate)) {
+                throw new Error("End date cannot be before start date");
+            }
+
+            updateFields[`services.$.${TableFields.endDate}`] = newEndDate.toDate();
+
+            // Calculate updated duration
+            const newDuration = newEndDate.diff(baseStartDate, "days") + 1; // inclusive of start day
+            updateFields[`services.$.updatedServiceDuration`] = newDuration;
+
+            // If start date was also changed, set status = 1
+            if (reqBody[TableFields.serviceStartDate] !== undefined) {
+                updateFields[`services.$.${TableFields.serviceStatus}`] = 1;
+            }
+        }
+
+        // -------------------------------
+        // 4. Update serviceStatusChangeDate if provided
+        // -------------------------------
+        if (reqBody[TableFields.serviceStatusChangeDate] !== undefined) {
+            updateFields[`services.$.${TableFields.serviceStatusChangeDate}`] =
+                reqBody[TableFields.serviceStatusChangeDate];
+        }
+
+        if (Object.keys(updateFields).length === 0) {
+            throw new Error("No valid fields to update");
+        }
+
+        // -------------------------------
+        // 5. Perform the update
+        // -------------------------------
+        return await Client.findOneAndUpdate(
+            {
+                [TableFields.ID]: client[TableFields.ID],
+                [`${TableFields.services}.${TableFields.ID}`]: serviceId,
+            },
+            { $set: updateFields },
+            { new: true }
+        );
+    };
+
+
+    static updateClientServiceDeassign = async (client, serviceId) => {
+        return await Client.findByIdAndUpdate(
+            client[TableFields.ID],
+            {
+                $set: {
+                    [`${TableFields.services}.$[elem].${TableFields.deleted}`]: true,
+                    [`${TableFields.services}.$[elem].${TableFields.deassignDate}`]: Date.now(),
+                },
+            },
+            {
+                arrayFilters: [
+                    {
+                        "elem._id": serviceId,
+                        [`elem.${TableFields.deleted}`]: false,
+                    },
+                ],
+                new: true,
+            }
+        )
+    }
+
 
     static totalRegisteredClients = async () => {
         const clientCounts = await Client.find({
@@ -559,8 +702,8 @@ class ClientService {
                 $push: {
                     [TableFields.services]: {
                         [TableFields.serviceId]: serviceId,
-                        [TableFields.serviceName] : service[TableFields.serviceName],
-                        [TableFields.serviceDuration] : service[TableFields.serviceDuration],
+                        [TableFields.serviceName]: service[TableFields.serviceName],
+                        [TableFields.serviceDuration]: service[TableFields.serviceDuration],
                         [TableFields.serviceStartDate]: todayDate,
                         [TableFields.endDate]: endDate,
                         [TableFields.serviceStatus]: 2,

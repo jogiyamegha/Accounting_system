@@ -165,7 +165,6 @@ exports.editClientDocumentData = async (req) => {
 
 exports.editClient = async (req) => {
     let reqBody = req.body;
-    console.log(reqBody);
     // let files = req.files;
     // const clientId = req.params[TableFields.clientId];
 
@@ -261,19 +260,48 @@ exports.getAllClients = async (req) => {
         .withBasicInfo()
         .execute();
 
-    console.log("clients", clients);
     return clients;
 };
 
 exports.getClientServiceDetail = async(req) => {
     const clientId = req.params[TableFields.clientId];
     const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
-    console.log(client[TableFields.services]);
-    // return client[TableFields.services];
     return {
         clientInfo: client,
         serviceArray : client[TableFields.services]
     }
+}
+
+exports.editClientServiceDetail = async (req) => {
+    const clientId = req.params[TableFields.clientId];
+    const serviceId = req.params[TableFields.serviceId];
+
+    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+    if(!client) {
+        throw new ValidationError(ValidationMsg.ClientNotExists);
+    }
+    const isServiceAssigned = await ClientService.isServiceExistsInClient(client, serviceId)
+    if(!isServiceAssigned) {
+        throw new ValidationError(ValidationMsg.ServiceIsNotAssigned);
+    }
+
+    return await ClientService.updateClientServiceDetail(client,serviceId,  req.body)
+}
+
+exports.clientServiceDeassign = async (req) => {
+    const clientId = req.params[TableFields.clientId];
+    const serviceId = req.params[TableFields.serviceId];
+
+    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+    if(!client) {
+        throw new ValidationError(ValidationMsg.ClientNotExists);
+    }
+    const isServiceAssigned = await ClientService.isServiceExistsInClient(client, serviceId)
+    if(!isServiceAssigned) {
+        throw new ValidationError(ValidationMsg.ServiceIsNotAssigned);
+    }
+    return await ClientService.updateClientServiceDeassign(client,serviceId)
+
 }
 
 async function parseAndValidateClient(
@@ -476,9 +504,6 @@ async function parseAndValidateEditedClientsDocuments(
 
     let editedDocs = [];
     let newDocs = [];
-
-
-    console.log("reqBody",reqBody);
 
     // ---- Parse editedDocs
     for (const existingDoc of existingDocs) {
