@@ -234,8 +234,9 @@
 /* Specific colors */
 .tags:nth-child(1)::before {
   /* background-color: #2563eb;  */
-  background-color: #e0ecff; 
-  border-color: #93c5fd;
+  background-color: #93c5fd; 
+  /* background-color: #e0ecff;  */
+  /* border-color: #93c5fd; */
 
 }
 

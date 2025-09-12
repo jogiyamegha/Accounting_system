@@ -5,24 +5,28 @@ const ClientService = require("../../db/services/ClientService");
 
 exports.addNotification = async (req) => {
     let reqBody = req.body;
+
+    console.log("reqBody",reqBody);
+
     let client = await ClientService.findByEmail(reqBody[TableFields.email]).withBasicInfo().execute();
 
     let receiverId = client[TableFields.ID];
 
     let existingNotification = await NotificationService.getExistingNotification(receiverId, reqBody.type, reqBody[TableFields.expiresAt] , reqBody.message);
 
-    if (existingNotification) {
-        return existingNotification; 
-    }
-    const result = await parseAndValidateNotification(
-        reqBody,
-        receiverId,
-        async function (updatedFields){
-            return await NotificationService.insertRecord(updatedFields)
-        }
-    )
 
-    return result;
+    // if (existingNotification) {
+    //     return existingNotification; 
+    // }
+    // const result = await parseAndValidateNotification(
+    //     reqBody,
+    //     receiverId,
+    //     async function (updatedFields){
+    //         return await NotificationService.insertRecord(updatedFields)
+    //     }
+    // )
+
+    // return result;
 }
 
 exports.getAllNotifications = async (req) => {
@@ -68,6 +72,7 @@ async function parseAndValidateNotification (
             "Client Active Status" : NotificationTypes.clientActiveStatus,
             "System Update" : NotificationTypes.systemUpdate,
             "Payroll Alert" : NotificationTypes.payrollReminder,
+            "Service Overdue" : NotificationTypes.serviceOverdue,
         };
         notfType = notificationTypeMap[notificationType];
     }
