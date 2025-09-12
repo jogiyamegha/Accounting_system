@@ -29,6 +29,7 @@ exports.getDocumentsForAdmin = async (req) => {
 };
 
 exports.updateDocumentStatus = async (req) => {
+    console.log("first", req.body);
     const clientId = req.params.clientId;
     const documentId = req.body.docId;
     const docStatus = req.body.status;

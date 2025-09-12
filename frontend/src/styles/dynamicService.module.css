@@ -140,12 +140,12 @@
 
 .uploadBtn5 {
   background: #fff;
-  border: 1px solid #fecaca; 
+  border: 1px solid #fecaca;
   cursor: pointer;
   padding: 6px 10px;
   border-radius: 8px;
   transition: all 0.25s ease;
-  color: #b91c1c; 
+  color: #b91c1c;
   font-size: 0.9rem;
 }
 
@@ -213,12 +213,81 @@
   appearance: none; /* Cleaner look on some browsers */
 }
 
+/* Base pill style */
+.statusButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* space between icon and text */
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  /* border: 1px solid #666; */
+  border-radius: 20px; /* pill shape */
+  cursor: pointer;
+  /* transition: transform 0.2s ease, box-shadow 0.2s ease; */
+  white-space: nowrap;
+
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.statusButton:hover {
+  transform: scale(1.03);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Options inside dropdown */
+.statusButton option {
+  background-color: #fff;
+  color: #333;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 8px 14px; /* only some browsers respect this */
+  border-bottom: 1px solid #eee; /* subtle separator */
+}
+
+.statusButton option:checked,
+.statusButton option:hover {
+  background-color: #f5f5f5; /* highlight on hover/selected */
+  color: #007bff;
+}
+
+/* Status variations */
+.statusPending {
+  /* border: 2px solid #e69100; */
+  padding: 4px;
+  border-radius: 10px;
+  background-color: #fff7e6;
+  color: #e69100;
+  box-shadow: 2px 2px 4px rgba(37, 99, 235, 0.15);
+}
+
+.statusApproved {
+  /* border: 2px solid #155724; */
+  padding: 4px;
+  border-radius: 10px;
+
+  background-color: #e6f9ed;
+  color: #155724;
+  box-shadow: 2px 2px 4px rgba(37, 99, 235, 0.15);
+}
+
+.statusRejected {
+  /* border: 2px solid #b91c1c; */
+  padding: 4px;
+  border-radius: 10px;
+  background-color: #fde8e8;
+  color: #b91c1c;
+  box-shadow: 2px 2px 4px rgba(37, 99, 235, 0.15);
+}
+
 /* Back Button */
 .backButton {
   position: fixed; /* floating button */
   bottom: 20px;
   right: 20px;
- 
+
   background: linear-gradient(135deg, #4a90e2, #357abd);
   color: white;
   font-family: inherit;
@@ -240,7 +309,7 @@
   z-index: 1100;
   transition: all 0.3s ease;
 }
- 
+
 .icon {
   background: white;
   margin-left: 1em;
@@ -255,27 +324,27 @@
   right: 0.3em;
   transition: all 0.3s;
 }
- 
+
 .backButton:hover .icon {
   width: calc(100% - 0.6em);
   border-radius: 0.9em;
   right: 0.3em;
 }
- 
+
 .icon svg {
   width: 1.1em;
   transition: transform 0.3s;
   color: #357abd;
 }
- 
+
 .backButton:hover .icon svg {
   transform: translateX(-0.1em);
 }
- 
+
 .backButton:active .icon {
   transform: scale(0.95);
 }
- 
+
 /* Modal */
 .modalContent {
   background: #fff;
@@ -301,7 +370,6 @@
   background: #a0aec0;
 }
 
-
 .pagination {
   margin-top: 24px;
   display: flex;
@@ -315,23 +383,22 @@
 /* Default button style */
 .pagination button {
   padding: 8px 16px;
-  border: 1px solid #cbd5e1;          /* neutral border */
+  border: 1px solid #cbd5e1; /* neutral border */
   border-radius: 8px;
-  background: #fff;                   /* white background */
-  color: #334155;                     /* dark text */
+  background: #fff; /* white background */
+  color: #334155; /* dark text */
   font-size: 0.85rem;
   cursor: pointer;
   min-width: 38px;
   text-align: center;
-  transition: background-color 0.25s ease, 
-              color 0.25s ease,
-              box-shadow 0.25s ease;
+  transition: background-color 0.25s ease, color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 /* Hover effect */
 .pagination button:hover:not(:disabled) {
   background: #e2e8f0;
-  color: #1d4ed8;                     /* blue text on hover */
+  color: #1d4ed8; /* blue text on hover */
   box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
 }
 
@@ -344,13 +411,12 @@
 
 /* Active (current page) */
 .activePage {
-  background: #2563eb;                /* blue background */
-  color: #fff;                        /* white text */
+  background: #2563eb; /* blue background */
+  color: #fff; /* white text */
   border-color: #2563eb;
   font-weight: 600;
   box-shadow: 0 3px 6px rgba(37, 99, 235, 0.25);
 }
-
 
 /* ==========================
    Responsive: Large Tablets

@@ -226,6 +226,7 @@ export default function DocumentManagement() {
   const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [editedDocs, setEditedDocs] = useState({});
 
   // fetch documents from API
   useEffect(() => {
@@ -377,6 +378,49 @@ export default function DocumentManagement() {
           .split("T")[0]
       : "N/A";
 
+  const handleUpdate = async (docId, clientId, status) => {
+    try {
+      // const { status, comments } = editedDocs[docId];
+      const comments = editedDocs[docId]?.comments;
+      console.log("status", status);
+
+      const response = await fetch(
+        `${ADMIN_END_POINT}/update-doc-status/${clientId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status, comments, docId }),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        const errData = await response.json();
+        toast.error(errData.error || "Failed to update document status");
+      }
+
+      setDocuments((prevDocs) =>
+        prevDocs.map((doc) =>
+          doc._id === docId
+            ? {
+                ...doc,
+                documentDetails: {
+                  ...doc.documentDetails,
+                  docStatus: DocStatus[status],
+                  comments,
+                },
+              }
+            : doc
+        )
+      );
+      toast.success("Status Submitted & client is notified.");
+      await fetchDocuments();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  };
+
   return (
     <div className={styles.container}>
       {/* keep your Sidebar untouched */}
@@ -510,25 +554,56 @@ export default function DocumentManagement() {
                         : "-"}
                     </td>
                     <td>
-                      <button
-                        className={`${styles.statusButton} ${
-                          doc.documentDetails.docStatus === DocStatus.pending
-                            ? styles.statusPending
-                            : doc.documentDetails.docStatus ===
-                              DocStatus.approved
+                      {(() => {
+                        // Get current DB status key
+                        const currentStatusKey =
+                          Object.entries(DocStatus).find(
+                            ([, v]) => v === doc.documentDetails.docStatus
+                          )?.[0] || "";
+
+                        const statusClass =
+                          currentStatusKey === "approved"
                             ? styles.statusApproved
-                            : styles.statusRejected
-                        }`}
-                      >
-                        {getStatusIcon(doc.documentDetails.docStatus)}
-                        <span className={styles.docStatus}>
-                          {
-                            Object.entries(DocStatus).find(
-                              ([, v]) => v === doc.documentDetails.docStatus
-                            )?.[0]
-                          }
-                        </span>
-                      </button>
+                            : currentStatusKey === "rejected"
+                            ? styles.statusRejected
+                            : styles.statusPending;
+
+                        return (
+                          <select
+                            className={`${styles.statusButton} ${statusClass}`}
+                            value={
+                              editedDocs[doc._id]?.status || currentStatusKey
+                            }
+                            onChange={(e) => {
+                              const selectedStatus = e.target.value;
+
+                              console.log("ddj", selectedStatus);
+
+                              // update local state
+                              setEditedDocs((prev) => ({
+                                ...prev,
+                                [doc._id]: {
+                                  ...prev[doc._id],
+                                  status: selectedStatus,
+                                },
+                              }));
+
+                              // call handleUpdate immediately with new status
+                              handleUpdate(
+                                doc._id,
+                                doc.clientId,
+                                selectedStatus
+                              );
+                            }}
+                          >
+                            {Object.keys(DocStatus).map((key) => (
+                              <option key={key} value={key}>
+                                {key}
+                              </option>
+                            ))}
+                          </select>
+                        );
+                      })()}
                     </td>
                     <td className={styles.statusActions}>
                       <a

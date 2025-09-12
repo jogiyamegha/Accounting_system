@@ -439,18 +439,27 @@
 
 /* Status variations */
 .statusPending {
+  border: 2px solid #e69100;
   background-color: #fff7e6;
   color: #e69100;
 }
 
 .statusApproved {
+  border: 2px solid #155724;
+
   background-color: #e6f9ed;
   color: #155724;
 }
 
 .statusRejected {
+  border: 2px solid #b91c1c;
   background-color: #fde8e8;
   color: #b91c1c;
+}
+
+.statusButton option {
+  color: #000;
+  background: #fff;
 }
 
 /* Approve / Reject icons */
@@ -487,17 +496,14 @@
 
 /* Default button style */
 .pagination button {
-  padding: 8px 16px;
+  padding: 8px 14px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: #fff;
   color: #334155;
   font-size: 0.85rem;
   cursor: pointer;
-  min-width: 38px;
-  text-align: center;
-  transition: background-color 0.25s ease, color 0.25s ease,
-    box-shadow 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 /* Hover effect */
@@ -511,7 +517,7 @@
 .pagination button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: none;
+  /* box-shadow: none; */
 }
 
 /* Active (current page) */
