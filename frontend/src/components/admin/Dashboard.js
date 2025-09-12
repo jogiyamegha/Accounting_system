@@ -13,9 +13,15 @@ import {
 } from "recharts";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faFile, faChartLine, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBell,
+  faFile,
+  faChartLine,
+  faArrowLeft,
+} from "@fortawesome/free-solid-svg-icons";
 
 import styles from "../../styles/adminDashboard.module.css";
+import loaderStyles from "../../styles/loader.module.css";
 import {
   ADMIN_END_POINT,
   notificationIcons,
@@ -179,7 +185,9 @@ export default function Dashboard() {
           <h2>Notifications and Alerts</h2>
 
           {loading ? (
-            <p>Loading notifications...</p>
+            <div className={loaderStyles.dotLoaderWrapper}>
+              <div className={loaderStyles.dotLoader}></div>
+            </div>
           ) : notifications.length === 0 ? (
             <p>No new notifications</p>
           ) : (

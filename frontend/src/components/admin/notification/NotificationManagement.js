@@ -1,18 +1,26 @@
 import { useEffect, useState } from "react";
 import classes from "../../../styles/notificationManagement.module.css";
+import loaderStyles from "../../../styles/loader.module.css";
 import {
   ADMIN_END_POINT,
   notificationTypeLabels,
 } from "../../../utils/constants";
 import Sidebar from "../../Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faBell, faClock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faBell,
+  faClock,
+} from "@fortawesome/free-solid-svg-icons";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function NotificationManagement() {
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(true);
+
   const [notifications, setNotifications] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newNotification, setNewNotification] = useState({
@@ -27,6 +35,8 @@ export default function NotificationManagement() {
     const fetchNotifications = async () => {
       let data;
       try {
+        setLoading(true);
+
         const res = await fetch(`${ADMIN_END_POINT}/notification-management`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -43,6 +53,8 @@ export default function NotificationManagement() {
       } catch (err) {
         toast.error("Error fetching notifications");
         console.error("Error fetching notifications:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchNotifications();
@@ -112,14 +124,20 @@ export default function NotificationManagement() {
       <Sidebar />
       <div className={classes.mainContent}>
         <div className={classes.pageTitle}>
-          <h1><FontAwesomeIcon icon={faBell} /> Notification Management</h1>
+          <h1>
+            <FontAwesomeIcon icon={faBell} /> Notification Management
+          </h1>
         </div>
 
         {/* General Notifications Section */}
         <div className={classes.card}>
           <h2 className={classes.cardTitle}>General Notifications</h2>
           <ul className={classes.notificationList}>
-            {notifications.length > 0 ? (
+            {loading ? (
+              <div className={loaderStyles.dotLoaderWrapper}>
+                <div className={loaderStyles.dotLoader}></div>
+              </div>
+            ) : notifications.length > 0 ? (
               notifications.map((n) => (
                 <li
                   key={n._id}

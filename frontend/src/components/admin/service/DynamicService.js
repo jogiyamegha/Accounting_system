@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ADMIN_END_POINT, ServiceStatus } from "../../../utils/constants";
 import Sidebar from "../../Sidebar";
 import styles from "../../../styles/dynamicService.module.css";
+import loaderStyles from "../../../styles/loader.module.css";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAddressCard, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -278,7 +279,9 @@ export default function DynamicService() {
 
         <section className={styles.tableSection}>
           {loading ? (
-            <p className={styles.loading}>Loading clients...</p>
+            <div className={loaderStyles.dotLoaderWrapper}>
+              <div className={loaderStyles.dotLoader}></div>
+            </div>
           ) : clients.length === 0 ? (
             <p className={styles.noData}>No clients found for this service.</p>
           ) : (
@@ -290,8 +293,8 @@ export default function DynamicService() {
                   <th>Start Date</th>
                   <th>End Date</th>
                   <th>Status</th>
-                  <th >Change Status</th>
-                  <th style={{textAlign: "center"}} >Actions</th>
+                  <th>Change Status</th>
+                  <th style={{ textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>

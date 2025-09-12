@@ -1,0 +1,67 @@
+
+/* Center the loader on the whole page */
+.loaderWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* full viewport height */
+  background: #f9f9f9; /* optional background */
+}
+
+/* Loader itself */
+.loader {
+  width: 70px;          /* bigger */
+  padding: 12px;        /* thicker */
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #1e293b;
+
+  --_m:
+    conic-gradient(#0000 10%, #000),
+    linear-gradient(#000 0 0) content-box;
+
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+
+  animation: l3 1s infinite linear;
+}
+
+@keyframes l3 {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+
+
+/* Wrapper so it’s easy to center in its container */
+.dotLoaderWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem; /* some space */
+}
+
+/* The loader itself */
+.dotLoader {
+  width: 120px;
+  height: 20px;
+
+  /* Create a row of dots using a mask */
+  -webkit-mask: radial-gradient(circle closest-side, #000 94%, #0000) left/20% 100%;
+  mask: radial-gradient(circle closest-side, #000 94%, #0000) left/20% 100%;
+
+  background: linear-gradient(#1e293b 0 0) left/0% 100% no-repeat #e5e7eb;
+  /* main color (#1e293b) and background color (#e5e7eb) can be changed */
+
+  animation: l17 2s infinite steps(6);
+  border-radius: 4px; /* soften edges */
+}
+
+@keyframes l17 {
+  100% {
+    background-size: 120% 100%;
+  }
+}

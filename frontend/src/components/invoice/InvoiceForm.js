@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import styles from "./InvoiceForm.module.css";
+import loaderStyles from "../../styles/loader.module.css";
 import { ADMIN_END_POINT, generateInvoiceNumber } from "../../utils/constants";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-
 
 const InvoiceForm = ({ onSubmit }) => {
   const { clientId } = useParams();
@@ -124,7 +124,7 @@ const InvoiceForm = ({ onSubmit }) => {
         );
         const result = await res.json();
 
-        if (!res.ok){
+        if (!res.ok) {
           let errorData = result.error;
           toast.error(errorData || "Failed to fetch client details");
         }
@@ -138,7 +138,9 @@ const InvoiceForm = ({ onSubmit }) => {
           userName: client.name || "",
           position: client.position || "",
           companyName: company.name || "",
-          address: `${company.address.addressLine1}, ${company.address.addressLine2}, ${company.address.street}, ${company.address.landmark}, ${company.address.city}, ${company.address.state}, ${company.address.zipcode}, ${company.address.country}` || "",
+          address:
+            `${company.address.addressLine1}, ${company.address.addressLine2}, ${company.address.street}, ${company.address.landmark}, ${company.address.city}, ${company.address.state}, ${company.address.zipcode}, ${company.address.country}` ||
+            "",
         }));
       } catch (err) {
         setError(err.message);
@@ -150,209 +152,213 @@ const InvoiceForm = ({ onSubmit }) => {
     fetchClientDetails();
   }, [clientId]);
 
-  if (loading) return <p className="loading-text">Loading client details...</p>;
+  if (loading)
+    return (
+      <div className={loaderStyles.dotLoaderWrapper}>
+        <div className={loaderStyles.dotLoader}></div>
+      </div>
+    );
   if (error) return <p className="error-text">{error}</p>;
   if (!data) return <p className="empty-text">No client details found</p>;
 
   return (
     <>
-    <form onSubmit={handleSubmit} className={styles.formContainer}>
-      <h1 className={styles.mainTitle}>Create New Invoice</h1>
+      <form onSubmit={handleSubmit} className={styles.formContainer}>
+        <h1 className={styles.mainTitle}>Create New Invoice</h1>
 
-      <div className={styles.detailsGrid}>
-        <div>
-          <h3 className={styles.sectionTitle}>Invoice Details</h3>
-          <div className={styles.inputGroup}>
-            <div>
-              <label htmlFor="invoiceNumber" className={styles.inputLabel}>
-                Invoice Number
-              </label>
-               <input
-                type="text"
-                id="invoiceNumber"
-                name="invoiceNumber"
-                value={formData.invoiceNumber}
-                readOnly
-                className={styles.inputField}
-              />
-            </div>
-            <div className={styles.checkboxContainer}>
-              <input
-                type="checkbox"
-                id="includeVAT"
-                name="includeVAT"
-                checked={formData.includeVAT}
-                onChange={handleInputChange}
-                className={styles.checkbox}
-              />
-              <label htmlFor="includeVAT" className={styles.checkboxLabel}>
-                Include VAT (5%)
-              </label>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h3 className={styles.sectionTitle}>Billed To</h3>
-          <div className={styles.inputGroup}>
-            <div>
-              <label htmlFor="userName" className={styles.inputLabel}>
-                Recipient Name
-              </label>
-              <input
-                type="text"
-                id="userName"
-                name="userName"
-                value={formData.userName}
-                title="Please enter a valid name (letters, spaces, periods only)"
-                onChange={handleInputChange}
-                className={styles.inputField}
-                placeholder="Kerry p. reuter"
-                maxLength={30}
-                readOnly
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="position" className={styles.inputLabel}>
-                Position
-              </label>
-              <input
-                type="text"
-                id="position"
-                name="position"
-                value={formData.position}
-                title="Please enter a valid position (letters, spaces, hyphens, and periods only)"
-                maxLength={40}
-                onChange={handleInputChange}
-                className={styles.inputField}
-                placeholder="CEO of Happy Monster"
-                readOnly
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="companyName" className={styles.inputLabel}>
-                Company Name
-              </label>
-              <input
-                type="text"
-                id="companyName"
-                name="companyName"
-                maxLength={30}
-                value={formData.companyName}
-                title="Please enter a valid company name (letters, spaces, hyphens, and periods only)"
-                onChange={handleInputChange}
-                className={styles.inputField}
-                placeholder="Happy Monster, UK"
-                readOnly
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="address" className={styles.inputLabel}>
-                Company Address
-              </label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address}
-                maxLength={80}
-                onChange={handleInputChange}
-                className={styles.inputField}
-                placeholder="303 Ashton Lane Austin, TX 78701"
-                readOnly
-                required
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.divider}>
-        <h3 className={styles.sectionTitle}>Items</h3>
-        <div className={styles.itemsList}>
-          {formData.items.map((item, index) => (
-            <div key={index} className={styles.itemRow}>
-              <div className={styles.itemDesc}>
-                <label className={styles.itemInputLabel}>Description</label>
-                <input
-                  type="text"
-                  name="description"
-                  value={item.description}
-                  pattern="^[a-zA-Z0-9\s.,\-'/()]+$"
-                  title="Please enter a valid description (letters, numbers, spaces, and basic punctuation only)"
-                  onChange={(e) => handleItemChange(index, e)}
-                  className={styles.itemInputField}
-                  required
-                />
-              </div>
-              <div className={styles.itemQty}>
-                <label className={styles.itemInputLabel}>Qty</label>
-                <input
-                  type="text"
-                  name="quantity"
-                  pattern="^\d+$"
-                  title="Please enter a valid quantity (whole number)"
-                  value={item.quantity}
-                  onChange={(e) => handleItemChange(index, e)}
-                  className={styles.itemInputField}
-                  required
-                />
-              </div>
-              <div className={styles.itemPrice}>
-                <label className={styles.itemInputLabel}>
-                  Unit Price (AED)
+        <div className={styles.detailsGrid}>
+          <div>
+            <h3 className={styles.sectionTitle}>Invoice Details</h3>
+            <div className={styles.inputGroup}>
+              <div>
+                <label htmlFor="invoiceNumber" className={styles.inputLabel}>
+                  Invoice Number
                 </label>
                 <input
                   type="text"
-                  name="price"
-                  pattern="^\d+(\.\d{1,2})?$"
-                  title="Please enter a valid price (e.g., 100.00)"
-                  value={item.price}
-                  onChange={(e) => handleItemChange(index, e)}
-                  className={styles.itemInputField}
+                  id="invoiceNumber"
+                  name="invoiceNumber"
+                  value={formData.invoiceNumber}
+                  readOnly
+                  className={styles.inputField}
+                />
+              </div>
+              <div className={styles.checkboxContainer}>
+                <input
+                  type="checkbox"
+                  id="includeVAT"
+                  name="includeVAT"
+                  checked={formData.includeVAT}
+                  onChange={handleInputChange}
+                  className={styles.checkbox}
+                />
+                <label htmlFor="includeVAT" className={styles.checkboxLabel}>
+                  Include VAT (5%)
+                </label>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 className={styles.sectionTitle}>Billed To</h3>
+            <div className={styles.inputGroup}>
+              <div>
+                <label htmlFor="userName" className={styles.inputLabel}>
+                  Recipient Name
+                </label>
+                <input
+                  type="text"
+                  id="userName"
+                  name="userName"
+                  value={formData.userName}
+                  title="Please enter a valid name (letters, spaces, periods only)"
+                  onChange={handleInputChange}
+                  className={styles.inputField}
+                  placeholder="Kerry p. reuter"
+                  maxLength={30}
+                  readOnly
                   required
                 />
               </div>
-              <div className={styles.itemRemove}>
-                <button
-                  type="button"
-                  onClick={() => removeItem(index)}
-                  className={`${styles.button} ${styles.removeButton}`}
-                >
-                  X
-                </button>
+              <div>
+                <label htmlFor="position" className={styles.inputLabel}>
+                  Position
+                </label>
+                <input
+                  type="text"
+                  id="position"
+                  name="position"
+                  value={formData.position}
+                  title="Please enter a valid position (letters, spaces, hyphens, and periods only)"
+                  maxLength={40}
+                  onChange={handleInputChange}
+                  className={styles.inputField}
+                  placeholder="CEO of Happy Monster"
+                  readOnly
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="companyName" className={styles.inputLabel}>
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  id="companyName"
+                  name="companyName"
+                  maxLength={30}
+                  value={formData.companyName}
+                  title="Please enter a valid company name (letters, spaces, hyphens, and periods only)"
+                  onChange={handleInputChange}
+                  className={styles.inputField}
+                  placeholder="Happy Monster, UK"
+                  readOnly
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="address" className={styles.inputLabel}>
+                  Company Address
+                </label>
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  maxLength={80}
+                  onChange={handleInputChange}
+                  className={styles.inputField}
+                  placeholder="303 Ashton Lane Austin, TX 78701"
+                  readOnly
+                  required
+                />
               </div>
             </div>
-          ))}
-        </div>
-        <button
-          type="button"
-          onClick={addItem}
-          className={`${styles.button} ${styles.addButton}`}
-        >
-          + Add Item
-        </button>
-      </div>
-
-      <div className={styles.submitButtonContainer}>
-        <button type="submit" className={styles.submitButton}>
-          Generate Invoice
-        </button>
-      </div>
-    </form>
-
-    <button
-          className={styles.backButton}
-          onClick={() => window.history.back()}
-        >
-          Back
-          <div className={styles.icon}>
-            <FontAwesomeIcon icon={faArrowLeft} />
           </div>
-        </button>
+        </div>
 
+        <div className={styles.divider}>
+          <h3 className={styles.sectionTitle}>Items</h3>
+          <div className={styles.itemsList}>
+            {formData.items.map((item, index) => (
+              <div key={index} className={styles.itemRow}>
+                <div className={styles.itemDesc}>
+                  <label className={styles.itemInputLabel}>Description</label>
+                  <input
+                    type="text"
+                    name="description"
+                    value={item.description}
+                    pattern="^[a-zA-Z0-9\s.,\-'/()]+$"
+                    title="Please enter a valid description (letters, numbers, spaces, and basic punctuation only)"
+                    onChange={(e) => handleItemChange(index, e)}
+                    className={styles.itemInputField}
+                    required
+                  />
+                </div>
+                <div className={styles.itemQty}>
+                  <label className={styles.itemInputLabel}>Qty</label>
+                  <input
+                    type="text"
+                    name="quantity"
+                    pattern="^\d+$"
+                    title="Please enter a valid quantity (whole number)"
+                    value={item.quantity}
+                    onChange={(e) => handleItemChange(index, e)}
+                    className={styles.itemInputField}
+                    required
+                  />
+                </div>
+                <div className={styles.itemPrice}>
+                  <label className={styles.itemInputLabel}>
+                    Unit Price (AED)
+                  </label>
+                  <input
+                    type="text"
+                    name="price"
+                    pattern="^\d+(\.\d{1,2})?$"
+                    title="Please enter a valid price (e.g., 100.00)"
+                    value={item.price}
+                    onChange={(e) => handleItemChange(index, e)}
+                    className={styles.itemInputField}
+                    required
+                  />
+                </div>
+                <div className={styles.itemRemove}>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(index)}
+                    className={`${styles.button} ${styles.removeButton}`}
+                  >
+                    X
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={addItem}
+            className={`${styles.button} ${styles.addButton}`}
+          >
+            + Add Item
+          </button>
+        </div>
+
+        <div className={styles.submitButtonContainer}>
+          <button type="submit" className={styles.submitButton}>
+            Generate Invoice
+          </button>
+        </div>
+      </form>
+
+      <button
+        className={styles.backButton}
+        onClick={() => window.history.back()}
+      >
+        Back
+        <div className={styles.icon}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </div>
+      </button>
     </>
   );
 };

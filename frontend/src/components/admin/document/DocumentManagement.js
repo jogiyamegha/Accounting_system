@@ -182,6 +182,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "../../../styles/documentManagement2.module.css";
+import loaderStyles from "../../../styles/loader.module.css";
 import { ADMIN_END_POINT, DocStatus } from "../../../utils/constants";
 import Sidebar from "../../Sidebar";
 import { useNavigate } from "react-router-dom";
@@ -520,7 +521,9 @@ export default function DocumentManagement() {
 
         {/* Document Table */}
         {loading ? (
-          <p className={styles.loading}>Loading documents...</p>
+          <div className={loaderStyles.dotLoaderWrapper}>
+            <div className={loaderStyles.dotLoader}></div>
+          </div>
         ) : (
           <section className={styles.documentTable}>
             <table>

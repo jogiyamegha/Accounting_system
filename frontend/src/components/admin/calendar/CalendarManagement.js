@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Sidebar from "../../Sidebar";
 import styles from "../../../styles/calendar.module.css";
+import loaderStyles from "../../../styles/loader.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
@@ -30,6 +31,8 @@ export default function CalendarManagement() {
     t.setHours(0, 0, 0, 0);
     return t;
   }, []);
+
+  const [loading, setLoading] = useState(true);
 
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState("");
@@ -92,6 +95,8 @@ export default function CalendarManagement() {
   // 🔹 Fetch deadlines
   const fetchDeadlines = async () => {
     try {
+      setLoading(true);
+
       const res = await fetch(`${ADMIN_END_POINT}/all-calendar-events`, {
         method: "GET",
         credentials: "include",
@@ -124,11 +129,15 @@ export default function CalendarManagement() {
     } catch (err) {
       toast.error("Error during fetching deadline");
       console.error("Error fetching deadlines:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchClients = async () => {
     try {
+      setLoading(true);
+
       const res = await fetch(`${ADMIN_END_POINT}/fetch-clients`, {
         credentials: "include",
       });
@@ -138,6 +147,8 @@ export default function CalendarManagement() {
     } catch (err) {
       console.error(err);
       toast.error("Failed to load clients");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -497,74 +508,86 @@ export default function CalendarManagement() {
                   </button>
                 )}
               </div>
-              {/* Events List */}
               {/* Events List */}{" "}
-              {filteredMonthDeadlines.length === 0 && (
-                <div className={styles.noEvents}>No Events this month.</div>
-              )}{" "}
-              {filteredMonthDeadlines
-                .flatMap((dateKey) => {
-                  const events = deadlines[dateKey] || [];
-                  return events.flatMap((e) =>
-                    e.clients.map((client, idx) => ({
-                      _id: `${e._id}-${client.email}-${idx}`,
-                      title: e.title,
-                      clientName: client.name,
-                      clientEmail: client.email,
-                      dateKey,
-                      originalEvent: e,
-                    }))
-                  );
-                }) // ADD THIS NEW FILTER
-                .filter((ev) => {
-                  // Filter by client name if a client is selected
-                  if (filterClient && ev.clientName !== filterClient) {
-                    return false;
-                  } // Filter by category if a category is selected
+              {loading ? (
+                /* Show loader while loading */
+                <div className={loaderStyles.dotLoaderWrapper}>
+                  <div className={loaderStyles.dotLoader}></div>
+                </div>
+              ) : (
+                <>
+                  {filteredMonthDeadlines.length === 0 && (
+                    <div className={styles.noEvents}>No Events this month.</div>
+                  )}{" "}
+                  {filteredMonthDeadlines
+                    .flatMap((dateKey) => {
+                      const events = deadlines[dateKey] || [];
+                      return events.flatMap((e) =>
+                        e.clients.map((client, idx) => ({
+                          _id: `${e._id}-${client.email}-${idx}`,
+                          title: e.title,
+                          clientName: client.name,
+                          clientEmail: client.email,
+                          dateKey,
+                          originalEvent: e,
+                        }))
+                      );
+                    }) // ADD THIS NEW FILTER
+                    .filter((ev) => {
+                      // Filter by client name if a client is selected
+                      if (filterClient && ev.clientName !== filterClient) {
+                        return false;
+                      } // Filter by category if a category is selected
 
-                  if (
-                    filterCategory &&
-                    ev.originalEvent.deadlineCategory.toString() !==
-                      filterCategory
-                  ) {
-                    return false;
-                  }
-                  return true;
-                })
-                .map((ev) => (
-                  <div key={ev._id} className={styles.eventItem}>
-                    {" "}
-                    <div className={styles.eventHeader}>
-                      {" "}
-                      <strong>
+                      if (
+                        filterCategory &&
+                        ev.originalEvent.deadlineCategory.toString() !==
+                          filterCategory
+                      ) {
+                        return false;
+                      }
+                      return true;
+                    })
+                    .map((ev) => (
+                      <div key={ev._id} className={styles.eventItem}>
                         {" "}
-                        {new Date(ev.dateKey).toLocaleDateString("en-GB")}{" "}
-                      </strong>{" "}
-                      <div className={styles.actionIcons}>
-                        {" "}
-                        <FontAwesomeIcon
-                          icon={faPen}
-                          className={styles.iconButton}
-                          onClick={() =>
-                            handleEditEvent(ev.dateKey, [ev.originalEvent])
-                          }
-                        />{" "}
-                        <FontAwesomeIcon
-                          icon={faTrash}
-                          className={styles.iconButton}
-                          onClick={() =>
-                            handleDeleteEvent(ev.dateKey, [ev.originalEvent])
-                          }
-                        />{" "}
-                      </div>{" "}
-                    </div>
-                    <div className={styles.eventListCompact}>
-                      <span className={styles.eventChip}>
-                        {ev.title} : {ev.clientName} ({ev.clientEmail})
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                        <div className={styles.eventHeader}>
+                          {" "}
+                          <strong>
+                            {" "}
+                            {new Date(ev.dateKey).toLocaleDateString(
+                              "en-GB"
+                            )}{" "}
+                          </strong>{" "}
+                          <div className={styles.actionIcons}>
+                            {" "}
+                            <FontAwesomeIcon
+                              icon={faPen}
+                              className={styles.iconButton}
+                              onClick={() =>
+                                handleEditEvent(ev.dateKey, [ev.originalEvent])
+                              }
+                            />{" "}
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              className={styles.iconButton}
+                              onClick={() =>
+                                handleDeleteEvent(ev.dateKey, [
+                                  ev.originalEvent,
+                                ])
+                              }
+                            />{" "}
+                          </div>{" "}
+                        </div>
+                        <div className={styles.eventListCompact}>
+                          <span className={styles.eventChip}>
+                            {ev.title} : {ev.clientName} ({ev.clientEmail})
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                </>
+              )}
             </aside>
           </div>
         </div>

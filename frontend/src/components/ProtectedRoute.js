@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser, clearUser } from "../redux/features/userSlice";
 import { Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
+import styles from '../styles/loader.module.css'
 
 import { ADMIN_END_POINT, CLIENT_END_POINT } from "../utils/constants";
 
@@ -98,8 +99,9 @@ export default function ProtectedRoute({
 
   if (loading || !authChecked) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        Loading...
+      <div className={styles.loaderWrapper}>
+      <div className={styles.loader}>
+      </div>
       </div>
     );
   }

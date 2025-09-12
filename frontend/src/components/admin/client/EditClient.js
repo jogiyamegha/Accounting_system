@@ -4,6 +4,7 @@ import { ADMIN_END_POINT, docTypeMap } from "../../../utils/constants";
 import { countries } from "../../../utils/countries";
 import Sidebar from "../../Sidebar";
 import classes from "../../../styles/editClient.module.css";
+import loaderStyles from "../../../styles/loader.module.css";
 import { toast } from "react-toastify";
 
 function formatForDateInput(isoString) {
