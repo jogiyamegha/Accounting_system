@@ -246,7 +246,7 @@
 .statusButton {
   display: inline-flex;
   align-items: center;
-  gap: 6px; /* space between icon and text */
+  gap: 2px; /* space between icon and text */
   padding: 8px 16px;
   font-size: 0.8rem;
   font-weight: 600;
@@ -283,11 +283,12 @@
   border: 2px solid #e69100;
   background-color: #fff7e6;
   color: #e69100;
+  gap: 2px;
 }
 
 .statusApproved {
   border: 2px solid #155724;
-
+gap: 2px;
   background-color: #e6f9ed;
   color: #155724;
 }
@@ -296,6 +297,7 @@
   border: 2px solid #b91c1c;
   background-color: #fde8e8;
   color: #b91c1c;
+  gap: 2px;
 }
 
 /* Actions dropdown*/

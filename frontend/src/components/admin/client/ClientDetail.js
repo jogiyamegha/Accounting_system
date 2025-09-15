@@ -140,8 +140,8 @@ export default function ClientDetail() {
         <div className={loaderStyles.dotLoader}></div>
       </div>
     );
-  if (error) return <p className="error-text">{error}</p>;
-  if (!data) return <p className="empty-text">No client details found</p>;
+  if (error) return toast.error(error)
+  if (!data) return toast.error("No client details found")
 
   const { client, company } = data;
 
