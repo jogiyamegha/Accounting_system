@@ -13,7 +13,7 @@ import {
   faClipboardList,
   faUserCircle,
   faArrowLeft,
-  faXmark
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "../../Sidebar";
 
@@ -251,9 +251,11 @@ export default function ClientServiceDetail() {
                     <th></th> {/* color tag column */}
                     <th>Service</th>
                     <th>Status</th>
-                    <th>Duration</th>
+                    <th>Duration (In Days)</th>
                     <th>Start → End</th>
                     <th>Status Changed Date</th>
+                    <th>Status(To Completed) Date</th>
+                    <th>Status(To In-Progress) Date</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -328,11 +330,11 @@ export default function ClientServiceDetail() {
 
                           {/* DURATION */}
                           <td>
-                            {service.serviceDuration} days
+                            {service.serviceDuration} 
                             {service.updatedServiceDuration &&
                               !service.deleted && (
                                 <div className={styles.infoText}>
-                                  + {service.updatedServiceDuration} days
+                                  + {service.updatedServiceDuration}
                                   extended
                                 </div>
                               )}
@@ -396,6 +398,30 @@ export default function ClientServiceDetail() {
                             </div>
                           </td>
 
+                          <td>
+                            <div className={styles.infoText}>
+                              {service.updatedDateAfterStatusChangeToCompleted ? (
+                                new Date(
+                                  service.updatedDateAfterStatusChangeToCompleted
+                                ).toLocaleDateString("en-GB")
+                              ) : (
+                                <p>NA</p>
+                              )}
+                            </div>
+                          </td>
+
+                          <td>
+                            <div className={styles.infoText}>
+                              {service.updatedDateAfterStatusChangeToInProgress ? (
+                                new Date(
+                                  service.updatedDateAfterStatusChangeToInProgress
+                                ).toLocaleDateString("en-GB")
+                              ) : (
+                                <p>NA</p>
+                              )}
+                            </div>
+                          </td>
+
                           {/* ACTION BUTTONS */}
                           <td>
                             {service.deleted ? (
@@ -428,8 +454,7 @@ export default function ClientServiceDetail() {
                                     className={styles.deleteBtn}
                                     onClick={() => handleDelete(service._id)}
                                   >
-                                    <FontAwesomeIcon icon={faXmark}/>{" "}
-                                    Deassign
+                                    <FontAwesomeIcon icon={faXmark} /> Deassign
                                   </button>
                                 )}
                               </div>

@@ -139,6 +139,11 @@
 }
 
 /* ====== SERVICES LIST ====== */
+.servicesList {
+  width: 100%;
+  overflow-x: auto; /* Scroll horizontally on small screens */
+}
+
 /* Table */
 .servicesTable {
   width: 100%;
@@ -148,11 +153,13 @@
 
 .servicesTable th {
   text-align: left;
+  vertical-align: top;
   font-weight: 600;
   color: #374151;
-  padding: 12px;
-  font-size: 1.1rem;
+  padding: 8px 12px;
+  font-size: 0.9rem;
   border-bottom: 2px solid #e5e7eb;
+  line-height: 1.2;
 }
 
 .servicesTable td {
@@ -246,11 +253,18 @@
 
 /* Status Badge (unchanged) */
 .statusBadge {
-  padding: 0.35rem 0.8rem;
-  border-radius: 9999px;
-  font-size: 0.8rem;
+  display: inline-flex; /* Aligns text vertically & horizontally */
+  align-items: center; /* Vertically center */
+  justify-content: center; /* Horizontally center */
+  padding: 0.4rem 0.8rem; /* Slightly more breathing space */
+  border-radius: 9999px; /* Perfect pill shape */
+  font-size: 0.8rem; /* Keeps badge compact */
   font-weight: 600;
   text-transform: capitalize;
+  line-height: 1; /* Keeps text vertically centered */
+  min-width: 80px; /* Ensures consistent width for short words */
+  text-align: center;
+  white-space: nowrap;
 }
 .deleted {
   background: #fee2e2;
