@@ -12,6 +12,8 @@ import {
   faTimes,
   faClipboardList,
   faUserCircle,
+  faArrowLeft,
+  faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "../../Sidebar";
 
@@ -21,6 +23,9 @@ export default function ClientServiceDetail() {
   const [clientInfomation, setClientInformation] = useState("");
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [page, setPage] = useState(1);
+  const recordsPerPage = 5;
 
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -179,218 +184,304 @@ export default function ClientServiceDetail() {
     );
   if (error) return toast.error(error);
 
+  const totalPages = Math.ceil(services.length / recordsPerPage);
+
+  // Function to navigate to a specific page
+  const goToPage = (pageNumber) => {
+    if (pageNumber < 1) return; // prevent going before first page
+    if (pageNumber > totalPages) return; // prevent going beyond last page
+    setPage(pageNumber);
+  };
   return (
     <div className={styles.mainContainer}>
       <Sidebar />
 
       <div className={styles.container}>
+        {/* HEADER */}
         <div className={styles.header}>
           <h1 className={styles.pageTitle}>
-            {" "}
             <FontAwesomeIcon icon={faClipboardList} />
             Client Service Details
           </h1>
-          <div className={styles.clientInfoRight}>
-            <p className={styles.profileName}>{clientInfomation.name}</p>
-            <p className={styles.profileEmail}>{clientInfomation.email}</p>
-          </div>
-        </div>
 
-        {/* <div className={styles.clientInfo}>
-          <div className={styles.profileLeft}>
+          <div className={styles.clientInfoRight}>
             <FontAwesomeIcon
               icon={faUserCircle}
               className={styles.profileIcon}
             />
-            <div>
-              <h2 className={styles.profileName}>{clientInfomation.name}</h2>
-              <div className={styles.infoRow}>
-                <span className={styles.infoValue}>{clientInfomation.email}</span>
-              </div>
-            </div>
+            <a
+              href={`/admin/client-detail/${clientId}`}
+              className={styles.profileName}
+            >
+              {clientInfomation.name}
+            </a>
+            <a
+              href={`/admin/client-detail/${clientId}`}
+              className={styles.profileEmail}
+            >
+              {clientInfomation.email}
+            </a>
           </div>
+        </div>
+
+        {/* <div className={styles.tagSection}>
+          <ul>
+            <li className={`${styles.tags} ${styles.deleted}`}>
+              <span className={styles.dot}></span> Deleted
+            </li>
+            <li className={`${styles.tags} ${styles.notStarted}`}>
+              <span className={styles.dot}></span> Not Started
+            </li>
+            <li className={`${styles.tags} ${styles.inProgress}`}>
+              <span className={styles.dot}></span> In Progress
+            </li>
+            <li className={`${styles.tags} ${styles.completed}`}>
+              <span className={styles.dot}></span> Completed
+            </li>
+          </ul>
         </div> */}
 
+        {/* SERVICES LIST */}
         <div className={styles.servicesList}>
           {services.length > 0 ? (
-            services.map((service) => {
-              const isCurrentEditing = isEditing && editingId === service._id;
-              const statusClass =
-                service.serviceStatus === 1
-                  ? styles.cardNotStarted
-                  : service.serviceStatus === 2
-                  ? styles.cardInProgress
-                  : styles.cardCompleted;
+            <>
+              <table className={styles.servicesTable}>
+                <thead>
+                  <tr>
+                    <th></th> {/* color tag column */}
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Duration</th>
+                    <th>Start → End</th>
+                    <th>Status Changed Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {services
+                    .slice((page - 1) * recordsPerPage, page * recordsPerPage)
+                    .map((service) => {
+                      const isCurrentEditing =
+                        isEditing && editingId === service._id;
 
-              return (
-                <div
-                  key={service._id}
-                  className={`${styles.serviceCard} ${statusClass} ${
-                    service.deleted ? styles.deletedCard : ""
-                  }`}
+                      const rowStatusClass = service.deleted
+                        ? styles.deletedRow
+                        : service.serviceStatus === 1
+                        ? styles.notStartedRow
+                        : service.serviceStatus === 2
+                        ? styles.inProgressRow
+                        : styles.completedRow;
+
+                      const colorTagClass = service.deleted
+                        ? styles.deletedTag
+                        : service.serviceStatus === 1
+                        ? styles.notStartedTag
+                        : service.serviceStatus === 2
+                        ? styles.inProgressTag
+                        : styles.completedTag;
+
+                      return (
+                        <tr
+                          key={service._id}
+                          className={`${styles.serviceRow} ${rowStatusClass}`}
+                        >
+                          {/* Color Tag */}
+                          <td className={styles.colorTagCell}>
+                            <span
+                              className={`${styles.colorTag} ${colorTagClass}`}
+                            />
+                          </td>
+
+                          {/* SERVICE NAME */}
+                          <td className={styles.serviceNameCell}>
+                            <div className={styles.serviceName}>
+                              {service.serviceName}
+                            </div>
+                          </td>
+
+                          {/* STATUS BADGE */}
+                          <td>
+                            <span
+                              className={`${styles.statusBadge} ${
+                                service.deleted
+                                  ? styles.deleted
+                                  : service.serviceStatus === 1
+                                  ? styles.notStarted
+                                  : service.serviceStatus === 2
+                                  ? styles.inProgress
+                                  : service.serviceStatus === 3
+                                  ? styles.completed
+                                  : ""
+                              }`}
+                            >
+                              {service.deleted
+                                ? "Deleted"
+                                : service.serviceStatus === 1
+                                ? "Not Started"
+                                : service.serviceStatus === 2
+                                ? "In Progress"
+                                : service.serviceStatus === 3
+                                ? "Completed"
+                                : ""}
+                            </span>
+                          </td>
+
+                          {/* DURATION */}
+                          <td>
+                            {service.serviceDuration} days
+                            {service.updatedServiceDuration &&
+                              !service.deleted && (
+                                <div className={styles.infoText}>
+                                  + {service.updatedServiceDuration} days
+                                  extended
+                                </div>
+                              )}
+                          </td>
+
+                          {/* START & END DATES */}
+                          <td>
+                            {isCurrentEditing ? (
+                              <div className={styles.editDates}>
+                                <input
+                                  type="date"
+                                  min={new Date().toISOString().split("T")[0]}
+                                  value={editData.serviceStartDate}
+                                  onChange={(e) =>
+                                    setEditData((prev) => ({
+                                      ...prev,
+                                      serviceStartDate: e.target.value,
+                                    }))
+                                  }
+                                  className={styles.dateInput}
+                                />
+                                <span className={styles.arrow}>→</span>
+                                <input
+                                  type="date"
+                                  value={editData.endDate}
+                                  onChange={(e) =>
+                                    setEditData((prev) => ({
+                                      ...prev,
+                                      endDate: e.target.value,
+                                    }))
+                                  }
+                                  className={styles.dateInput}
+                                />
+                              </div>
+                            ) : (
+                              <div>
+                                {service.serviceStartDate
+                                  ? new Date(
+                                      service.serviceStartDate
+                                    ).toLocaleDateString("en-GB")
+                                  : "-"}
+                                <span className={styles.arrow}> → </span>
+                                {service.endDate
+                                  ? new Date(
+                                      service.endDate
+                                    ).toLocaleDateString("en-GB")
+                                  : "-"}
+                              </div>
+                            )}
+                          </td>
+
+                          <td>
+                            <div className={styles.infoText}>
+                              {service.serviceStatusChangeDate ? (
+                                new Date(
+                                  service.serviceStatusChangeDate
+                                ).toLocaleDateString("en-GB")
+                              ) : (
+                                <p>NA</p>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* ACTION BUTTONS */}
+                          <td>
+                            {service.deleted ? (
+                              <p className={styles.infoText}>NA</p>
+                            ) : isCurrentEditing ? (
+                              <div className={styles.actionRow}>
+                                <button
+                                  className={styles.saveBtn}
+                                  onClick={handleSaveEdit}
+                                >
+                                  <FontAwesomeIcon icon={faSave} /> Save
+                                </button>
+                                <button
+                                  className={styles.cancelBtn}
+                                  onClick={handleCancelEdit}
+                                >
+                                  <FontAwesomeIcon icon={faTimes} /> Cancel
+                                </button>
+                              </div>
+                            ) : (
+                              <div className={styles.actions}>
+                                <button
+                                  className={styles.editBtn}
+                                  onClick={() => handleEdit(service)}
+                                >
+                                  <FontAwesomeIcon icon={faEdit} /> Edit
+                                </button>
+                                {service.serviceStatus !== 3 && (
+                                  <button
+                                    className={styles.deleteBtn}
+                                    onClick={() => handleDelete(service._id)}
+                                  >
+                                    <FontAwesomeIcon icon={faXmark}/>{" "}
+                                    Deassign
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+
+              {/* Pagination */}
+              <div className={styles.pagination}>
+                <button
+                  onClick={() => goToPage(page - 1)}
+                  disabled={page === 1}
                 >
-                  <div className={styles.topRow}>
-                    <div className={styles.leftSide}>
-                      <span className={styles.serviceName}>
-                        {service.serviceName} [Duration:{" "}
-                        {service.serviceDuration} days]
-                      </span>
-                      {!service.deleted && (
-                        <span
-                          className={`${styles.statusBadge} ${
-                            service.serviceStatus === 1
-                              ? styles.notStarted
-                              : service.serviceStatus === 2
-                              ? styles.inProgress
-                              : styles.completed
-                          }`}
-                        >
-                          {service.serviceStatus === 1
-                            ? "not started"
-                            : service.serviceStatus === 2
-                            ? "in progress"
-                            : "completed"}
-                        </span>
-                      )}
-                    </div>
+                  Previous
+                </button>
 
-                    {/* Show edit/delete buttons only when not deleted & not editing */}
-                    {!isCurrentEditing && !service.deleted && (
-                      <>
-                        <button
-                          className={styles.editBtn}
-                          onClick={() => handleEdit(service)}
-                        >
-                          <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                        <button
-                          className={styles.deleteBtn}
-                          onClick={() => handleDelete(service._id)}
-                        >
-                          <i class="fa-solid fa-circle-xmark"></i> deAssign
-                        </button>
-                      </>
-                    )}
-                  </div>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    className={page === i + 1 ? styles.activePage : ""}
+                    onClick={() => goToPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
 
-                  <div className={styles.dateRow}>
-                    {!service.deleted && service.updatedServiceDuration ? (
-                      <span>
-                        Please note that your service duration is extended{" "}
-                        {service.updatedServiceDuration} days by admin.
-                      </span>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-
-                  {/* Replace static text with inputs when editing */}
-                  <div className={styles.dateRow}>
-                    {isCurrentEditing ? (
-                      <>
-                        <input
-                          type="date"
-                          min={new Date().toISOString().split("T")[0]}
-                          value={editData.serviceStartDate}
-                          onChange={(e) =>
-                            setEditData((prev) => ({
-                              ...prev,
-                              serviceStartDate: e.target.value,
-                            }))
-                          }
-                        />
-                        <span className={styles.arrow}>→</span>
-                        <input
-                          type="date"
-                          value={editData.endDate}
-                          onChange={(e) =>
-                            setEditData((prev) => ({
-                              ...prev,
-                              endDate: e.target.value,
-                            }))
-                          }
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <span>
-                          {service.serviceStartDate
-                            ? new Date(
-                                service.serviceStartDate
-                              ).toLocaleDateString("en-GB")
-                            : "-"}
-                        </span>
-                        <span className={styles.arrow}>→</span>
-                        <span>
-                          {service.endDate
-                            ? new Date(service.endDate).toLocaleDateString(
-                                "en-GB"
-                              )
-                            : "-"}
-                        </span>
-                      </>
-                    )}
-                  </div>
-
-                  {isCurrentEditing && service.serviceStatusChangeDate && (
-                    <input
-                      type="date"
-                      value={editData.serviceStatusChangeDate}
-                      onChange={(e) =>
-                        setEditData((prev) => ({
-                          ...prev,
-                          serviceStatusChangeDate: e.target.value,
-                        }))
-                      }
-                    />
-                  )}
-
-                  {isCurrentEditing && (
-                    <div className={styles.actionRow}>
-                      <button
-                        className={styles.saveBtn}
-                        onClick={handleSaveEdit}
-                      >
-                        <FontAwesomeIcon icon={faSave} /> Save
-                      </button>
-                      <button
-                        className={styles.cancleBtn}
-                        onClick={handleCancelEdit}
-                      >
-                        <FontAwesomeIcon icon={faTimes} /> Cancel
-                      </button>
-                    </div>
-                  )}
-
-                  {!isCurrentEditing && service.serviceStatusChangeDate && (
-                    <div className={styles.bottomRow}>
-                      <span className={styles.statusText}>
-                        Status changed on:{" "}
-                        {new Date(
-                          service.serviceStatusChangeDate
-                        ).toLocaleDateString("en-GB")}
-                      </span>
-                    </div>
-                  )}
-
-                  {!isCurrentEditing && service.deassignDate && (
-                    <div className={styles.bottomRow}>
-                      <span className={styles.statusText}>
-                        Service de-assigned on:{" "}
-                        {new Date(service.deassignDate).toLocaleDateString(
-                          "en-GB"
-                        )}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              );
-            })
+                <button
+                  onClick={() => goToPage(page + 1)}
+                  disabled={page === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            </>
           ) : (
             <p>No services found.</p>
           )}
         </div>
       </div>
+      <button
+        className={styles.backButton}
+        onClick={() => window.history.back()}
+      >
+        Back
+        <div className={styles.icon}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </div>
+      </button>
     </div>
   );
 }

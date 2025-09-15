@@ -1,236 +1,486 @@
-/* Container */
-.container {
- display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-  background: #f5f7fa;
+/* ====== BASE LAYOUT ====== */
+.mainContainer {
+  display: flex;
+  width: 100%;
   min-height: 100vh;
-  margin-left: 280px;
+  background: linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%);
+  font-family: "Inter", sans-serif;
+  color: #1f2937;
 }
 
-.loading,
-.error {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: 2rem;
+/* container adjusts for sidebar */
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  min-height: 100vh;
+  margin-left: 280px; /* sidebar space */
 }
 
+@media (max-width: 1024px) {
+  .container {
+    margin-left: 0;
+    padding: 20px;
+  }
+}
+
+/* ====== HEADER ====== */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .pageTitle {
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   font-weight: 700;
-  color: #111827;
-  letter-spacing: 0.3px;
-}
-
-/* .clientInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  background: #fff;
-  padding: 20px;
-  border-radius: 14px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  margin-bottom: 12px;
-}
-
-.profileLeft {
+  color: #0f172a;
+  letter-spacing: -0.3px;
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
+}
+
+.clientInfoRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .profileIcon {
-  font-size: 60px;
+  font-size: 22px;
   color: #64748b;
 }
 
-.profileName {
-  font-size: 22px;
-  font-weight: 600;
-  margin: 0;
-  margin-bottom: 0.5rem;
+.profileName,
+.profileEmail {
+  text-decoration: none;
+  padding: 6px 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  font-size: 0.9rem;
+  color: #374151;
 }
 
-.infoRow {
-  display: flex;
-  flex-direction: column;
-  padding: 12px 14px;
-  background: #edeff3db;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
-} */
-
-.infoRow:hover {
-  background: #f8fafc;
+.profileName:hover,
+.profileEmail:hover {
+  background: #ffffff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-.infoValue {
-  font-size: 15px;
-  font-weight: 500;
-  color: #0f172a;
-  line-height: 1.5;
-  word-break: break-word;
-}
+/* ====== Tags Section ====== */
 
-.servicesList {
+/* Container: right-aligned horizontal */
+.tagSection {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  justify-content: flex-end; /* pushes to the right */
+  align-items: center;
+  padding: 8px 16px;
 }
 
-/* Service Card */
-.serviceCard {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 1rem 1.2rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+.tagSection ul {
   display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  transition: background-color 0.3s ease;
+  gap: 16px; /* spacing between tags */
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-/* Background colors for different statuses */
-.cardNotStarted {
-  background: #fff5e7; /* very light yellow */
-  border: 1px solid #ed9111;
-
-}
-
-.cardInProgress {
-  background: #f0f9ff; /* very light blue */
-  border: 1px solid #5877f1;
-}
-
-.cardCompleted {
-  background: #f0fdf4; /* very light green */
-  border: 1px solid green;
-
-}
-
-/* Deleted overrides all other colors */
-.deletedCard {
-  background: #fff5f5 !important;
-  border: 1px solid #fca5a5;
-  opacity: 0.9;
-}
-
-/* Top row layout */
-.topRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.leftSide {
+/* Each tag item */
+.tags {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #f9fafb; /* light neutral background */
+  transition: all 0.3s ease;
+  cursor: default;
 }
 
-.serviceName {
-  font-size: 1rem;
+/* Dot before text */
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Status-specific colors — match your card colors */
+.deleted .dot {
+  background-color: #fca5a5;
+}
+.notStarted .dot {
+  background-color: #fbbf24;
+}
+.inProgress .dot {
+  background-color: #3b82f6;
+}
+.completed .dot {
+  background-color: #22c55e;
+}
+
+/* Optional hover for a professional feel */
+.tags:hover {
+  /* background: #f3f4f6; */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* ====== SERVICES LIST ====== */
+/* Table */
+.servicesTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.servicesTable th {
+  text-align: left;
   font-weight: 600;
+  color: #374151;
+  padding: 12px;
+  font-size: 1.1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.servicesTable td {
+  padding: 14px 12px;
+  vertical-align: middle;
+  font-size: 0.9rem;
   color: #111827;
 }
 
-/* Status Badge Styling */
-.statusBadge {
-  padding: 0.25rem 0.6rem;
+.colorTagCell {
+  width: 8px;
+  padding: 0 !important;
+}
+
+/* The small color tag itself */
+.colorTag {
+  display: block;
+  width: 6px;
+  height: 100%;
+  border-radius: 4px;
+}
+
+/* 🔹 Color Tag Backgrounds */
+/* .notStartedTag {
+  background-color: #fbbf24;
+}
+
+.inProgressTag {
+  background-color: #3b82f6;
+}
+
+.completedTag {
+  background-color: #22c55e;
+}
+
+.deletedTag {
+  background-color: #fca5a5;
+} */
+
+/* 🔹 Left Border of the Cell Based on Status 
+   (apply class to the <tr> as you already do) */
+.notStartedRow td:first-child {
+  border-left: 4px solid #fbbf24;
+  background-color: #fffaf2; /* light bg tint */
+}
+
+.inProgressRow td:first-child {
+  border-left: 4px solid #3b82f6;
+  background-color: #f0f9ff;
+}
+
+.completedRow td:first-child {
+  border-left: 4px solid #22c55e;
+  background-color: #f0fdf4;
+}
+
+.deletedRow td:first-child {
+  border-left: 4px solid #fca5a5;
+  background-color: #fff5f5;
+}
+
+/* Row backgrounds */
+.serviceRow {
+  background: #fff;
   border-radius: 8px;
-  font-size: 0.75rem;
+  border: 1px solid #e5e7eb;
+  transition: box-shadow 0.2s ease;
+}
+.serviceRow:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Status-based row backgrounds */
+/* .notStartedRow {
+  background: linear-gradient(145deg, #fff7eb 0%, #fffaf2 100%);
+  border: 1px solid #fbbf24;
+}
+.inProgressRow {
+  background: linear-gradient(145deg, #f0f9ff 0%, #f8fbff 100%);
+  border: 1px solid #3b82f6;
+}
+.completedRow {
+  background: linear-gradient(145deg, #f0fdf4 0%, #f8fef9 100%);
+  border: 1px solid #22c55e;
+}
+.deletedRow {
+  background: #fff5f5;
+  border: 1px solid #fca5a5;
+  opacity: 0.95;
+} */
+
+/* Status Badge (unchanged) */
+.statusBadge {
+  padding: 0.35rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
   font-weight: 600;
   text-transform: capitalize;
 }
-
-.notStarted {
-  background: #fef9c3;
-  color: #a16207;
+.deleted {
+  background: #fee2e2;
+  color: #dc2626;
 }
-
+.notStarted {
+  background: #fef3c7;
+  color: #92400e;
+}
 .inProgress {
   background: #dbeafe;
   color: #1d4ed8;
 }
-
 .completed {
   background: #dcfce7;
   color: #15803d;
 }
 
-/* Action buttons */
-.actions {
-  display: flex;
-  gap: 0.4rem;
+/* Info text */
+.infoText {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 4px;
 }
 
+/* Date Inputs */
+.dateInput {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: #ffffff;
+  transition: border 0.2s ease;
+}
+.dateInput:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+.arrow {
+  margin: 0 6px;
+  color: #6b7280;
+  font-weight: bold;
+}
+
+/* Buttons (same as before) */
+.actions,
+.actionRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
 .editBtn,
-.deleteBtn {
-  padding: 0.3rem 0.7rem;
+.deleteBtn,
+.saveBtn,
+.cancelBtn {
+  padding: 0.4rem 0.9rem;
   border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
   border: none;
-  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
-
 .editBtn {
   background: #e0f2fe;
   color: #0369a1;
 }
-
 .editBtn:hover {
   background: #bae6fd;
 }
-
 .deleteBtn {
   background: #fee2e2;
   color: #b91c1c;
 }
-
 .deleteBtn:hover {
   background: #fecaca;
 }
+.saveBtn {
+  background: #22c55e;
+  color: #fff;
+}
+.saveBtn:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+.cancelBtn {
+  background: #f87171;
+  color: #fff;
+}
+.cancelBtn:hover {
+  background: #ef4444;
+  transform: translateY(-1px);
+}
 
-/* Dates row */
-.dateRow {
+/* Responsive */
+@media (max-width: 768px) {
+  .servicesTable th,
+  .servicesTable td {
+    font-size: 0.8rem;
+    padding: 10px;
+  }
+  .editBtn,
+  .deleteBtn,
+  .saveBtn,
+  .cancelBtn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+  }
+}
+
+.pagination {
+  margin-top: 22px;
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination button {
+  padding: 8px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #334155;
   font-size: 0.85rem;
-  color: #374151;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.arrow {
-  font-weight: bold;
-  color: #6b7280;
+.pagination button:hover {
+  background: #e2e8f0;
+  color: #1d4ed8;
 }
 
-/* Bottom Row */
-.bottomRow {
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.activePage {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+}
+
+/* ====== Back Button ====== */
+
+.backButton {
+  position: fixed; /* floating button */
+  bottom: 20px;
+  right: 20px;
+
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: white;
+  font-family: inherit;
+  padding: 0.35em;
+  padding-left: 1.2em;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 30px;
+  border: none;
+  letter-spacing: 0.05em;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 0.8rem;
-  color: #6b7280;
+  box-shadow: inset 0 0 1.6em -0.6em #2d5a9b;
+  overflow: hidden;
+  position: fixed;
+  height: 2.8em;
+  padding-right: 3.3em;
+  cursor: pointer;
+  z-index: 1100;
+  transition: all 0.3s ease;
 }
 
-.statusText {
-  font-style: italic;
+.icon {
+  background: white;
+  margin-left: 1em;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.2em;
+  width: 2.2em;
+  border-radius: 50%;
+  box-shadow: 0.1em 0.1em 0.6em 0.2em #357abd;
+  right: 0.3em;
+  transition: all 0.3s;
+}
+
+.backButton:hover .icon {
+  width: calc(100% - 0.6em);
+  border-radius: 0.9em;
+  right: 0.3em;
+}
+
+.icon svg {
+  width: 1.1em;
+  transition: transform 0.3s;
+  color: #357abd;
+}
+
+.backButton:hover .icon svg {
+  transform: translateX(-0.1em);
+}
+
+.backButton:active .icon {
+  transform: scale(0.95);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+  .serviceName {
+    font-size: 0.95rem;
+  }
+  .statusBadge {
+    font-size: 0.75rem;
+  }
+  .saveBtn,
+  .cancelBtn {
+    flex: 1;
+    justify-content: center;
+  }
 }

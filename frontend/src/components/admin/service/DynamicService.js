@@ -414,14 +414,36 @@ export default function DynamicService() {
                                   );
                                 }}
                               >
-                                {Object.keys(ServiceStatus).map((key) => (
-                                  <option key={key} value={ServiceStatus[key]}>
-                                    {key}
+                                {currentStatus === 1 ? (
+                                  <>
+                                    <option value={ServiceStatus["notStarted"]}>
+                                      notStarted
+                                    </option>
+                                    <option value={ServiceStatus["inProgress"]}>
+                                      inProgress
+                                    </option>
+                                  </>
+                                ) : currentStatus === 2 ? (
+                                  <>
+                                    <option value={ServiceStatus["inProgress"]}>
+                                      inProgress
+                                    </option>
+                                    <option value={ServiceStatus["completed"]}>
+                                      completed
+                                    </option>
+                                  </>
+                                ) : currentStatus === 3 ? (
+                                  <option value={ServiceStatus["completed"]}>
+                                    completed
                                   </option>
-                                ))}
+                                ) : (
+                                  <option value="NA">NA</option>
+                                )}
                               </select>
                             </td>
-                            <td  ><p style={{textAlign: "center"}}>NA</p></td>
+                            <td>
+                              <p style={{ textAlign: "center" }}>NA</p>
+                            </td>
 
                             <td
                               className={styles.actions}
@@ -431,11 +453,7 @@ export default function DynamicService() {
                                 <button
                                   className={styles.uploadBtn4}
                                   onClick={() =>
-                                    renewService(
-                                      service._id ||
-                                        service.serviceId,
-                                      client._id
-                                    )
+                                    renewService(service.serviceId, client._id)
                                   }
                                 >
                                   Renew
@@ -446,11 +464,7 @@ export default function DynamicService() {
                                 <button
                                   className={styles.uploadBtn5}
                                   onClick={() =>
-                                    deAssignService(
-                                      service.serviceId?._id ||
-                                        service.serviceId,
-                                      client._id
-                                    )
+                                    deAssignService(service._id, client._id)
                                   }
                                 >
                                   De-Assign
@@ -507,8 +521,6 @@ export default function DynamicService() {
                                   >
                                     Assign Staff
                                   </button>
-
-                                  
                                 </div>
                               </div>
                             </td>
@@ -545,61 +557,60 @@ export default function DynamicService() {
         </section>
 
         {showAssignStaffModal && (
-  <div className={styles.modalOverlay}>
-    <div className={styles.modalContent}>
-      <h2>Assign Staff</h2>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          // call your assignStaff here
-          assignStaff(
-            currentServiceClient.serviceId,
-            currentServiceClient.clientId,
-            { name: staffName, email: staffEmail }
-          );
-          // close modal
-          setShowAssignStaffModal(false);
-          setStaffName("");
-          setStaffEmail("");
-        }}
-      >
-        <label>
-          Staff Name:
-          <input
-            type="text"
-            value={staffName}
-            onChange={(e) => setStaffName(e.target.value)}
-            required
-          />
-        </label>
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <h2>Assign Staff</h2>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  // call your assignStaff here
+                  assignStaff(
+                    currentServiceClient.serviceId,
+                    currentServiceClient.clientId,
+                    { name: staffName, email: staffEmail }
+                  );
+                  // close modal
+                  setShowAssignStaffModal(false);
+                  setStaffName("");
+                  setStaffEmail("");
+                }}
+              >
+                <label>
+                  Staff Name:
+                  <input
+                    type="text"
+                    value={staffName}
+                    onChange={(e) => setStaffName(e.target.value)}
+                    required
+                  />
+                </label>
 
-        <label>
-          Staff Email:
-          <input
-            type="email"
-            value={staffEmail}
-            onChange={(e) => setStaffEmail(e.target.value)}
-            required
-          />
-        </label>
+                <label>
+                  Staff Email:
+                  <input
+                    type="email"
+                    value={staffEmail}
+                    onChange={(e) => setStaffEmail(e.target.value)}
+                    required
+                  />
+                </label>
 
-        <div className={styles.modalActions}>
-          <button type="submit" className={styles.submitBtn}>
-            Assign
-          </button>
-          <button
-            type="button"
-            className={styles.cancelBtn}
-            onClick={() => setShowAssignStaffModal(false)}
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
-
+                <div className={styles.modalActions}>
+                  <button type="submit" className={styles.submitBtn}>
+                    Assign
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.cancelBtn}
+                    onClick={() => setShowAssignStaffModal(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         <button
           className={styles.backButton}
