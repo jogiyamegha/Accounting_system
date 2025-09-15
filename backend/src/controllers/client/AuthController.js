@@ -36,7 +36,7 @@ exports.signUp = async (req) => {
         const token = user.createAuthToken();
         await ClientService.saveAuthToken(user[TableFields.ID], token);
 
-        Email.sendClientSignupMail(user[TableFields.name_], email, password)
+        // Email.sendClientSignupMail(user[TableFields.name_], email, password)
         return { user, token };
     }
 };
@@ -112,7 +112,7 @@ exports.forgotPassword = async (req) => {
     let { code, email, name } = await ClientService.getResetPasswordToken(
         providedEmail
     );
-    Email.sendForgotPasswordMail(email, code, name);
+    // Email.sendForgotPasswordMail(email, code, name);
 };
 
 exports.forgotPasswordCodeExists = async (req) => {
@@ -167,11 +167,11 @@ exports.changePassword = async (req) => {
             token
         );
 
-        Email.sendChangedPasswordMail(
-            providedEmail,
-            newPassword,
-            user[TableFields.name_]
-        );
+        // Email.sendChangedPasswordMail(
+        //     providedEmail,
+        //     newPassword,
+        //     user[TableFields.name_]
+        // );
         return { token };
     } else throw new ValidationError(ValidationMsg.PasswordInvalid);
 };

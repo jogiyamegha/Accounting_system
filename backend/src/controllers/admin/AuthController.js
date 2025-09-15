@@ -99,7 +99,7 @@ exports.forgotPassword = async (req) => {
     let { code, email, name } = await AdminService.getResetPasswordToken(
         providedEmail
     );
-    Email.sendForgotPasswordMail(email, code, name);
+    // Email.sendForgotPasswordMail(email, code, name);
 };
 
 exports.forgotPasswordCodeExists = async (req) => {
@@ -175,11 +175,11 @@ exports.changePassword = async (req) => {
             newPassword,
             token
         );
-        Email.sendChangedPasswordMail(
-            providedEmail,
-            newPassword,
-            user[TableFields.name_]
-        );
+        // Email.sendChangedPasswordMail(
+        //     providedEmail,
+        //     newPassword,
+        //     user[TableFields.name_]
+        // );
         return { token };
     } else throw new ValidationError(ValidationMsg.PasswordInvalid);
 };

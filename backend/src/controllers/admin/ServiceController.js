@@ -146,11 +146,11 @@ exports.assignService = async (req, res) => {
     );
 
     // Send service assignment email
-    await Email.sendServiceAssignMail(
-      client[TableFields.name_],
-      client[TableFields.email],
-      service[TableFields.serviceName]
-    );
+    // await Email.sendServiceAssignMail(
+    //   client[TableFields.name_],
+    //   client[TableFields.email],
+    //   service[TableFields.serviceName]
+    // );
 
     // Return success response
     return res.status(200).json({
@@ -271,129 +271,137 @@ exports.deAssignService = async (req) => {
   return result;
 };
 
-// exports.renewService = async (req) => {
-//     const serviceId = req.params[TableFields.serviceId];
-//     const clientId = req.params[TableFields.clientId];
-
-//     const clientExists = await ClientService.userExists(clientId);
-//     if (!clientExists) {
-//         throw new ValidationError(ValidationMsg.ClientNotExists);
-//     }
-
-//     const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
-
-//     const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
-
-//     const isServiceExistsInClient = await ClientService.isServiceExistsInClient(client, serviceId);
-
-//     if(!isServiceExistsInClient) {
-//         throw new ValidationError(ValidationMsg.ServiceNotExistsInClient);
-//     }
-
-//     const isServiceCompleted = await ClientService.checkAllServiceCompleted(client, serviceId);
-//     console.log("isServiceCompleted", isServiceCompleted);
-
-//     if(!isServiceCompleted) {
-//         throw new ValidationError(ValidationMsg.ServiceIsNotCompleted);
-//     }
-
-//     await Email.sendServiceRenewalMail(client[TableFields.name_], client[TableFields.email], service[TableFields.serviceName])
-//     return await ClientService.addRenewService(client[TableFields.ID], serviceId);
-// }
-
-exports.renewService = async (req, res) => {
-  try {
+exports.renewService = async (req) => {
     const serviceId = req.params[TableFields.serviceId];
     const clientId = req.params[TableFields.clientId];
 
-    // Validate input
-    if (!serviceId) {
-      return res.status(400).json({
-        success: false,
-        error: "Service ID is required",
-      });
-    }
-    if (!clientId) {
-      return res.status(400).json({
-        success: false,
-        error: "Client ID is required",
-      });
-    }
-
-    // Check if client exists
     const clientExists = await ClientService.userExists(clientId);
     if (!clientExists) {
-      throw new ValidationError(ValidationMsg.ClientNotExists);
+        throw new ValidationError(ValidationMsg.ClientNotExists);
     }
 
-    // Get service details for email
-    const service = await ServiceService.findById(serviceId)
-      .withBasicInfo()
-      .execute();
-    if (!service) {
-      throw new ValidationError(ValidationMsg.ServiceNotExists);
+    const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+
+    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+
+    const isServiceExistsInClient = await ClientService.isServiceExistsInClient(client, serviceId);
+
+    if(!isServiceExistsInClient) {
+        throw new ValidationError(ValidationMsg.ServiceNotExistsInClient);
     }
 
-    // Get client details
-    const client = await ClientService.getUserById(clientId)
-      .withBasicInfo()
-      .execute();
+    const isServiceCompleted = await ClientService.checkAllServiceCompleted(client, serviceId);
+    console.log("isServiceCompleted", isServiceCompleted);
 
-    // Check if service exists in client's services
-    const isServiceExistsInClient = await ClientService.isServiceExistsInClient(
-      client,
-      serviceId
-    );
-    if (!isServiceExistsInClient) {
-      throw new ValidationError(ValidationMsg.ServiceNotExistsInClient);
+    if(!isServiceCompleted) {
+        throw new ValidationError(ValidationMsg.ServiceIsNotCompleted);
     }
 
-    // Check if service is completed and can be renewed
-    const isServiceCompleted = await ClientService.checkAllServiceCompleted(
-      client,
-      serviceId
-    );
-    console.log("isServiceCompleted:", isServiceCompleted);
+    await Email.sendServiceRenewalMail(client[TableFields.name_], client[TableFields.email], service[TableFields.serviceName])
+    return await ClientService.addRenewService(client[TableFields.ID], serviceId);
+}
 
-    if (!isServiceCompleted) {
-      throw new ValidationError(ValidationMsg.ServiceIsNotCompleted);
-    }
+// exports.renewService = async (req, res) => {
+//     const serviceId = req.params[TableFields.serviceId];
+//     const clientId = req.params[TableFields.clientId];
 
-    // Renew the service
-    const renewResult = await ClientService.addRenewService(
-      client[TableFields.ID],
-      serviceId
-    );
+//     console.log("serviceId", serviceId);
+//     console.log("clientId", clientId);
 
-    // Send service renewal email
-    await Email.sendServiceRenewalMail(
-      client[TableFields.name_],
-      client[TableFields.email],
-      service[TableFields.serviceName]
-    );
+//     // Validate input
+//     if (!serviceId) {
+//       // return res.status(400).json({
+//       //   success: false,
+//       //   error: "Service ID is required",
+//       // });
+//       throw new ValidationError(ValidationMsg.ServiceIdEmpty);
+//     }
+//     if (!clientId) {
+//       // return res.status(400).json({
+//       //   success: false,
+//       //   error: "Client ID is required",
+//       // });
+//       throw new ValidationError(ValidationMsg.ClientIdEmpty);  
+//     }
 
-    // Return success response
-    return res.status(200).json({
-      success: true,
-      message: "Service renewed successfully",
-      data: renewResult,
-    });
-  } catch (error) {
-    console.error("Error in renewService:", error);
+//     // Check if client exists
+//     const clientExists = await ClientService.userExists(clientId);
+//     if (!clientExists) {
+//       throw new ValidationError(ValidationMsg.ClientNotExists);
+//     }
 
-    if (error instanceof ValidationError) {
-      return res.status(400).json({
-        success: false,
-        error: error.message,
-      });
-    }
+//     // Get service details for email
+//     const service = await ServiceService.findById(serviceId)
+//       .withBasicInfo()
+//       .execute();
+//     if (!service) {
+//       throw new ValidationError(ValidationMsg.ServiceNotExists);
+//     }
 
-    return res.status(500).json({
-      success: false,
-      error: "Internal server error while renewing service",
-    });
-  }
-};
+//     // Get client details
+//     const client = await ClientService.getUserById(clientId)
+//       .withBasicInfo()
+//       .execute();
+
+//     // Check if service exists in client's services
+//     const isServiceExistsInClient = await ClientService.isServiceExistsInClient(
+//       client,
+//       serviceId
+//     );
+//     if (!isServiceExistsInClient) {
+//       throw new ValidationError(ValidationMsg.ServiceNotExistsInClient);
+//     }
+
+//     // Check if service is completed and can be renewed
+//     const isServiceCompleted = await ClientService.checkAllServiceCompleted(
+//       client,
+//       serviceId
+//     );
+//     console.log("isServiceCompleted:", isServiceCompleted);
+
+//     if (!isServiceCompleted) {
+//       throw new ValidationError(ValidationMsg.ServiceIsNotCompleted);
+//     }
+
+//     // Renew the service
+//     const renewResult = await ClientService.addRenewService(
+//       client[TableFields.ID],
+//       serviceId
+//     );
+
+//     // Send service renewal email
+//     // await Email.sendServiceRenewalMail(
+//     //   client[TableFields.name_],
+//     //   client[TableFields.email],
+//     //   service[TableFields.serviceName]
+//     // );
+
+//     // Return success response
+//     // return res.status(200).json({
+//     //   success: true,
+//     //   message: "Service renewed successfully",
+//     //   data: renewResult,
+//     // });
+
+    
+//   // } catch (error) {
+//   //   console.error("Error in renewService:", error);
+
+//   //   if (error instanceof ValidationError) {
+//   //     return res.status(400).json({
+//   //       success: false,
+//   //       error: error.message,
+//   //     });
+//   //   }
+
+//   //   return res.status(500).json({
+//   //     success: false,
+//   //     error: "Internal server error while renewing service",
+//   //   });
+//   // }
+
+//   return renewResult;
+// };
 
 exports.updateServiceStatus = async (req) => {
   const serviceId = req.params[TableFields.serviceId];

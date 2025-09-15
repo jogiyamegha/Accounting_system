@@ -48,12 +48,12 @@ exports.updateDocumentStatus = async (req) => {
 
     if (!user) throw new ValidationError(ValidationMsg.RecordNotFound);
 
-    Email.sendDocStatusMail(
-        user[TableFields.name_],
-        user[TableFields.email],
-        docStatus,
-        comment
-    );
+    // Email.sendDocStatusMail(
+    //     user[TableFields.name_],
+    //     user[TableFields.email],
+    //     docStatus,
+    //     comment
+    // );
     return updatedDoc;
 };
 

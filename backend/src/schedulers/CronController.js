@@ -48,12 +48,12 @@ exports.serviceDeadlineTomorrow = async () => {
         );
 
         if (serviceTypes.length > 0) {
-          bulkEmail.addEmail(
-            client[TableFields.clientDetail][TableFields.clientName],
-            client[TableFields.clientDetail][TableFields.clientEmail],
-            serviceTypes,
-            "service-deadline-tomorrow.hbs"
-          );
+          // bulkEmail.addEmail(
+          //   client[TableFields.clientDetail][TableFields.clientName],
+          //   client[TableFields.clientDetail][TableFields.clientEmail],
+          //   serviceTypes,
+          //   "service-deadline-tomorrow.hbs"
+          // );
         }
       });
 
@@ -95,12 +95,12 @@ exports.serviceDeadlineToday = async () => {
         );
 
         if (serviceTypes.length > 0) {
-          bulkEmail.addEmail(
-            client[TableFields.clientDetail][TableFields.clientName],
-            client[TableFields.clientDetail][TableFields.clientEmail],
-            serviceTypes,
-            "service-deadline-today.hbs"
-          );
+          // bulkEmail.addEmail(
+          //   client[TableFields.clientDetail][TableFields.clientName],
+          //   client[TableFields.clientDetail][TableFields.clientEmail],
+          //   serviceTypes,
+          //   "service-deadline-today.hbs"
+          // );
         }
       });
 
