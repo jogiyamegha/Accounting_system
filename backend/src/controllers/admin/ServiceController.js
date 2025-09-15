@@ -274,7 +274,9 @@ exports.renewService = async (req) => {
         throw new ValidationError(ValidationMsg.ServiceIsNotCompleted);
     }
 
-    await Email.sendServiceRenewalMail(client[TableFields.name_], client[TableFields.email], service[TableFields.serviceName])
+    console.log("hydrabad");
+
+    // await Email.sendServiceRenewalMail(client[TableFields.name_], client[TableFields.email], service[TableFields.serviceName])
     return await ClientService.addRenewService(client[TableFields.ID], serviceId);
 }
 

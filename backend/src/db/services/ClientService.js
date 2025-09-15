@@ -317,32 +317,6 @@ class ClientService {
         return false;
     };
 
-
-
-    static addRenewService = async (clientId, serviceId) => {
-        const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
-
-        const todayDate = new Date();
-        const endDate = new Date(todayDate);
-        endDate.setDate(endDate.getDate() + service[TableFields.serviceDuration]);
-
-        return await Client.updateOne(
-            {
-                [TableFields.ID]: clientId
-            },
-            {
-                $push: {
-                    [TableFields.services]: {
-                        [TableFields.serviceId]: serviceId,
-                        [TableFields.serviceStartDate]: todayDate,
-                        [TableFields.endDate]: endDate,
-                        [TableFields.serviceStatus]: 2
-                    }
-                }
-            }
-        );
-    }
-
     static checkIsServiceCompleted = async (clientId, serviceId) => {
         const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
         const services = client[TableFields.services];
@@ -497,6 +471,8 @@ class ClientService {
 
     static addRenewService = async (clientId, serviceId) => {
         const service = await ServiceService.findById(serviceId).withBasicInfo().execute();
+        console.log("service", service);
+        console.log(service[0]);
 
         const todayDate = new Date();
         const endDate = new Date(todayDate);
@@ -510,6 +486,8 @@ class ClientService {
                 $push: {
                     [TableFields.services]: {
                         [TableFields.serviceId]: serviceId,
+                        [TableFields.serviceName] : service[TableFields.serviceName],
+                        [TableFields.serviceDuration] : service[TableFields.serviceDuration],
                         [TableFields.serviceStartDate]: todayDate,
                         [TableFields.endDate]: endDate,
                         [TableFields.serviceStatus]: 2
