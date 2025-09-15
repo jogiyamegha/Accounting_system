@@ -212,7 +212,8 @@ const ValidationMsg = (function () {
   ValidationMsg.ServiceIsNotCompleted =
     "service is not completed yet, so you can renew it after completion";
   ValidationMsg.ServiceIsRunning =
-    "Service is running, so you can assign after its completion.";
+    "Service is assigned already and completed, so please request for renew! after its completion.";
+  ValidationMsg.InternalServiceNotExists = 'Internal Service Not Exists'
   ValidationMsg.DeadlineCategoryEmpty = "deadline field is required";
   ValidationMsg.DateEmpty = "Date required";
   ValidationMsg.EventNotFound = "Event Not Found";
@@ -355,6 +356,8 @@ const TableFields = (function () {
   TableFields.serviceStatusChangeDate = "serviceStatusChangeDate";
   TableFields.deassignDate = "deassignDate";
   TableFields.updatedServiceDuration = 'updatedServiceDuration';  
+  TableFields.updatedDateAfterStatusChangeToCompleted = 'updatedDateAfterStatusChangeToCompleted';
+  TableFields.updatedDateAfterStatusChangeToInProgress = 'updatedDateAfterStatusChangeToInProgress';
   TableFields.clients = "clients";
   TableFields.durationType = "durationType";
   TableFields.startingAmount = "startingAmount";

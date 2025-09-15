@@ -420,10 +420,15 @@ export default function ServiceManagement() {
             );
 
             const data = await res.json();
-            if (!res.ok) toast.error(data.error || "Failed to assign service");
-
-            toast.success("Service assigned successfully!");
-            setShowAssignModal(false);
+            if (!res.ok){
+                console.log("here if");
+                toast.info(data.error || "Failed to assign service");
+            }
+            else {
+                console.log("here else");
+                toast.success("Service assigned successfully!");
+                setShowAssignModal(false);
+            }
         } catch (err) {
             toast.error(err.message);
         }

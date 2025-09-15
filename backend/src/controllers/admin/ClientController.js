@@ -276,16 +276,19 @@ exports.editClientServiceDetail = async (req) => {
     const clientId = req.params[TableFields.clientId];
     const serviceId = req.params[TableFields.serviceId];
 
-    const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
-    if(!client) {
-        throw new ValidationError(ValidationMsg.ClientNotExists);
-    }
-    const isServiceAssigned = await ClientService.isServiceExistsInClient(client, serviceId)
-    if(!isServiceAssigned) {
-        throw new ValidationError(ValidationMsg.ServiceIsNotAssigned);
-    }
+    console.log(clientId);
+    console.log("serviceId", serviceId);
 
-    return await ClientService.updateClientServiceDetail(client,serviceId,  req.body)
+    // const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
+    // if(!client) {
+    //     throw new ValidationError(ValidationMsg.ClientNotExists);
+    // }
+    // const isServiceAssigned = await ClientService.isServiceExistsInClient(client, serviceId)
+    // if(!isServiceAssigned) {
+    //     throw new ValidationError(ValidationMsg.ServiceIsNotAssigned);
+    // }
+
+    // return await ClientService.updateClientServiceDetail(client,serviceId,  req.body)
 }
 
 exports.clientServiceDeassign = async (req) => {

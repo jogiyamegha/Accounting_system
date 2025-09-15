@@ -124,6 +124,12 @@ const clientSchema = new Schema(
                 },
                 [TableFields.updatedServiceDuration] : {
                     type : Number
+                },
+                [TableFields.updatedDateAfterStatusChangeToCompleted] : {
+                    type: Date
+                },
+                [TableFields.updatedDateAfterStatusChangeToInProgress] : {
+                    type : Date
                 }
             }
         ]

@@ -28,12 +28,26 @@ class ClientService {
     static isServiceExistsInClient = async (client, serviceId) => {
         const services = client[TableFields.services];
         for (let service of services) {
-            if (service[TableFields.ID].toString() === serviceId) {
+            if (service[TableFields.serviceId].toString() === serviceId) {
                 return true;
             }
         }
         return false;
     }
+
+    static checkInternalServiceExists = async (client, serviceId) => {
+        const services = client[TableFields.services];
+        if(services.length == 0){
+            return false;
+        } 
+        for(let service of services) {
+            if(service[TableFields.ID].toString() === serviceId.toString()) {
+                return true;
+            }
+        }
+        return false; 
+    }
+    
 
     static checkServiceAssignedAndCompletedOrDeassign = async (client, serviceId) => {
         // Check if service is currently running (assigned, not deleted, and not completed)
@@ -42,7 +56,7 @@ class ClientService {
             for (let service of services) {
                 if (service[TableFields.serviceId].toString() === serviceId) {
                     // If service exists and is not deleted and not completed, it's running
-                    if (service[TableFields.deleted] == false && service[TableFields.endDate] > new Date()) {
+                    if (service[TableFields.deleted] == false && service[TableFields.endDate] > new Date() && service[TableFields.serviceStatus] === 3) {
                         return true; // Service is running
                     }
                 }
@@ -123,21 +137,74 @@ class ClientService {
     // };
 
 
+    // static checkAllServiceCompleted = async (client, serviceId) => {
+    //     console.log(client);
+    //     const services = client[TableFields.services];
+    //     if (services.length > 0) {
+    //         console.log("1");
+    //         for (let service of services) {
+    //             if(!service[TableFields.updatedDateAfterStatusChangeToCompleted]){
+    //                 console.log("2");
+    //                 if (
+    //                     (service[TableFields.serviceId].toString() === serviceId.toString()) &&
+    //                     (service[TableFields.endDate] <= new Date()) && 
+    //                     (service[TableFields.serviceStatus] == 3) &&
+    //                     (service[TableFields.deleted] == false)
+    //                 ) {
+    //                     console.log("first");
+    //                     return true;
+    //                 }
+    //             } else {
+    //                 console.log("3");
+    //                 if (
+    //                     (service[TableFields.serviceId].toString() === serviceId.toString()) &&
+    //                     (service[TableFields.updatedDateAfterStatusChangeToCompleted] <= new Date()) && 
+    //                     (service[TableFields.serviceStatus] == 3) &&
+    //                     (service[TableFields.deleted] == false)
+    //                 ) {
+    //                     console.log("second");
+    //                     return true;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
+
     static checkAllServiceCompleted = async (client, serviceId) => {
-        const services = client[TableFields.services];
-        if (services.length > 0) {
-            for (let service of services) {
-                if (
-                    (service[TableFields.serviceId].toString() === serviceId.toString()) &&
-                    (service[TableFields.endDate] <= new Date()) && // Changed < to <=
-                    (service[TableFields.serviceStatus] == 3) &&
-                    (service[TableFields.deleted] == false)
-                ) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        const services = client[TableFields.services] || [];
+
+        const relevantServices = services.filter(service =>
+            service[TableFields.serviceId]?.toString() === serviceId.toString() &&
+            service[TableFields.deleted] === false
+        );
+        console.log(relevantServices);
+        if (relevantServices.length === 0) return true;
+
+        return relevantServices.every(service => {
+            const dateToCheck = service[TableFields.updatedDateAfterStatusChangeToCompleted] ||service[TableFields.endDate];
+            return (
+                service[TableFields.serviceStatus] === 3 && dateToCheck && dateToCheck <= new Date()
+            );
+        });
+    };
+
+
+    static checkIsServiceRunning = async (client, serviceId) => {
+        const services = client[TableFields.services] || [];
+
+        const relevantServices = services.filter(service =>
+            service[TableFields.serviceId]?.toString() === serviceId.toString() &&
+            service[TableFields.deleted] === false
+        );
+
+        if (relevantServices.length === 0) return false;
+
+        return relevantServices.every(service => {
+            return (
+                service[TableFields.serviceStatus] === 2 && service[TableFields.deleted] === false
+            );
+        });
     }
 
     static getAllClientsRelatedService = (serviceId, filter = {}) => {
@@ -305,29 +372,22 @@ class ClientService {
         return false;
     };
 
-    static updateDeassign = async (client, serviceId) => {
-        // Find the active (non-deleted) service entry for this serviceId
+    static updateDeassign = async (client, serviceArrayItemId) => {
         return await Client.findOneAndUpdate(
             {
-                [TableFields.ID]: client[TableFields.ID]
+                [TableFields.ID]: client[TableFields.ID],
+                [`${TableFields.services}._id`]: serviceArrayItemId,
             },
             {
                 $set: {
-                    [`${TableFields.services}.$[elem].${TableFields.deleted}`]: true,
-                    [`${TableFields.services}.$[elem].${TableFields.deassignDate}`]: new Date()
+                    [`${TableFields.services}.$.deleted`]: true, 
+                    [`${TableFields.services}.$.deassignDate`]: new Date()
                 }
             },
-            {
-                arrayFilters: [
-                    {
-                        [`elem.${TableFields.serviceId}`]: serviceId,
-                        [`elem.${TableFields.deleted}`]: false
-                    }
-                ],
-                new: true
-            }
+            { new: true }
         );
     };
+
 
     // static updateServiceStatus = async (serviceId, clientId, newStatus) => {
 
@@ -370,6 +430,50 @@ class ClientService {
             throw new Error(`Invalid status: ${newStatus}`);
         }
 
+        if (newStatus === 2) {
+            return await Client.findByIdAndUpdate(
+                clientId,
+                {
+                    $set: {
+                        [`${TableFields.services}.$[elem].${TableFields.serviceStatus}`]: mappedStatus,
+                        [`${TableFields.services}.$[elem].${TableFields.serviceStatusChangeDate}`]: Date.now(),
+                        [`${TableFields.services}.$[elem].${TableFields.updatedDateAfterStatusChangeToInProgress}`]: Date.now()
+                    },
+                },
+                {
+                    arrayFilters: [
+                        {
+                            "elem._id": serviceId,
+                            [`elem.${TableFields.deleted}`]: false,
+                        },
+                    ],
+                    new: true,
+                }
+            );
+
+        }
+
+        if (newStatus === 3) {
+            return await Client.findByIdAndUpdate(
+                clientId,
+                {
+                    $set: {
+                        [`${TableFields.services}.$[elem].${TableFields.serviceStatus}`]: mappedStatus,
+                        [`${TableFields.services}.$[elem].${TableFields.serviceStatusChangeDate}`]: Date.now(),
+                        [`${TableFields.services}.$[elem].${TableFields.updatedDateAfterStatusChangeToCompleted}`]: Date.now()
+                    },
+                },
+                {
+                    arrayFilters: [
+                        {
+                            "elem._id": serviceId,
+                            [`elem.${TableFields.deleted}`]: false,
+                        },
+                    ],
+                    new: true,
+                }
+            );
+        }
         return await Client.findByIdAndUpdate(
             clientId,
             {
@@ -388,7 +492,6 @@ class ClientService {
                 new: true,
             }
         );
-
     };
 
 
