@@ -432,7 +432,7 @@ export default function DynamicService() {
                                   className={styles.uploadBtn4}
                                   onClick={() =>
                                     renewService(
-                                      service.serviceId?._id ||
+                                      service._id ||
                                         service.serviceId,
                                       client._id
                                     )
