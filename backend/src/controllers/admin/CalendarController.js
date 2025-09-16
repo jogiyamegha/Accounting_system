@@ -5,6 +5,7 @@ const ValidationError = require("../../utils/ValidationError");
 
 exports.addEvent = async (req) => {
     const reqBody = req.body;
+    console.log("first", reqBody)
     const date = reqBody[TableFields.date];
 
     return await parseAndValidateEvent(reqBody, undefined, async (updatedFields) => {

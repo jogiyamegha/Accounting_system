@@ -68,26 +68,26 @@ class CalendarService {
     );
   };
 
-  static findByServiceType = async (serviceType) => {
-    if (typeof serviceType === "string") {
-      const serviceTypeMap = {
-        VATServices: ServiceType.VATServices,
-        CorporateTaxServices: ServiceType.CorporateTaxServices,
-        AccountingServices: ServiceType.AccountingServices,
-        AuditAndCompliance: ServiceType.AuditAndCompliance,
-      };
+  // static findByServiceType = async (serviceType) => {
+  //   if (typeof serviceType === "string") {
+  //     const serviceTypeMap = {
+  //       VATServices: ServiceType.VATServices,
+  //       CorporateTaxServices: ServiceType.CorporateTaxServices,
+  //       AccountingServices: ServiceType.AccountingServices,
+  //       AuditAndCompliance: ServiceType.AuditAndCompliance,
+  //     };
 
-      serviceType = serviceTypeMap[serviceType];
-    }
+  //     serviceType = serviceTypeMap[serviceType];
+  //   }
 
-    if (!Object.values(ServiceType).includes(serviceType)) {
-      throw new ValidationError("Invalid Service Type.");
-    }
+  //   if (!Object.values(ServiceType).includes(serviceType)) {
+  //     throw new ValidationError("Invalid Service Type.");
+  //   }
 
-    return await Calendar.findOne({
-      [TableFields.serviceType]: serviceType,
-    });
-  };
+  //   return await Calendar.findOne({
+  //     [TableFields.serviceType]: serviceType,
+  //   });
+  // };
 
   static updateDeleteEvent = async (eventId) => {
     return await Calendar.findByIdAndUpdate(

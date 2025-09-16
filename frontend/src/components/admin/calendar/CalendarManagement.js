@@ -47,6 +47,8 @@ export default function CalendarManagement() {
   const [filterCategory, setFilterCategory] = useState("");
   const [filterClient, setFilterClient] = useState("");
 
+  const [services, setServices] = useState([]);
+
   // 🔹 Edit modal states
   const [editingDateKey, setEditingDateKey] = useState(null);
   const [editingEvents, setEditingEvents] = useState([]); // array of events
@@ -92,6 +94,29 @@ export default function CalendarManagement() {
     return "upcoming";
   };
 
+  // fetch services
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${ADMIN_END_POINT}/service-management`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+
+      console.log("services", data);
+      if (!res.ok) {
+        toast.error(data.error || "Failed to fetch services");
+      }
+      setServices(data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load services");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // 🔹 Fetch deadlines
   const fetchDeadlines = async () => {
     try {
@@ -107,7 +132,7 @@ export default function CalendarManagement() {
       const mapped = {};
       data.forEach((item) => {
         const dateKey = item.date.split("T")[0];
-        const title = categoryMap[item.deadlineCategory] || "Unknown";
+        const title = item.deadlineCategory || "Unknown";
 
         // Extract client names
         const clients = (item.associatedClients || []).map((c) => ({
@@ -124,6 +149,8 @@ export default function CalendarManagement() {
           clients,
         });
       });
+
+      console.log("mapped",mapped)
 
       setDeadlines(mapped);
     } catch (err) {
@@ -155,6 +182,7 @@ export default function CalendarManagement() {
   useEffect(() => {
     fetchDeadlines();
     fetchClients();
+    fetchServices();
   }, []);
 
   // 🔹 All client names extracted from deadlines (for filter dropdown)
@@ -479,9 +507,14 @@ export default function CalendarManagement() {
                   onChange={(e) => setFilterCategory(e.target.value)}
                 >
                   <option value="">Categories</option>
-                  {Object.entries(categoryMap).map(([id, label]) => (
+                  {/* {Object.entries(categoryMap).map(([id, label]) => (
                     <option key={id} value={id}>
                       {label}
+                    </option>
+                  ))} */}
+                  {services.map((service) => (
+                    <option key={service._id} value={service.serviceName}>
+                      {service.serviceName}
                     </option>
                   ))}
                 </select>
@@ -627,7 +660,9 @@ export default function CalendarManagement() {
                   <li key={i} className={styles.popupEventItem}>
                     {ev.title} —{" "}
                     <span className={styles.clientEmail}>
-                      {ev.clients.map(client => `${client.name} (${client.email})`).join(", ")}
+                      {ev.clients
+                        .map((client) => `${client.name} (${client.email})`)
+                        .join(", ")}
                     </span>
                   </li>
                 ))}
@@ -648,9 +683,14 @@ export default function CalendarManagement() {
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
                   <option value="">-- Select Event Category --</option>
-                  {Object.entries(categoryMap).map(([id, label]) => (
+                  {/* {Object.entries(categoryMap).map(([id, label]) => (
                     <option key={id} value={id}>
                       {label}
+                    </option>
+                  ))} */}
+                  {services.map((service) => (
+                    <option key={service._id} value={service.serviceName}>
+                      {service.serviceName}
                     </option>
                   ))}
                 </select>
@@ -716,9 +756,14 @@ export default function CalendarManagement() {
                   }}
                   className={styles.addInput}
                 >
-                  {Object.entries(categoryMap).map(([id, label]) => (
+                  {/* {Object.entries(categoryMap).map(([id, label]) => (
                     <option key={id} value={id}>
                       {label}
+                    </option>
+                  ))} */}
+                  {services.map((service) => (
+                    <option key={service._id} value={service.serviceName}>
+                      {service.serviceName}
                     </option>
                   ))}
                 </select>

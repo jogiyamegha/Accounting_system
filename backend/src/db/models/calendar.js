@@ -47,8 +47,9 @@ const calendarSchema = new Schema(
       },
     ],
     [TableFields.deadlineCategory]: {
-      type: Number,
-      enum: Object.values(DeadlineCategory),
+      // type: Number,
+      // enum: Object.values(DeadlineCategory),
+      type: String,
       required: [true, ValidationMsg.DeadlineCategoryEmpty],
     },
     // [TableFields.startDate]: {
