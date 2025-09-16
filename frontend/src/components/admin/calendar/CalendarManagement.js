@@ -627,7 +627,7 @@ export default function CalendarManagement() {
                   <li key={i} className={styles.popupEventItem}>
                     {ev.title} —{" "}
                     <span className={styles.clientEmail}>
-                      {ev.clients.join(", ")}
+                      {ev.clients.map(client => `${client.name} (${client.email})`).join(", ")}
                     </span>
                   </li>
                 ))}
