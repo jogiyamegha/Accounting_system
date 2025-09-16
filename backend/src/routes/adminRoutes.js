@@ -254,6 +254,11 @@ const router = API.configRoute("/admin")
 .useAdminAuth()
 .build()
 
+.addPath(`/get-client-service-deadline/:${TableFields.serviceId}`)
+.asGET(ClientController.getClientServiceDeadline)
+.useAdminAuth()
+.build()
+
 .addPath(`/documents/:${TableFields.clientId}/:${TableFields.serviceType}`)
 .asGET(DocumentController.getClientDocuments)
 .useAdminAuth()

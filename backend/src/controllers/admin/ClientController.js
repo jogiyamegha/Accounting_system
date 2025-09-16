@@ -19,6 +19,7 @@ const {
     Folders,
 } = require("../../utils/storage");
 const ServiceManager = require("../../db/serviceManager");
+const ServiceService = require("../../db/services/ServiceService");
 
 exports.addClient = async (req) => {
     const reqBody = req.body;
@@ -304,7 +305,20 @@ exports.clientServiceDeassign = async (req) => {
         throw new ValidationError(ValidationMsg.ServiceIsNotAssigned);
     }
     return await ClientService.updateClientServiceDeassign(client,serviceId)
+}
 
+exports.getClientServiceDeadline = async (req) => {
+    const serviceId = req.params[TableFields.serviceId];
+    console.log("serviceId", serviceId);
+
+    const isServiceExists = await ServiceService.serviceExists(serviceId);
+    if(!isServiceExists) {
+        throw new ValidationError(ValidationMsg.ServiceNotExists);
+    }
+
+    const clients = await ClientService.getAllClientsForDeadline(serviceId).withBasicInfo().execute();
+    console.log("clients", clients);
+    return clients;
 }
 
 async function parseAndValidateClient(
