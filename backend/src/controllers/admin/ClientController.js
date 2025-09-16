@@ -99,8 +99,6 @@ exports.addClient = async (req) => {
 exports.editClientProfileData = async (req, res) => {
     try {
         const reqBody = req.body;
-        console.log("reqBody", reqBody);
-
         const clientId = req.params[TableFields.clientId];
 
         const client = await ClientService.getUserById(clientId)
@@ -115,7 +113,6 @@ exports.editClientProfileData = async (req, res) => {
 
         return updatedClient;
     } catch (error) {
-        console.log("in catch");
         console.log(error);
 
         return res.status(500).json({ message: error.message || "Internal Server Error" });
@@ -125,7 +122,6 @@ exports.editClientProfileData = async (req, res) => {
 
 exports.editClientProfileData2 = async (req) => {
     let reqBody = req.body;
-    console.log("reqBody", reqBody);
 
     const clientId = req.params[TableFields.clientId];
 
@@ -142,9 +138,7 @@ exports.editClientProfileData2 = async (req) => {
 
 exports.editClientDocumentData = async (req) => {
     let reqBody = req.body;
-    // console.log(reqBody);
     let files = req.files;
-    // console.log("first", files);
     const clientId = req.params[TableFields.clientId];
 
     const result = await parseAndValidateEditedClientsDocuments(
@@ -277,9 +271,6 @@ exports.editClientServiceDetail = async (req) => {
     const clientId = req.params[TableFields.clientId];
     const serviceId = req.params[TableFields.serviceId];
 
-    console.log(clientId);
-    console.log("serviceId", serviceId);
-
     const client = await ClientService.getUserById(clientId).withBasicInfo().execute();
     if(!client) {
         throw new ValidationError(ValidationMsg.ClientNotExists);
@@ -309,7 +300,6 @@ exports.clientServiceDeassign = async (req) => {
 
 exports.getClientServiceDeadline = async (req) => {
     const serviceId = req.params[TableFields.serviceId];
-    console.log("serviceId", serviceId);
 
     const isServiceExists = await ServiceService.serviceExists(serviceId);
     if(!isServiceExists) {
@@ -317,7 +307,6 @@ exports.getClientServiceDeadline = async (req) => {
     }
 
     const clients = await ClientService.getAllClientsForDeadline(serviceId).withBasicInfo().execute();
-    console.log("clients", clients);
     return clients;
 }
 
@@ -583,8 +572,6 @@ async function parseAndValidateEditedClientsDocuments(
             reqBody?.newDocs?.[index]?.comments ??
             reqBody[`newDocs[${index}][comments]`] ??
             "";
-
-        console.log("Parsed documentType:", documentType);
 
             let docType = null;
             if (typeof documentType === "string" || typeof documentType === "number") {
