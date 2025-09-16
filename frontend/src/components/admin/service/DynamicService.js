@@ -89,6 +89,33 @@ export default function DynamicService() {
         }
     };
 
+    const getServiceName = async () => {
+        try {
+            const res = await fetch(`${ADMIN_END_POINT}/service-name/${id}`, {
+                method: "GET",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            if (!res.ok) { 
+                let errorData = await res.json(); 
+                toast.error(errorData.error || "Failed to fetch service name"); 
+                return; 
+            } 
+            
+            const data = await res.json(); 
+            return data.name; 
+        } catch (error) { 
+            console.log(error); 
+        }
+    }
+
+    const getServiceNameAndSet = async () => { 
+        const name = await getServiceName(); 
+        if (name)
+            setServiceName(name); 
+    };
+
     useEffect(() => {
         if (id) fetchServiceAndClients();
     }, [page, id]);
@@ -262,10 +289,11 @@ export default function DynamicService() {
     };
 
     useEffect(() => {
-        const handleClickOutside = () => setOpenMenuId(null);
-        window.addEventListener("click", handleClickOutside);
-        return () => window.removeEventListener("click", handleClickOutside);
-    }, []);
+        if (id) { 
+            fetchServiceAndClients(); 
+            getServiceNameAndSet(); 
+        } 
+    }, [page, id]);
 
     return (
         <div className={styles.pageWrapper}>
@@ -274,7 +302,7 @@ export default function DynamicService() {
                 <div className={styles.pageTitle}>
                     <h1>
                         <FontAwesomeIcon icon={faAddressCard} />
-                        Associated Clients with{" "}
+                        Associated Clients with{" "} {getServiceNameAndSet}
                         {serviceName && (
                             <span className={styles.serviceName}>– {serviceName}</span>
                         )}
@@ -399,7 +427,7 @@ export default function DynamicService() {
                                             .map((service, idx) => {
                                                 const currentStatus = Number(
                                                     statusUpdates[service._id] ??
-                                                        service.serviceStatus
+                                                    service.serviceStatus
                                                 );
 
                                                 return (
@@ -415,15 +443,14 @@ export default function DynamicService() {
                                                         <td>{formatDate(service.endDate)}</td>
                                                         <td>
                                                             <select
-                                                                className={`${styles.statusButton} ${
-                                                                    currentStatus ===
-                                                                    ServiceStatus.inProgress
+                                                                className={`${styles.statusButton} ${currentStatus ===
+                                                                        ServiceStatus.inProgress
                                                                         ? styles.statusPending
                                                                         : currentStatus ===
-                                                                          ServiceStatus.completed
-                                                                        ? styles.statusApproved
-                                                                        : styles.statusRejected
-                                                                }`}
+                                                                            ServiceStatus.completed
+                                                                            ? styles.statusApproved
+                                                                            : styles.statusRejected
+                                                                    }`}
                                                                 onClick={(e) => e.stopPropagation()}
                                                                 value={
                                                                     statusUpdates[service._id] ??
@@ -529,11 +556,10 @@ export default function DynamicService() {
                                                                 </button>
 
                                                                 <div
-                                                                    className={`${styles.dropdownMenu} ${
-                                                                        openMenuId === service._id
+                                                                    className={`${styles.dropdownMenu} ${openMenuId === service._id
                                                                             ? styles.open
                                                                             : ""
-                                                                    }`}
+                                                                        }`}
                                                                 >
                                                                     <button
                                                                         className={styles.dropdownItem}
