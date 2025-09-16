@@ -428,6 +428,7 @@ export default function ServiceManagement() {
                 console.log("here else");
                 toast.success("Service assigned successfully!");
                 setShowAssignModal(false);
+                navigate(`/admin/service/${selectedService._id}`)
             }
         } catch (err) {
             toast.error(err.message);

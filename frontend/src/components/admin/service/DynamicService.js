@@ -11,6 +11,7 @@ import {
   faArrowLeft,
   faEllipsisH,
   faEllipsisV,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 const serviceStatusNumberToString = {
@@ -261,6 +262,10 @@ export default function DynamicService() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+
+          <button className={styles.addBtn} >
+            <FontAwesomeIcon icon={faPlus} /> Assign Service
+          </button>
         </div>
 
         {/* 🔎 Filters + Sort */}
