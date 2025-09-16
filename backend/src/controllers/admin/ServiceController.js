@@ -99,14 +99,16 @@ exports.assignService = async (req, res) => {
 
   let allServices = await ClientService.findServicesByClientEmail(clientEmail);
 
-  allServices.map((s) => {
+  allServices.forEach((s) => {
     if (!s.deleted && s.serviceStatus === 2) {
       let data = {
         deadlineCategory: s.serviceName,
         date: new Date(s.endDate).toISOString().split("T")[0],
-        clientEmail: clientEmail,
+        clientEmail,
       };
-      CalendarController.addEvent(data);
+
+    //   console.log("data",data)
+      CalendarController.addEvent({body: data});
     }
   });
   return result;
@@ -270,15 +272,7 @@ exports.deAssignService = async (req) => {
     throw new ValidationError(ValidationMsg.InternalServiceNotExists);
   }
 
-
   let result = await ClientService.updateDeassign(client, serviceId);
-
-  
-
-
-
-
-
 
   return result;
 };

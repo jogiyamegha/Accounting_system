@@ -25,10 +25,10 @@ class ClientService {
     });
   };
 
-  static findServicesByClientEmail = async (email) => {
-    let result = await Client.findOne(email);
-    return result.services;
-  };
+ static findServicesByClientEmail = async (email) => {
+  const result = await Client.findOne({ email }); 
+  return result?.services || []; 
+};
 
   static isServiceExistsInClient = async (client, serviceId) => {
     const services = client[TableFields.services];
